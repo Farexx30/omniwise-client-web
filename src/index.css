@@ -1,9 +1,7 @@
 @import "tailwindcss";
 
 @layer base {
-  html,
-  body,
-  #root {
+  html, body, #root {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -31,9 +29,31 @@
 }
 
 @theme {
-  --background-image-main-page: url("/MainPageBackground.png");
+  --background-image-main-page: url("/main-page-background.png");
 }
 
 @utility text-gradient {
   @apply bg-linear-to-r from-[#D6C7FF] to-[#AB8BFF] bg-clip-text text-transparent;
+}
+
+@layer components {
+  .main-page-background {
+    @apply bg-main-page w-full h-screen bg-center bg-cover fixed inset-0 z-0;
+  }
+
+  .search-bar {
+    @apply w-full bg-[#cecefb]/5 px-4 py-3 rounded-4xl mt-10 max-w-3xl mx-auto;
+
+    & div {
+      @apply relative flex items-center;
+    }
+
+    & img {
+      @apply absolute left-2 h-5 w-5;
+    }
+
+    & input {
+      @apply w-full bg-transparent py-2 sm:pr-10 pl-10 text-base text-gray-200 placeholder-[#cecefb] outline-hidden;
+    }
+  }
 }
