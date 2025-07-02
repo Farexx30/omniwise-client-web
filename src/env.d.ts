@@ -1,5 +1,5 @@
 interface ImportMetaEnv {
-  readonly OMNIWISE_BASE_API_URL: string;
+  readonly VITE_OMNIWISE_BASE_API_URL: string;
 }
 
 interface ImportMeta {
