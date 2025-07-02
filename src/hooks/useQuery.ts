@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 
 export default function useQuery<T>(queryFunction: () => Promise<T>, autoQuery = true) {
     const [data, setData] = useState<T | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
-    const executeQuery = async () => {
+    const executeQuery = async() => {
         setLoading(true);
         setError(null);
 

@@ -1,14 +1,22 @@
-import { useState, type JSX } from 'react';
+import { useEffect, useState, type JSX } from 'react';
 import './App.css'
 import SearchBar from './components/SearchBar'
-import { getEnrolledCourses } from './services/api';
+import { getAvailableCourses, getEnrolledCourses } from './services/api';
 import useQuery from './hooks/useQuery';
 import Spinner from './components/Spinner';
 import CourseCard from './components/CourseCard';
 
 function App() {
   const [searchValue, setSearchValue] = useState("");
-  const { data: courses, loading, error } = useQuery(getEnrolledCourses, true);
+  const { data: courses, loading, error, requeryFunction } = useQuery(getEnrolledCourses, true);
+
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(async () => {
+  //     await requeryFunction();
+  //   }, 500);
+
+  //   return () => clearTimeout(timeoutId);
+  // }, [searchValue.trim()]);
 
   let content: JSX.Element | null = null;
 
@@ -25,7 +33,9 @@ function App() {
     content = (
       <ul className="grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3">
         {courses.map(c => (
-            <CourseCard key={c.id} {...c} />
+          <li key={c.id} className="course-card">
+            <CourseCard {...c} />
+          </li>
         ))}
       </ul>
     )
