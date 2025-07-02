@@ -4,6 +4,7 @@ import SearchBar from './components/SearchBar'
 import { getEnrolledCourses } from './services/api';
 import useQuery from './hooks/useQuery';
 import Spinner from './components/Spinner';
+import CourseCard from './components/CourseCard';
 
 function App() {
   const [searchValue, setSearchValue] = useState("");
@@ -23,11 +24,8 @@ function App() {
   else {
     content = (
       <ul className="grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3">
-        {courses.map(course => (
-          <li key={course.id}>
-            <img src={course.imgUrl || '/search-icon.svg'} alt={course.name} />
-            <h3>{course.name}</h3>
-          </li>
+        {courses.map(c => (
+            <CourseCard key={c.id} {...c} />
         ))}
       </ul>
     )
@@ -36,7 +34,6 @@ function App() {
   return (
     <main>
       <div className="main-page-background" />
-
       <div className="px-5 py-12 xs:p-10 max-w-7xl mx-auto flex flex-col relative z-10">
         <header>
           <h1>

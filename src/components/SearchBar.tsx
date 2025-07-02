@@ -13,7 +13,6 @@ export default function SearchBar({ searchValue, onSearch, placeholder }: Search
                     src="/search-icon.svg"
                     alt="Search Icon"
                 />
-
                 <input
                     type="text"
                     value={searchValue}

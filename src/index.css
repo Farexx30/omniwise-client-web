@@ -60,4 +60,44 @@
       @apply w-full bg-transparent py-2 sm:pr-10 pl-10 text-base text-gray-200 placeholder-[#cecefb] outline-hidden;
     }
   }
+
+  .course-card {
+    @apply relative bg-[#0f0d23] p-5 rounded-2xl shadow-inner shadow-[#cecefb]/10 w-full max-w-sm overflow-hidden;
+
+    & img {
+      @apply rounded-lg h-auto w-full object-cover;
+    }
+
+    & h3 {
+      @apply text-white font-bold text-base line-clamp-1;
+    }
+
+    & .content {
+      @apply mt-2 flex flex-row items-center flex-wrap gap-2;
+    }
+
+    & .rating {
+      @apply flex flex-row items-center gap-1;
+    }
+
+    & .rating img {
+      @apply size-4 object-contain;
+    }
+
+    & .rating p {
+      @apply font-bold text-base text-white;
+    }
+
+    & .content span {
+      @apply text-sm text-gray-100;
+    }
+
+    & .content .lang {
+      @apply capitalize text-gray-100 font-medium text-base;
+    }
+
+    & .content .year {
+      @apply text-gray-100 font-medium text-base;
+    }
+  }
 }
