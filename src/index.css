@@ -8,7 +8,7 @@
   }
 
   body {
-    background: #030014;
+    background: #1e1e1e;
   }
 
   h1 {
@@ -33,6 +33,9 @@
 }
 
 @theme {
+
+  --color-secondary-grey: #b3b3b3;
+
   --background-image-main-page: url("/main-page-background.png");
 }
 
@@ -42,7 +45,7 @@
 
 @layer components {
   .main-page-background {
-    @apply bg-main-page w-full h-screen bg-center bg-cover fixed inset-0 z-0;
+    @apply bg-main-page w-full h-screen bg-center bg-cover fixed inset-0 z-0 overflow-hidden ;
   }
 
   .search-bar {
