@@ -6,6 +6,7 @@ import useQuery from './hooks/useQuery';
 import Spinner from './components/Spinner';
 import CourseCard from './components/CourseCard';
 import LoginForm from './components/LoginForm';
+import RegistrationForm from './components/RegistrationForm';
 
 function App() {
   // const [searchValue, setSearchValue] = useState("");
@@ -66,7 +67,7 @@ function App() {
 
   return (
     <>
-      <LoginForm />
+      <RegistrationForm />
     </>
   )
 }
