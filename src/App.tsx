@@ -67,7 +67,7 @@ function App() {
 
   return (
     <>
-      <LoginForm />
+      <RegistrationForm />
     </>
   )
 }

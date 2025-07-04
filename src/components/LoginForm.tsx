@@ -12,6 +12,7 @@ const LoginForm = () => {
         console.log("Password:", password);
     };
 
+
     return (
         <main>
             <div className="login-and-registration-container">
