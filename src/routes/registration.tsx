@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { useState } from "react";
 import { type UserRole } from "../types/user";
+import { register } from '../services/api';
 
 export const Route = createFileRoute('/registration')({
     component: RegistrationForm,
@@ -14,24 +15,51 @@ function RegistrationForm() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [role, setRole] = useState<UserRole>("Student");
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        //We will handle the api call here:
-        console.log("Email:", email);
-        console.log("First Name:", firstName);
-        console.log("Last Name:", lastName);
-        console.log("Password:", password);
-        console.log("Confirm Password:", confirmPassword);
-        console.log("Role:", role);
-
-        const canRegister = true; // Just for test purposes, we will use a simple boolean to simulate authentication (it will be changed later with real authentication)
-        if (canRegister) {
-            router.navigate({ to: '/home' });
+    const isFormValid = (): boolean => {
+        if (!email || !firstName || !lastName || !password || !confirmPassword) {
+            return false;
         }
-        else {
-            alert("Registration failed. Email already in use.");
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+
+        if(!passwordRegex.test(password)) {
+            return false;
+        }
+
+        if (password !== confirmPassword) {
+            return false;
+        }
+
+        return true;
+    }
+
+    const handleSubmit = async(e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        try {
+            const result = await register({
+                email,
+                password,
+                firstName,
+                lastName,
+                roleName: role,
+            });
+
+            if (result === "BadRequest") {
+                alert("Registration failed: Email already in use.");
+                return;
+            }
+
+            router.navigate({ to: '/pending-approval' });
+        }
+        catch (error) {
+            alert(error instanceof Error ? error.message : new Error("An unexpected error occurred"));
+        }
+        finally {
+            setIsLoading(false);
         }
     }
 
@@ -121,7 +149,7 @@ function RegistrationForm() {
                                 <span className="pl-2">Teacher</span>
                             </label>
                         </div>
-                        <button type="submit">
+                        <button type="submit" disabled={!isFormValid() || isLoading}>
                             Register
                         </button>
                         <div className="mt-8 flex justify-center">

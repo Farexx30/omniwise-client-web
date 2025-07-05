@@ -17,14 +17,14 @@ function LoginForm() {
         setIsLoading(true);
 
         try {
-            const authenticationResult = await login(email, password);
+            const result = await login(email, password);
 
-            if (authenticationResult === "Unauthorized") {
+            if (result === "Unauthorized") {
                 alert("Login failed: Invalid email or password.");
                 return;
             }
 
-            if (authenticationResult === "Forbidden") {
+            if (result === "Forbidden") {
                 router.navigate({ to: '/pending-approval' });
                 return;
             }

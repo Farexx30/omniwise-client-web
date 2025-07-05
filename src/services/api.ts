@@ -1,9 +1,32 @@
 import type { Course } from "../types/course";
-import type { AuthenticationResult, AuthenticationSuccessResponse } from "../types/user";
+import type {  AuthenticationSuccessResponse, LoginResult, RegisterResult, RegisterUser } from "../types/user";
 
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
 
-export const login = async(email: string, password: string): Promise<AuthenticationResult> => {
+export const register = async(user: RegisterUser): Promise<RegisterResult> => {
+    const url = `${BASE_API_URL}/identity/register`; 
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ 
+            email: user.email, 
+            password: user.password, 
+            firstName: user.firstName, 
+            lastName: user.lastName, 
+            roleName: user.roleName 
+        })
+    });
+
+    if (response.status === 400) {
+        return "BadRequest";
+    }
+
+    return "Success";
+}
+
+export const login = async(email: string, password: string): Promise<LoginResult> => {
     const url = `${BASE_API_URL}/identity/login`; 
     const response = await fetch(url, {
         method: "POST",
