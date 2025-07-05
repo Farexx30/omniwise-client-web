@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
+import { login } from "../services/api";
 
 export const Route = createFileRoute('/login')({
   component: LoginForm,
@@ -9,20 +10,21 @@ function LoginForm() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async(e: FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
 
-        //We will handle the api call here:
-        console.log("Email:", email);
-        console.log("Password:", password);
-
-        const canLogin = true; // Just for test purposes, we will use a simple boolean to simulate authentication (it will be changed later with real authentication)
-        if (canLogin) {
+        try {
+            await login(email, password);
             router.navigate({ to: '/home' });
-        } 
-        else {
-            alert("Login failed. Check your email and password.");
+        }
+        catch (error) {
+            alert(error instanceof Error ? error.message : new Error("An unexpected error occurred"));
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 
@@ -54,7 +56,7 @@ function LoginForm() {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
-                        <button type="submit">Sign in</button>
+                        <button type="submit" disabled={!email || !password || isLoading}>Sign in</button>
                         <div className="mt-8 flex justify-center">
                             <Link to="/registration" className="text-gray-400 hover:underline">
                                 <p>Don't have an account? Create one</p>
