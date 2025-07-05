@@ -46,7 +46,7 @@
 
 @layer components {
   .main-page-background {
-    @apply bg-main-page w-full h-screen bg-center bg-cover fixed inset-0 z-0 overflow-hidden ;
+    @apply bg-main-page w-screen h-screen bg-center bg-cover fixed inset-0 z-0 overflow-hidden;
   }
 
   .search-bar {

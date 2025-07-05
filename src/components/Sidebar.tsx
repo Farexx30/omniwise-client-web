@@ -6,23 +6,31 @@ import TransparentButton from "./TransparentButton";
 
 const Sidebar = () => {
     return (
-        <div className="flex flex-col bg-transparent h-full w-44 op-0 bottom-0 left-0 p-3">
-            <ShadowButton
-                iconSrc={plusIcon}
-                text="New course"
-            />
-            <ShadowButton
-                iconSrc={signupIcon}
-                text="Join course"
-            />
-            <div className="p-2 w-full h-full overflow-hidden">
+        <div className="flex flex-col bg-transparent h-full w-44 p-3">
+            <div className="flex flex-col gap-2 mb-4">  
+                <ShadowButton
+                    iconSrc={plusIcon}
+                    text="New course"
+                />
+                <ShadowButton
+                    iconSrc={signupIcon}
+                    text="Join course"
+                />
                 <TransparentButton
                     iconSrc={bell}
                     text="Notifications"
                 />
-                <span className="text-secondary-grey font-semibold select-none mt-2 mb-2 text-left w-full block"> 
-                    My courses 
+                
+                <span className="text-secondary-grey font-semibold select-none mt-2 text-left w-full block">
+                    My courses
                 </span>
+            </div>
+            <div className="flex-1 pr-1 overflow-y-auto">
+                
+                {Array.from({ length: 20 }).map((_, i) => (
+                    <TransparentButton key={i} text={`Course ${i + 1}`} />
+                ))}
+
                 {/* TODO: Add here list of courses using transparent button */}
             </div>
         </div>
