@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import { login } from "../services/api";
 
 export const Route = createFileRoute('/login')({
-  component: LoginForm,
+    component: LoginForm,
 })
 
 function LoginForm() {
@@ -12,12 +12,23 @@ function LoginForm() {
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async(e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
-            await login(email, password);
+            const authenticationResult = await login(email, password);
+
+            if (authenticationResult === "Unauthorized") {
+                alert("Login failed: Invalid email or password.");
+                return;
+            }
+
+            if (authenticationResult === "Forbidden") {
+                router.navigate({ to: '/pending-approval' });
+                return;
+            }
+
             router.navigate({ to: '/home' });
         }
         catch (error) {
@@ -59,7 +70,7 @@ function LoginForm() {
                         <button type="submit" disabled={!email || !password || isLoading}>Sign in</button>
                         <div className="mt-8 flex justify-center">
                             <Link to="/registration" className="text-gray-400 hover:underline">
-                                <p>Don't have an account? Create one</p>
+                                Don't have an account? Create one
                             </Link>
                         </div>
                     </form>

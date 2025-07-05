@@ -1,9 +1,9 @@
 import type { Course } from "../types/course";
-import type { AuthenticationErrorResponse, AuthenticationSuccessResponse } from "../types/user";
+import type { AuthenticationResult, AuthenticationSuccessResponse } from "../types/user";
 
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
 
-export const login = async(email: string, password: string): Promise<void> => {
+export const login = async(email: string, password: string): Promise<AuthenticationResult> => {
     const url = `${BASE_API_URL}/identity/login`; 
     const response = await fetch(url, {
         method: "POST",
@@ -13,9 +13,12 @@ export const login = async(email: string, password: string): Promise<void> => {
         body: JSON.stringify({ email, password })
     });
 
-    if (!response.ok) {
-        const error = await response.json() as AuthenticationErrorResponse;
-        throw new Error(`Login failed: ${error.detail}`);
+    if (response.status === 401) {
+        return "Unauthorized"
+    }
+
+    if (response.status === 403) {
+        return "Forbidden"
     }
 
     const json = await response.json() as AuthenticationSuccessResponse    
@@ -23,6 +26,8 @@ export const login = async(email: string, password: string): Promise<void> => {
     localStorage.setItem("accessToken", json.accessToken);
     localStorage.setItem("expiresIn", json.expiresIn.toString());
     localStorage.setItem("refreshToken", json.refreshToken);
+
+    return "Success";
 }
 
 

@@ -126,7 +126,7 @@ function RegistrationForm() {
                         </button>
                         <div className="mt-8 flex justify-center">
                             <Link to="/login" className="text-gray-400 hover:underline">
-                                <p>Already have an account? Sign in</p>
+                                Already have an account? Sign in
                             </Link>
                         </div>
                     </form>
