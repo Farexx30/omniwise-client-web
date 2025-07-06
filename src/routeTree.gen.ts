@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegistrationRouteImport } from './routes/registration'
 import { Route as PendingApprovalRouteImport } from './routes/pending-approval'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HomeRouteRouteImport } from './routes/home/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HomeIndexRouteImport } from './routes/home/index'
 
@@ -30,23 +31,29 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HomeRouteRoute = HomeRouteRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeIndexRoute = HomeIndexRouteImport.update({
-  id: '/home/',
-  path: '/home/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => HomeRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/home': typeof HomeRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
-  '/home': typeof HomeIndexRoute
+  '/home/': typeof HomeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/home': typeof HomeRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
@@ -65,12 +73,19 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/pending-approval' | '/registration' | '/home'
+  fullPaths:
+    | '/'
+    | '/home'
+    | '/login'
+    | '/pending-approval'
+    | '/registration'
+    | '/home/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/login' | '/pending-approval' | '/registration' | '/home'
   id:
     | '__root__'
     | '/'
+    | '/home'
     | '/login'
     | '/pending-approval'
     | '/registration'
@@ -79,10 +94,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HomeRouteRoute: typeof HomeRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
   PendingApprovalRoute: typeof PendingApprovalRoute
   RegistrationRoute: typeof RegistrationRoute
-  HomeIndexRoute: typeof HomeIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -108,6 +123,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -117,20 +139,32 @@ declare module '@tanstack/react-router' {
     }
     '/home/': {
       id: '/home/'
-      path: '/home'
-      fullPath: '/home'
+      path: '/'
+      fullPath: '/home/'
       preLoaderRoute: typeof HomeIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof HomeRouteRoute
     }
   }
 }
 
+interface HomeRouteRouteChildren {
+  HomeIndexRoute: typeof HomeIndexRoute
+}
+
+const HomeRouteRouteChildren: HomeRouteRouteChildren = {
+  HomeIndexRoute: HomeIndexRoute,
+}
+
+const HomeRouteRouteWithChildren = HomeRouteRoute._addFileChildren(
+  HomeRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HomeRouteRoute: HomeRouteRouteWithChildren,
   LoginRoute: LoginRoute,
   PendingApprovalRoute: PendingApprovalRoute,
   RegistrationRoute: RegistrationRoute,
-  HomeIndexRoute: HomeIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

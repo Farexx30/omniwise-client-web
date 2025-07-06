@@ -74,6 +74,7 @@ export const getEnrolledCourses = async(): Promise<Course[]> => {
 
 export const getAvailableCourses = async(query?: string): Promise<Course[]> => {
     query = query?.trim() || "";
+    console.log(query)
     const url = `${BASE_API_URL}/courses/available?searchPhrase=${encodeURIComponent(query)}`;
     const response = await fetch(url, {
         method: "GET",
