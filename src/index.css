@@ -1,8 +1,21 @@
 @import "tailwindcss";
 
 @layer base {
-  html, body, #root {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
     height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  main {
     margin: 0;
     padding: 0;
   }
@@ -10,6 +23,15 @@
   body {
     background: #1e1e1e;
   }
+
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #1E1E1E inset !important;
+    -webkit-text-fill-color: #e5e7eb !important;
+    border: 1px solid #364153 !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+    background-color: #1E1E1E !important;
+  }
+
 
   h1 {
     @apply mx-auto max-w-4xl text-center text-5xl font-bold leading-tight tracking-[-1%] text-white sm:text-[64px] sm:leading-[76px];
@@ -38,6 +60,7 @@
   --color-secondary-grey: #B3B3B3;
 
   --background-image-main-page: url("/main-page-background.png");
+  --background-image-login-and-registration-page: url("/login-and-registration-background.png");
 }
 
 @utility text-gradient {
@@ -74,6 +97,38 @@
 
     & h3 {
       @apply text-white font-bold text-base line-clamp-1;
-    }   
+    }
+  }
+
+  .login-and-registration-container {
+    @apply fixed -inset-4 flex items-center justify-center bg-login-and-registration-page bg-cover bg-center;
+  }
+
+  .login-and-registration-form {
+    @apply px-10 py-8 rounded-2xl shadow-2xl bg-[#222224] w-full max-w-[480px] mx-auto;
+
+    & h1 {
+      @apply text-5xl text-center;
+    }    
+
+    & button {
+      @apply w-auto mt-8 bg-[#8C47F6] text-white px-16 py-2 block mx-auto rounded-xl cursor-pointer transition-shadow duration-300 hover:shadow-[0_0_16px_4px_rgba(168,85,247,0.7)];
+
+      &:disabled {
+      @apply bg-gray-500 cursor-default shadow-none;
+      }
+    }
+
+    & label {
+      @apply mb-1 text-left text-gray-100;
+    }
+  }
+
+  .input-box {
+    @apply flex flex-col relative w-full h-16 mt-8;
+
+    & input {
+      @apply border-1 border-gray-700 text-gray-200 w-full h-full bg-[#1E1E1E] p-2 rounded-lg placeholder:text-gray-500
+    }
   }
 }
