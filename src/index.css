@@ -106,14 +106,14 @@
   }
 
   .login-and-registration-form {
-    @apply px-10 py-8 rounded-2xl shadow-2xl bg-[#222224] overflow-y-auto h-full w-full max-w-[480px] mx-auto;
+    @apply px-10 py-8 rounded-2xl shadow-2xl bg-[#222224] w-full max-w-[480px] mx-auto overflow-auto max-h-[90vh];
 
     & h1 {
       @apply text-5xl text-center;
     }    
 
     & button {
-      @apply w-auto mt-8 bg-[#8C47F6] text-white px-16 py-2 block mx-auto rounded-xl cursor-pointer transition-shadow duration-300 hover:shadow-[0_0_16px_4px_rgba(168,85,247,0.7)];
+      @apply w-auto mt-8 bg-primary text-white px-16 py-2 block mx-auto rounded-full cursor-pointer hover:enabled:drop-shadow-[0_0_8px_rgba(140,71,246,1)] transition;
 
       &:disabled {
       @apply bg-gray-500 cursor-default shadow-none;

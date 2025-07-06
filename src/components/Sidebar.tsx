@@ -4,21 +4,24 @@ import bell from "/bell.svg";
 import ShadowButton from "./ShadowButton";
 import TransparentButton from "./TransparentButton";
 import { getEnrolledCourses } from "../services/api";
-import useQuery from "../hooks/useQuery";
 import type { JSX } from "react";
 import Spinner from "./Spinner";
 import TransparentLink from "./TransparentLink";
+import { useQuery } from "@tanstack/react-query";
 
 const Sidebar = () => {
-    const { data: courses, loading, error, requeryFunction } = useQuery(getEnrolledCourses, true);
+    const {data: courses, isLoading, isError} = useQuery({
+        queryFn: getEnrolledCourses,
+        queryKey: ["courses"]
+    })
 
     let content: JSX.Element | null = null
-    
-     if (loading) {
+
+    if (isLoading) {
         content = <Spinner />;
     }
-    else if (error) {
-        content = <p className="text-red-500">Error: {error.message}</p>;
+    else if (isError) {
+        content = <p className="text-red-500">Error.</p>;
     }
     else if (!courses || courses.length === 0) {
         content = <p>No courses found.</p>;
@@ -28,7 +31,7 @@ const Sidebar = () => {
             <ul>
                 {courses.map(c => (
                     <li key={c.id}>
-                        <TransparentLink to="/registration" text={c.name} />
+                        <TransparentLink to="/home" text={c.name} />
                     </li>
                 ))}
             </ul>

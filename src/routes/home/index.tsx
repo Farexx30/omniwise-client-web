@@ -3,32 +3,37 @@ import { useEffect, useState, type JSX } from "react";
 import CourseCard from '../../components/CourseCard';
 import SearchBar from '../../components/SearchBar';
 import Spinner from '../../components/Spinner';
-import useQuery from '../../hooks/useQuery';
 import { getEnrolledCourses } from '../../services/api';
+import { useQuery } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/home/')({
-    component: HomePage,
+    component: HomePage,   
 })
 
 function HomePage() {
+    const { data: courses, isLoading, isError } = useQuery({
+        queryFn: getEnrolledCourses,
+        queryKey: ["courses"]
+    })
+
     const [searchValue, setSearchValue] = useState("");
-    const { data: courses, loading, error, requeryFunction } = useQuery(getEnrolledCourses, true);
 
-    useEffect(() => {
-        const timeoutId = setTimeout(async () => {
-            await requeryFunction();
-        }, 500);
 
-        return () => clearTimeout(timeoutId);
-    }, [searchValue.trim()]);
+    // useEffect(() => {
+    //     const timeoutId = setTimeout(async () => {
+    //         await requeryFunction();
+    //     }, 500);
+
+    //     return () => clearTimeout(timeoutId);
+    // }, [searchValue.trim()]);
 
     let content: JSX.Element | null = null;
 
-    if (loading) {
+    if (isLoading) {
         content = <Spinner />;
     }
-    else if (error) {
-        content = <p className="text-red-500">Error: {error.message}</p>;
+    else if (isError) {
+        content = <p className="text-red-500">Error.</p>;
     }
     else if (!courses || courses.length === 0) {
         content = <p>No courses found.</p>;

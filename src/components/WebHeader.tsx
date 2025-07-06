@@ -1,6 +1,6 @@
 import logo from '/logo.svg';
 import logoutIcon from '/logout.svg';
-import TransparentButton from './TransparentButton';
+import TransparentLink from './TransparentLink';
 
 
 const WebHeader = () => {
@@ -11,7 +11,8 @@ const WebHeader = () => {
                 <span className="ml-2 font-light">Omniwise</span>
             </div>
             <div>
-                <TransparentButton
+                <TransparentLink
+                    to="/login"
                     iconSrc={logoutIcon}
                     text="Logout"
                 />
