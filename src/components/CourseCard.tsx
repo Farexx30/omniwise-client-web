@@ -6,9 +6,9 @@ interface CourseCardProps {
 
 const CourseCard = ({ id, name, imgUrl }: CourseCardProps) => {
     return (
-        <div>
-            <img src={imgUrl || '/search-icon.svg'} alt={name} />
-            <div className="absolute bottom-10 left-4 right-4 rounded-4xl w-auto bg-white/40 p-3 text-center">
+        <div className="course-card hover:drop-shadow-[0_0_8px_rgba(140,71,246,1)] transition">
+            <img src={imgUrl || '/course-basic-image.png'} alt={name} />
+            <div className="absolute bottom-2 left-4 right-4 rounded-4xl w-auto bg-[#cecefb]/8 shadow-xl p-3 text-center ">
                 <h3>{name}</h3>
             </div>
         </div>

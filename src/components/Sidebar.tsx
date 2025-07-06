@@ -1,6 +1,6 @@
-import plusIcon from "../assets/plus.svg";
-import signupIcon from "../assets/signup.svg";
-import bell from "../assets/bell.svg";
+import plusIcon from "/plus.svg";
+import signupIcon from "/signup.svg";
+import bell from "/bell.svg";
 import ShadowButton from "./ShadowButton";
 import TransparentButton from "./TransparentButton";
 

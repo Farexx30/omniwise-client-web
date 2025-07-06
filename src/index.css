@@ -58,6 +58,7 @@
 
   --color-primary: #8C47F6;
   --color-secondary-grey: #B3B3B3;
+  --color-background: #1e1e1e;
 
   --background-image-main-page: url("/main-page-background.png");
   --background-image-login-and-registration-page: url("/login-and-registration-background.png");
@@ -73,7 +74,7 @@
   }
 
   .search-bar {
-    @apply w-full bg-[#cecefb]/5 px-4 py-3 rounded-4xl mt-10 max-w-3xl mx-auto;
+    @apply w-full bg-[#cecefb]/5 px-4 py-3 rounded-4xl max-w-3xl mx-auto;
 
     & div {
       @apply relative flex items-center;
@@ -89,10 +90,10 @@
   }
 
   .course-card {
-    @apply relative bg-[#0f0d23] p-5 rounded-2xl shadow-inner shadow-[#cecefb]/10 w-full max-w-sm overflow-hidden;
+    @apply relative aspect-[4/3] rounded-2xl w-full max-w-sm  shadow-lg overflow-hidden;
 
     & img {
-      @apply rounded-lg h-auto w-full object-cover;
+      @apply rounded-lg h-full w-full object-cover;
     }
 
     & h3 {
@@ -105,7 +106,7 @@
   }
 
   .login-and-registration-form {
-    @apply px-10 py-8 rounded-2xl shadow-2xl bg-[#222224] w-full max-w-[480px] mx-auto;
+    @apply px-10 py-8 rounded-2xl shadow-2xl bg-[#222224] overflow-y-auto h-full w-full max-w-[480px] mx-auto;
 
     & h1 {
       @apply text-5xl text-center;
