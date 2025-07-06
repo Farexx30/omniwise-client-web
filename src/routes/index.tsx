@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 // Just for test purposes, we will use a simple boolean to simulate authentication (it will be changed later with real authentication)
-const isAuthenticated = false;
+const isAuthenticated = true;
 
 export const Route = createFileRoute('/')({
   beforeLoad: () => {

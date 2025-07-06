@@ -3,8 +3,38 @@ import signupIcon from "/signup.svg";
 import bell from "/bell.svg";
 import ShadowButton from "./ShadowButton";
 import TransparentButton from "./TransparentButton";
+import { getEnrolledCourses } from "../services/api";
+import useQuery from "../hooks/useQuery";
+import type { JSX } from "react";
+import Spinner from "./Spinner";
+import TransparentLink from "./TransparentLink";
 
 const Sidebar = () => {
+    const { data: courses, loading, error, requeryFunction } = useQuery(getEnrolledCourses, true);
+
+    let content: JSX.Element | null = null
+    
+     if (loading) {
+        content = <Spinner />;
+    }
+    else if (error) {
+        content = <p className="text-red-500">Error: {error.message}</p>;
+    }
+    else if (!courses || courses.length === 0) {
+        content = <p>No courses found.</p>;
+    }
+    else {
+        content = (
+            <ul>
+                {courses.map(c => (
+                    <li key={c.id}>
+                        <TransparentLink to="/registration" text={c.name} />
+                    </li>
+                ))}
+            </ul>
+        )
+    }
+
     return (
         <div className="flex flex-col bg-transparent h-full w-44 p-3">
             <div className="flex flex-col gap-2 mb-4">  
@@ -27,9 +57,7 @@ const Sidebar = () => {
             </div>
             <div className="flex-1 pr-1 overflow-y-auto">
                 
-                {Array.from({ length: 20 }).map((_, i) => (
-                    <TransparentButton key={i} text={`Course ${i + 1}`} />
-                ))}
+                {content}
 
                 {/* TODO: Add here list of courses using transparent button */}
             </div>
