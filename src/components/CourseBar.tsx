@@ -70,10 +70,32 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
                 <ul>
                     {currentData.map(d => (
                         <li key={`${currentTab}-${d.id}`}>
-                            <TransparentLink
-                                to="/home"
-                                text={d.name}
-                            />
+                            {currentTab === "lectures" ? (
+                                <TransparentLink
+                                    to="/home/lectures/$lectureId"
+                                    params={{
+                                        lectureId: d.id
+                                    }}
+                                    text={d.name}
+                                />
+                            ) : currentTab === "assignments" ? (
+                                <TransparentLink
+                                    to="/home/assignments/$assignmentId"
+                                    params={{
+                                        assignmentId: d.id
+                                    }}
+                                    text={d.name}
+                                />
+                            ) : (
+                                <TransparentLink
+                                    to="/home/courses/$courseId/members/$memberId"
+                                    params={{
+                                        courseId: currentCourseId!,
+                                        memberId: d.id
+                                    }}
+                                    text={d.name}
+                                />
+                            )}
                         </li>
                     ))}
                 </ul>

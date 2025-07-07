@@ -39,7 +39,7 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
                         <TransparentLink 
                             to="/home/courses/$courseId"
                             params={{
-                                courseId: c.id
+                                courseId: c.id.toString()
                             }}
                             onClick={() => onCourseClick(c.id, c.name)}
                             text={c.name}

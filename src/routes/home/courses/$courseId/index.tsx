@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { getCourseById } from '../../../services/api';
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query';
-import Spinner from '../../../components/Spinner';
+import Spinner from '../../../../components/Spinner';
+import { getCourseById } from '../../../../services/api';
 
-export const Route = createFileRoute('/home/courses/$courseId')({
+
+export const Route = createFileRoute('/home/courses/$courseId/')({
   component: Course,
   pendingComponent: () => <Spinner />,
   errorComponent: () => <p className="text-red-500">Error.</p>,
