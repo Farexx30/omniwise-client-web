@@ -102,7 +102,7 @@
   }
 
   .login-and-registration-container {
-    @apply fixed -inset-4 flex items-center justify-center bg-login-and-registration-page bg-cover bg-center;
+    @apply fixed inset-0 flex items-center justify-center bg-login-and-registration-page bg-cover bg-center;
   }
 
   .login-and-registration-form {

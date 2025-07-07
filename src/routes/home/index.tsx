@@ -7,7 +7,7 @@ import { getEnrolledCourses } from '../../services/api';
 import { useQuery } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/home/')({
-    component: HomePage,   
+    component: HomePage,
 })
 
 function HomePage() {

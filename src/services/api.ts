@@ -2,9 +2,10 @@ import type { Course } from "../types/course";
 import type {  AuthenticationSuccessResponse, LoginResult, RegisterResult, RegisterUser } from "../types/user";
 
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
+const BASE_API_URL_DEV = "https://localhost:7155/api"
 
 export const register = async(user: RegisterUser): Promise<RegisterResult> => {
-    const url = `${BASE_API_URL}/identity/register`; 
+    const url = `${BASE_API_URL_DEV}/identity/register`; 
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -27,7 +28,7 @@ export const register = async(user: RegisterUser): Promise<RegisterResult> => {
 }
 
 export const login = async(email: string, password: string): Promise<LoginResult> => {
-    const url = `${BASE_API_URL}/identity/login`; 
+    const url = `${BASE_API_URL_DEV}/identity/login`; 
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -55,7 +56,7 @@ export const login = async(email: string, password: string): Promise<LoginResult
 
 
 export const getEnrolledCourses = async(): Promise<Course[]> => {
-    const url = `${BASE_API_URL}/courses/enrolled`;
+    const url = `${BASE_API_URL_DEV}/courses/enrolled`;
     const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -75,7 +76,7 @@ export const getEnrolledCourses = async(): Promise<Course[]> => {
 export const getAvailableCourses = async(query?: string): Promise<Course[]> => {
     query = query?.trim() || "";
     console.log(query)
-    const url = `${BASE_API_URL}/courses/available?searchPhrase=${encodeURIComponent(query)}`;
+    const url = `${BASE_API_URL_DEV}/courses/available?searchPhrase=${encodeURIComponent(query)}`;
     const response = await fetch(url, {
         method: "GET",
         headers: {
