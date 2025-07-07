@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteRouteImport } from './routes/home/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HomeIndexRouteImport } from './routes/home/index'
+import { Route as HomeCoursesCourseIdRouteImport } from './routes/home/courses/$courseId'
 
 const RegistrationRoute = RegistrationRouteImport.update({
   id: '/registration',
@@ -46,6 +47,11 @@ const HomeIndexRoute = HomeIndexRouteImport.update({
   path: '/',
   getParentRoute: () => HomeRouteRoute,
 } as any)
+const HomeCoursesCourseIdRoute = HomeCoursesCourseIdRouteImport.update({
+  id: '/courses/$courseId',
+  path: '/courses/$courseId',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
   '/home/': typeof HomeIndexRoute
+  '/home/courses/$courseId': typeof HomeCoursesCourseIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
   '/home': typeof HomeIndexRoute
+  '/home/courses/$courseId': typeof HomeCoursesCourseIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
   '/home/': typeof HomeIndexRoute
+  '/home/courses/$courseId': typeof HomeCoursesCourseIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,8 +89,15 @@ export interface FileRouteTypes {
     | '/pending-approval'
     | '/registration'
     | '/home/'
+    | '/home/courses/$courseId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/pending-approval' | '/registration' | '/home'
+  to:
+    | '/'
+    | '/login'
+    | '/pending-approval'
+    | '/registration'
+    | '/home'
+    | '/home/courses/$courseId'
   id:
     | '__root__'
     | '/'
@@ -90,6 +106,7 @@ export interface FileRouteTypes {
     | '/pending-approval'
     | '/registration'
     | '/home/'
+    | '/home/courses/$courseId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,15 +161,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeIndexRouteImport
       parentRoute: typeof HomeRouteRoute
     }
+    '/home/courses/$courseId': {
+      id: '/home/courses/$courseId'
+      path: '/courses/$courseId'
+      fullPath: '/home/courses/$courseId'
+      preLoaderRoute: typeof HomeCoursesCourseIdRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
   }
 }
 
 interface HomeRouteRouteChildren {
   HomeIndexRoute: typeof HomeIndexRoute
+  HomeCoursesCourseIdRoute: typeof HomeCoursesCourseIdRoute
 }
 
 const HomeRouteRouteChildren: HomeRouteRouteChildren = {
   HomeIndexRoute: HomeIndexRoute,
+  HomeCoursesCourseIdRoute: HomeCoursesCourseIdRoute,
 }
 
 const HomeRouteRouteWithChildren = HomeRouteRoute._addFileChildren(
