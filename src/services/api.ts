@@ -111,3 +111,17 @@ export const getNotifications = async(): Promise<NotificationDetails[]> => {
     const json = await response.json();
     return json as NotificationDetails[];
 }
+
+export const deleteNotification = async(id: number) => {
+    const url = `${BASE_API_URL_DEV}/notifications/${id}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) { 
+        throw new Error(`Error while deleting notification: ${response.statusText}`);
+    }
+}

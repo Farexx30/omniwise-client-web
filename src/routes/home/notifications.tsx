@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router"
 import TransparentButton from "../../components/TransparentButton";
 import { getNotifications } from "../../services/api";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { JSX } from "react";
 import Spinner from "../../components/Spinner";
 import { formatDate } from "../../utils/date";
+import { deleteNotification } from "../../services/api";
 
 export const Route = createFileRoute('/home/notifications')({
     component: Notifications,
@@ -16,6 +17,15 @@ function Notifications() {
         queryKey: ["notifications"]
     })
 
+    const queryClient = useQueryClient();
+
+    const { mutate: removeNotification } = useMutation({
+        mutationFn: deleteNotification,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["notifications"] }); // odśwież listę
+        },
+    });
+    
     let content: JSX.Element | null = null;
 
     if (isLoading) {
@@ -40,6 +50,8 @@ function Notifications() {
                             <div className="ml-4">
                                 <TransparentButton
                                     text="x"
+                                        onClick={() => {removeNotification(n.id);
+    }}
                                 />
                             </div>
                         </div>

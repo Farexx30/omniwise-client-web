@@ -2,11 +2,13 @@ interface TransparentButtonProps {
     iconSrc?: string;
     text: string;
     textSize?: string;
+    onClick?: () => void; 
 }
 
-const TransparentButton = ({ iconSrc, text, textSize }: TransparentButtonProps) => {
+const TransparentButton = ({ iconSrc, text, textSize, onClick }: TransparentButtonProps) => {
     return (
-        <button className="flex items-center bg-transparent cursor-pointer select-none group">
+        <button className="flex items-center bg-transparent cursor-pointer select-none group"
+                onClick={onClick}>
             {iconSrc && (
                 <img
                     itemType="image/svg+xml"
