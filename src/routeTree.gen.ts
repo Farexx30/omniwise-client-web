@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteRouteImport } from './routes/home/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HomeIndexRouteImport } from './routes/home/index'
+import { Route as HomeNotificationsRouteImport } from './routes/home/notifications'
 
 const RegistrationRoute = RegistrationRouteImport.update({
   id: '/registration',
@@ -46,6 +47,11 @@ const HomeIndexRoute = HomeIndexRouteImport.update({
   path: '/',
   getParentRoute: () => HomeRouteRoute,
 } as any)
+const HomeNotificationsRoute = HomeNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
+  '/home/notifications': typeof HomeNotificationsRoute
   '/home/': typeof HomeIndexRoute
 }
 export interface FileRoutesByTo {
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
+  '/home/notifications': typeof HomeNotificationsRoute
   '/home': typeof HomeIndexRoute
 }
 export interface FileRoutesById {
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
+  '/home/notifications': typeof HomeNotificationsRoute
   '/home/': typeof HomeIndexRoute
 }
 export interface FileRouteTypes {
@@ -79,9 +88,16 @@ export interface FileRouteTypes {
     | '/login'
     | '/pending-approval'
     | '/registration'
+    | '/home/notifications'
     | '/home/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/pending-approval' | '/registration' | '/home'
+  to:
+    | '/'
+    | '/login'
+    | '/pending-approval'
+    | '/registration'
+    | '/home/notifications'
+    | '/home'
   id:
     | '__root__'
     | '/'
@@ -89,6 +105,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pending-approval'
     | '/registration'
+    | '/home/notifications'
     | '/home/'
   fileRoutesById: FileRoutesById
 }
@@ -144,14 +161,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeIndexRouteImport
       parentRoute: typeof HomeRouteRoute
     }
+    '/home/notifications': {
+      id: '/home/notifications'
+      path: '/notifications'
+      fullPath: '/home/notifications'
+      preLoaderRoute: typeof HomeNotificationsRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
   }
 }
 
 interface HomeRouteRouteChildren {
+  HomeNotificationsRoute: typeof HomeNotificationsRoute
   HomeIndexRoute: typeof HomeIndexRoute
 }
 
 const HomeRouteRouteChildren: HomeRouteRouteChildren = {
+  HomeNotificationsRoute: HomeNotificationsRoute,
   HomeIndexRoute: HomeIndexRoute,
 }
 

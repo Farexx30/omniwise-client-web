@@ -14,9 +14,13 @@ function HomeLayout() {
 
                 <WebHeader />
                 <div className="flex flex-row h-[calc(100vh-2rem)] w-full">
-                    <Sidebar />
-                    <CourseBar />
-                    <div className="w-[calc(100vw-29rem)] rounded-2xl mx-2 mb-4 p-4 overflow-y-auto">
+                    <div className='mb-4'>
+                        <Sidebar />
+                    </div>
+                    <div className='mb-4'>
+                        <CourseBar />
+                    </div>
+                    <div className="w-[calc(100vw-29rem)] rounded-2xl mx-2 mb-4 overflow-y-auto">
                         <Outlet />
                     </div>
                 </div>

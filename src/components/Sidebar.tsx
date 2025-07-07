@@ -49,7 +49,8 @@ const Sidebar = () => {
                     iconSrc={signupIcon}
                     text="Join course"
                 />
-                <TransparentButton
+                <TransparentLink
+                    to="/home/notifications"
                     iconSrc={bell}
                     text="Notifications"
                 />

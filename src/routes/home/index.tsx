@@ -50,7 +50,7 @@ function HomePage() {
         )
     }
     return (
-        <div className="bg-red h-full w-full">
+        <div className="h-full w-full">
             <SearchBar
                 searchValue={searchValue}
                 onSearch={setSearchValue}
