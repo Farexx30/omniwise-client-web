@@ -8,6 +8,11 @@ export interface RegisterUser {
     roleName: string;
 }
 
+export interface BasicUserInfo {
+    id: string;
+    name: string;
+}
+
 export type RegisterResult = "BadRequest" | "Success";
 
 export type LoginResult = "Unauthorized" | "Forbidden" | "Success";

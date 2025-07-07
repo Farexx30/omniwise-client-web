@@ -1,6 +1,7 @@
+import type { BasicAssignmentInfo } from "../types/assignment";
 import type { Course } from "../types/course";
 import type { BasicLectureInfo } from "../types/lecture";
-import type { AuthenticationSuccessResponse, LoginResult, RegisterResult, RegisterUser } from "../types/user";
+import type { AuthenticationSuccessResponse, BasicUserInfo, LoginResult, RegisterResult, RegisterUser } from "../types/user";
 
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
 const BASE_API_URL_DEV = "https://localhost:7155/api"
@@ -124,9 +125,51 @@ export const getLecturesByCourseId = async (id: number): Promise<BasicLectureInf
     });
 
     if (!response.ok) {
-        throw new Error(`Error fetching lecture for course: ${response.statusText}`);
+        throw new Error(`Error fetching lectures for course: ${response.statusText}`);
     }
 
     const json = await response.json();
     return json as BasicLectureInfo[];
+}
+
+export const getAssignmentsByCourseId = async (id: number): Promise<BasicAssignmentInfo[]> => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}/assignments`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching assignments for course: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json as BasicAssignmentInfo[];
+}
+
+export const getMembersByCourseId = async (id: number): Promise<BasicUserInfo[]> => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}/members/enrolled`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching members for course: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    const result: BasicUserInfo[] = Array.isArray(json) 
+            ? json.map((prop: { userId: string; firstName: string, lastName: string; }) => ({
+                id: prop.userId,
+                name: `${prop.firstName} ${prop.lastName}`
+            }))
+            : [];
+    return result;
 }

@@ -2,27 +2,52 @@ import { useQuery } from "@tanstack/react-query";
 import type { BasicLectureInfo } from "../types/lecture";
 import TransparentButton from "./TransparentButton"
 import TransparentLink from "./TransparentLink";
-import { getLecturesByCourseId } from "../services/api";
+import { getAssignmentsByCourseId, getLecturesByCourseId, getMembersByCourseId } from "../services/api";
 import { useEffect, useState } from "react";
+import type { BasicAssignmentInfo } from "../types/assignment";
+import type { BasicUserInfo } from "../types/user";
 
 interface CourseBarProps {
     currentCourseId: number | null;
     currentCourseName: string | null
 }
 
+type Tab = "lectures" | "assignments" | "members";
+
 const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
-    const [currentData, setCurrentData] = useState<BasicLectureInfo[]>([])
+    const [currentTab, setCurrentTab] = useState<Tab>("lectures")
+    const [currentData, setCurrentData] = useState<
+        BasicLectureInfo[]
+        | BasicAssignmentInfo[]
+        | BasicUserInfo[]
+    >([])
 
     const { data: lectures } = useQuery({
         queryKey: ["lectures", currentCourseId],
         queryFn: () => getLecturesByCourseId(currentCourseId!),
-        enabled: currentCourseId !== null,
+        enabled: currentCourseId !== null && currentTab === "lectures",
+        staleTime: 60_000 * 5
+    })
+
+    const { data: assignments } = useQuery({
+        queryKey: ["assignments", currentCourseId],
+        queryFn: () => getAssignmentsByCourseId(currentCourseId!),
+        enabled: currentCourseId !== null && currentTab === "assignments",
+        staleTime: 60_000 * 5
+    })
+
+    const { data: members } = useQuery({
+        queryKey: ["members", currentCourseId],
+        queryFn: () => getMembersByCourseId(currentCourseId!),
+        enabled: currentCourseId !== null && currentTab === "members",
         staleTime: 60_000 * 5
     })
 
     useEffect(() => {
-        setCurrentData(lectures || [])
-    }, [lectures])
+        if (currentTab == "lectures") setCurrentData(lectures || []);
+        else if (currentTab == "assignments") setCurrentData(assignments || []);
+        else if (currentTab == "members") setCurrentData(members || []);
+    }, [currentTab, lectures, assignments, members])
 
     const tabs = ["Lectures", "Assignments", "Members"];
 
@@ -36,6 +61,7 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
                     <div key={i}>
                         <TransparentButton
                             text={tab}
+                            onClick={() => setCurrentTab(tab.toLowerCase() as Tab)}
                         />
                     </div>
                 ))}
@@ -43,7 +69,7 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
             <div className="flex-grow overflow-auto">
                 <ul>
                     {currentData.map(d => (
-                        <li key={d.id}>
+                        <li key={`${currentTab}-${d.id}`}>
                             <TransparentLink
                                 to="/home"
                                 text={d.name}
