@@ -125,3 +125,18 @@ export const deleteNotification = async(id: number) => {
         throw new Error(`Error while deleting notification: ${response.statusText}`);
     }
 }
+
+export const enrollInCourse = async (courseId: number): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/courses/${courseId}/members`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error enrolling in course: ${response.statusText}`);
+    }
+};

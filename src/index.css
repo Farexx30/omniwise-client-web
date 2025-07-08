@@ -92,9 +92,6 @@
   .course-card {
     @apply relative aspect-[4/3] rounded-2xl w-full max-w-sm  shadow-lg overflow-hidden;
 
-    & img {
-      @apply rounded-lg h-full w-full object-cover;
-    }
 
     & h3 {
       @apply text-white font-bold text-base line-clamp-1;
