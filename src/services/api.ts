@@ -1,7 +1,7 @@
-import type { BasicAssignmentInfo } from "../types/assignment";
+import type { Assignment, BasicAssignmentInfo } from "../types/assignment";
 import type { Course } from "../types/course";
-import type { BasicLectureInfo } from "../types/lecture";
-import type { AuthenticationSuccessResponse, BasicUserInfo, LoginResult, RegisterResult, RegisterUser } from "../types/user";
+import type { BasicLectureInfo, Lecture } from "../types/lecture";
+import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, RegisterResult, RegisterUser } from "../types/user";
 
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
 const BASE_API_URL_DEV = "https://localhost:7155/api"
@@ -171,5 +171,64 @@ export const getMembersByCourseId = async (id: number): Promise<BasicUserInfo[]>
                 name: `${prop.firstName} ${prop.lastName}`
             }))
             : [];
+    return result;
+}
+
+export const getLectureById = async (id: number): Promise<Lecture> => {
+    const url = `${BASE_API_URL_DEV}/lectures/${encodeURIComponent(id)}`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching lecture: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json as Lecture;
+}
+
+export const getAssignmentById = async (id: number): Promise<Assignment> => {
+    const url = `${BASE_API_URL_DEV}/assignments/${encodeURIComponent(id)}`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching assignment: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json as Assignment;
+}
+
+export const getCourseMemberById = async (courseId: number, memberId: string): Promise<CourseMemberWithDetails> => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(courseId)}/members/${encodeURIComponent(memberId)}`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching course member: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+        const result: CourseMemberWithDetails = {
+        ...json,
+        id: json.userId,
+        fullName: `${json.firstName} ${json.lastName}`
+    }
     return result;
 }
