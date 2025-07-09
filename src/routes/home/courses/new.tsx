@@ -1,9 +1,10 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import ShadowLink from '../../../components/ShadowLink';
-import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { useContext, useState, type ChangeEvent, type FormEvent } from 'react';
 import ShadowButton from '../../../components/ShadowButton';
 import { createCourse } from '../../../services/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { HomeContext } from '../route';
 
 export const Route = createFileRoute('/home/courses/new')({
     component: CreateCourse,
@@ -12,6 +13,7 @@ export const Route = createFileRoute('/home/courses/new')({
 function CreateCourse() {
     const router = useRouter();
     const queryClient = useQueryClient();
+    const homeContext = useContext(HomeContext);
 
     const [name, setName] = useState("");
     const [img, setImg] = useState<File | null>(null);
@@ -20,6 +22,10 @@ function CreateCourse() {
         mutationFn: (formData: FormData) => createCourse(formData),
         onSuccess: (courseId) => {
             queryClient.invalidateQueries({ queryKey: ["courses"] })
+            
+            homeContext?.setCurrentCourseId(courseId);
+            homeContext?.setCurrentCourseName(name);
+
             router.navigate({
                 to: "/home/courses/$courseId",
                 params: {
