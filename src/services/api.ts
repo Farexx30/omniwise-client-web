@@ -58,8 +58,9 @@ export const login = async (email: string, password: string): Promise<LoginResul
 }
 
 
-export const getEnrolledCourses = async (): Promise<Course[]> => {
-    const url = `${BASE_API_URL_DEV}/courses/enrolled`;
+export const getEnrolledCourses = async (query?: string): Promise<Course[]> => {
+    query = query?.trim() || "";
+    const url = `${BASE_API_URL_DEV}/courses/enrolled?searchPhrase=${encodeURIComponent(query)}`;
     const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -293,4 +294,24 @@ export const deleteLecture = async (id: number) => {
     if (!response.ok) {
         throw new Error(`Error while deleting lecture: ${response.statusText}`);
     }
+}
+
+
+
+export const createCourse = async(formData: FormData): Promise<number> => {
+    const url = `${BASE_API_URL_DEV}/courses`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error creating a new course: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json.courseId;
 }
