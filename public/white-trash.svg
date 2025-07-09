@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="40"
+   height="44"
+   viewBox="0 0 40 44"
+   fill="none"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="Trash 2.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="40"
+       height="44"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <path
+     d="m 2,10 h 4 m 0,0 H 38 M 6,10 v 28 c 0,1.0609 0.4214,2.0783 1.1716,2.8284 C 7.9217,41.5786 8.9391,42 10,42 h 20 c 1.0609,0 2.0783,-0.4214 2.8284,-1.1716 C 33.5786,40.0783 34,39.0609 34,38 V 10 M 12,10 V 6 C 12,4.93913 12.4214,3.92172 13.1716,3.17157 13.9217,2.42143 14.9391,2 16,2 h 8 c 1.0609,0 2.0783,0.42143 2.8284,1.17157 C 27.5786,3.92172 28,4.93913 28,6 v 4 M 16,20 v 12 m 8,-12 v 12"
+     stroke="#1E1E1E"
+     stroke-width="4"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path1"
+     style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-opacity:1" />
+</svg>

@@ -280,3 +280,17 @@ export const getCourseMemberById = async (courseId: number, memberId: string): P
     }
     return result;
 }
+
+export const deleteLecture = async (id: number) => {
+    const url = `${BASE_API_URL_DEV}/lectures/${id}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error while deleting lecture: ${response.statusText}`);
+    }
+}
