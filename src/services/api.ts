@@ -232,3 +232,21 @@ export const getCourseMemberById = async (courseId: number, memberId: string): P
     }
     return result;
 }
+
+export const createCourse = async(formData: FormData): Promise<number> => {
+    const url = `${BASE_API_URL_DEV}/courses`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error creating a new course: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json.courseId;
+}

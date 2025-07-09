@@ -9,7 +9,7 @@ interface TransparentLinkProps {
     textSize?: string;
 }
 
-const TransparentButton = ({ to, params, onClick, iconSrc, text, textSize }: TransparentLinkProps) => {
+const TransparentLink = ({ to, params, onClick, iconSrc, text, textSize }: TransparentLinkProps) => {
     return (
         <Link 
             to={to} 
@@ -31,4 +31,4 @@ const TransparentButton = ({ to, params, onClick, iconSrc, text, textSize }: Tra
     )   
 }
 
-export default TransparentButton
+export default TransparentLink

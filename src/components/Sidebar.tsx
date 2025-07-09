@@ -8,6 +8,7 @@ import type { JSX } from "react";
 import Spinner from "./Spinner";
 import TransparentLink from "./TransparentLink";
 import { useQuery } from "@tanstack/react-query";
+import ShadowLink from "./ShadowLink";
 
 interface SidebarProps {
     onCourseClick: (courseId: number, courseName: string) => void;
@@ -53,7 +54,8 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
     return (
         <div className="flex flex-col bg-transparent h-full w-44 p-3">
             <div className="flex flex-col gap-2 mb-4">  
-                <ShadowButton
+                <ShadowLink
+                    to="/home/courses/new"
                     iconSrc={plusIcon}
                     text="New course"
                 />
