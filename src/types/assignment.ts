@@ -9,5 +9,12 @@ export interface Assignment {
     content: string;
     deadline: string;
     maxGrade: number;  
-    // will add files etc. in the future.
+    submissions?: Submission[];
+}
+
+export interface Submission {
+    id: number;
+    grade: number;
+    latestSubmissionDate: string;
+    authorFullName: string;
 }
