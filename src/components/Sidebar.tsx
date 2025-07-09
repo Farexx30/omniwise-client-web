@@ -8,10 +8,15 @@ import Spinner from "./Spinner";
 import TransparentLink from "./TransparentLink";
 import { useQuery } from "@tanstack/react-query";
 
-const Sidebar = () => {
+interface SidebarProps {
+    onCourseClick: (courseId: number, courseName: string) => void;
+}
+
+
+const Sidebar = ({ onCourseClick }: SidebarProps) => {
     const {data: courses, isLoading, isError} = useQuery({
-        queryFn: getEnrolledCourses,
-        queryKey: ["courses"]
+        queryKey: ["courses"],
+        queryFn: () => getEnrolledCourses(),
     })
 
     let content: JSX.Element | null = null
@@ -30,7 +35,14 @@ const Sidebar = () => {
             <ul>
                 {courses.map(c => (
                     <li key={c.id}>
-                        <TransparentLink to="/home" text={c.name} />
+                        <TransparentLink 
+                            to="/home/courses/$courseId"
+                            params={{
+                                courseId: c.id.toString()
+                            }}
+                            onClick={() => onCourseClick(c.id, c.name)}
+                            text={c.name}
+                         />
                     </li>
                 ))}
             </ul>
