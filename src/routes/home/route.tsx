@@ -22,17 +22,21 @@ function HomeLayout() {
             <div className="bg-main-page w-screen h-screen bg-center bg-cover fixed inset-0 z-0 overflow-hidden flex flex-col">
                 <WebHeader />
                 <div className="flex flex-row h-[calc(100vh-2rem)] w-full">
-                    <Sidebar onCourseClick={(courseId, courseName) => {
-                        setCurrentCourseId(courseId)
-                        setCurrentCourseName(courseName)
-                    }}
-                    />
-                    <CourseBar
-                        currentCourseId={currentCourseId}
-                        currentCourseName={currentCourseName}
-                    />
-                    <div className="w-[calc(100vw-29rem)] rounded-2xl mx-2 mb-4 p-4 overflow-y-auto">
-                        <HomeContext value={{setCurrentCourseId, setCurrentCourseName}}>
+                    <div className="mb-4">
+                        <Sidebar onCourseClick={(courseId, courseName) => {
+                            setCurrentCourseId(courseId)
+                            setCurrentCourseName(courseName)
+                        }}
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <CourseBar
+                            currentCourseId={currentCourseId}
+                            currentCourseName={currentCourseName}
+                        />
+                    </div>
+                    <div className="w-[calc(100vw-29rem)] rounded-2xl mx-2 mb-4 overflow-y-auto">
+                        <HomeContext value={{ setCurrentCourseId, setCurrentCourseName }}>
                             <Outlet />
                         </HomeContext>
                     </div>

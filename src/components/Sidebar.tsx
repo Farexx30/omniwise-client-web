@@ -2,7 +2,6 @@ import plusIcon from "/plus.svg";
 import signupIcon from "/signup.svg";
 import bell from "/bell.svg";
 import ShadowButton from "./ShadowButton";
-import TransparentButton from "./TransparentButton";
 import { getEnrolledCourses } from "../services/api";
 import type { JSX } from "react";
 import Spinner from "./Spinner";
@@ -61,7 +60,8 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
                     iconSrc={signupIcon}
                     text="Join course"
                 />
-                <TransparentButton
+                <TransparentLink
+                    to="/home/notifications"
                     iconSrc={bell}
                     text="Notifications"
                 />

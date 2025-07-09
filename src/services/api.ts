@@ -1,13 +1,14 @@
 import type { Assignment, BasicAssignmentInfo } from "../types/assignment";
 import type { Course } from "../types/course";
+import type { NotificationDetails } from "../types/notification";
 import type { BasicLectureInfo, Lecture } from "../types/lecture";
 import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, RegisterResult, RegisterUser } from "../types/user";
 
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
 const BASE_API_URL_DEV = "https://localhost:7155/api"
 
-export const register = async (user: RegisterUser): Promise<RegisterResult> => {
-    const url = `${BASE_API_URL_DEV}/identity/register`;
+export const register = async(user: RegisterUser): Promise<RegisterResult> => {
+    const url = `${BASE_API_URL_DEV}/identity/register`; 
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -29,8 +30,8 @@ export const register = async (user: RegisterUser): Promise<RegisterResult> => {
     return "Success";
 }
 
-export const login = async (email: string, password: string): Promise<LoginResult> => {
-    const url = `${BASE_API_URL_DEV}/identity/login`;
+export const login = async(email: string, password: string): Promise<LoginResult> => {
+    const url = `${BASE_API_URL_DEV}/identity/login`; 
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -57,9 +58,8 @@ export const login = async (email: string, password: string): Promise<LoginResul
 }
 
 
-export const getEnrolledCourses = async (query?: string): Promise<Course[]> => {
-    query = query?.trim() || "";
-    const url = `${BASE_API_URL_DEV}/courses/enrolled?searchPhrase=${encodeURIComponent(query)}`;
+export const getEnrolledCourses = async(): Promise<Course[]> => {
+    const url = `${BASE_API_URL_DEV}/courses/enrolled`;
     const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -94,6 +94,38 @@ export const getAvailableCourses = async (query?: string): Promise<Course[]> => 
 
     const json = await response.json();
     return json as Course[];
+}
+
+export const getNotifications = async(): Promise<NotificationDetails[]> => {
+    const url = `${BASE_API_URL_DEV}/notifications`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching notifications: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json as NotificationDetails[];
+}
+
+export const deleteNotification = async(id: number) => {
+    const url = `${BASE_API_URL_DEV}/notifications/${id}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) { 
+        throw new Error(`Error while deleting notification: ${response.statusText}`);
+    }
 }
 
 export const getCourseById = async (id: number): Promise<Course> => {
