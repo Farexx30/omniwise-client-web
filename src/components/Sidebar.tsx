@@ -1,20 +1,19 @@
 import plusIcon from "/plus.svg";
 import signupIcon from "/signup.svg";
 import bell from "/bell.svg";
-import ShadowLink from "./ShadowLink";
 import { getEnrolledCourses } from "../services/api";
 import type { JSX } from "react";
 import Spinner from "./Spinner";
 import TransparentLink from "./TransparentLink";
 import { useQuery } from "@tanstack/react-query";
+import ShadowLink from "./ShadowLink";
 
 interface SidebarProps {
     onCourseClick: (courseId: number, courseName: string) => void;
 }
 
-
 const Sidebar = ({ onCourseClick }: SidebarProps) => {
-    const {data: courses, isLoading, isError} = useQuery({
+    const {data: courses, isLoading, isError } = useQuery({
         queryKey: ["courses"],
         queryFn: () => getEnrolledCourses(),
     })
@@ -53,9 +52,9 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
         <div className="flex flex-col bg-transparent h-full w-44 p-3">
             <div className="flex flex-col gap-2 mb-4">  
                 <ShadowLink
+                    to="/home/courses/new"
                     iconSrc={plusIcon}
                     text="New course"
-                    to="/home/create-course"
                 />
                 <ShadowLink
                     iconSrc={signupIcon}

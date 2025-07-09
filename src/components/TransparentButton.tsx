@@ -1,6 +1,6 @@
 interface TransparentButtonProps {
     iconSrc?: string;
-    text: string;
+    text?: string;
     textSize?: string;
     onClick?: () => void; 
 }
@@ -8,6 +8,7 @@ interface TransparentButtonProps {
 const TransparentButton = ({ iconSrc, text, textSize, onClick }: TransparentButtonProps) => {
     return (
         <button 
+            type="button"
             className="flex items-center bg-transparent w-full cursor-pointer select-none group"
             onClick={onClick}>
             {iconSrc && (
