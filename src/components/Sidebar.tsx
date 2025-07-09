@@ -43,10 +43,12 @@ const Sidebar = () => {
                 <ShadowButton
                     iconSrc={plusIcon}
                     text="New course"
+                    to="/home/create-course"
                 />
                 <ShadowButton
                     iconSrc={signupIcon}
                     text="Join course"
+                    to="/home/available-courses"
                 />
                 <TransparentLink
                     to="/home/notifications"
