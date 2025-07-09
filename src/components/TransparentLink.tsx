@@ -2,14 +2,20 @@ import { Link } from "@tanstack/react-router";
 
 interface TransparentLinkProps {
     to: string;
+    params?: any;
+    onClick?: () => void;
     iconSrc?: string;
     text: string;
     textSize?: string;
 }
 
-const TransparentButton = ({ to, iconSrc, text, textSize }: TransparentLinkProps) => {
+const TransparentButton = ({ to, params, onClick, iconSrc, text, textSize }: TransparentLinkProps) => {
     return (
-        <Link to={to} className="flex items-center bg-transparent w-full cursor-pointer select-none group">
+        <Link 
+            to={to} 
+            params={{...params}}
+            onClick={onClick}
+            className="flex items-center bg-transparent w-full cursor-pointer select-none group">
             {iconSrc && (
                 <img
                     itemType="image/svg+xml"

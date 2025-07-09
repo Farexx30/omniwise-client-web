@@ -7,8 +7,9 @@ interface TransparentButtonProps {
 
 const TransparentButton = ({ iconSrc, text, textSize, onClick }: TransparentButtonProps) => {
     return (
-        <button className="flex items-center bg-transparent cursor-pointer select-none group"
-                onClick={onClick}>
+        <button 
+            className="flex items-center bg-transparent w-full cursor-pointer select-none group"
+            onClick={onClick}>
             {iconSrc && (
                 <img
                     itemType="image/svg+xml"
