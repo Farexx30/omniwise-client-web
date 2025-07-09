@@ -14,7 +14,6 @@ interface SidebarProps {
     onCourseClick: (courseId: number, courseName: string) => void;
 }
 
-
 const Sidebar = ({ onCourseClick }: SidebarProps) => {
     const {data: courses, isLoading, isError} = useQuery({
         queryKey: ["courses"],
