@@ -1,5 +1,4 @@
-import React, { useRef, useState, type ChangeEvent, type FormEvent } from "react";
-import { useFile } from "../hooks/useFile";
+import React, { useRef, useState, type ChangeEvent } from "react";
 import File from "./File";
 
 interface FileInputProps {

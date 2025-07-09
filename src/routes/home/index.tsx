@@ -34,7 +34,7 @@ function HomePage() {
     }
     else {
         content = (
-            <ul className="grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3">
+            <ul className="grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 p-4">
                 {courses.map(c => (
                     <li key={c.id}>
                         <CourseCard 
@@ -49,13 +49,13 @@ function HomePage() {
         )
     }
     return (
-        <div className="bg-red h-full w-full">
+        <div className="h-full w-full">
             <SearchBar
                 searchValue={searchValue}
                 onSearch={setSearchValue}
                 placeholder="Search for courses..."
             />
-            <section className="space-y-9 mt-4">
+            <section className="space-y-9">
                 {content}
             </section>
         </div>

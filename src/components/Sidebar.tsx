@@ -1,8 +1,6 @@
 import plusIcon from "/plus.svg";
 import signupIcon from "/signup.svg";
 import bell from "/bell.svg";
-import ShadowButton from "./ShadowButton";
-import TransparentButton from "./TransparentButton";
 import { getEnrolledCourses } from "../services/api";
 import type { JSX } from "react";
 import Spinner from "./Spinner";
@@ -15,7 +13,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ onCourseClick }: SidebarProps) => {
-    const {data: courses, isLoading, isError} = useQuery({
+    const {data: courses, isLoading, isError } = useQuery({
         queryKey: ["courses"],
         queryFn: () => getEnrolledCourses(),
     })
@@ -58,11 +56,13 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
                     iconSrc={plusIcon}
                     text="New course"
                 />
-                <ShadowButton
+                <ShadowLink
                     iconSrc={signupIcon}
                     text="Join course"
+                    to="/home/available-courses"
                 />
-                <TransparentButton
+                <TransparentLink
+                    to="/home/notifications"
                     iconSrc={bell}
                     text="Notifications"
                 />
@@ -72,10 +72,7 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
                 </span>
             </div>
             <div className="flex-1 pr-1 overflow-y-auto">
-                
                 {content}
-
-                {/* TODO: Add here list of courses using transparent button */}
             </div>
         </div>
     )

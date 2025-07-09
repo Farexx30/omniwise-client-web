@@ -15,6 +15,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteRouteImport } from './routes/home/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HomeIndexRouteImport } from './routes/home/index'
+import { Route as HomeNotificationsRouteImport } from './routes/home/notifications'
+import { Route as HomeAvailableCoursesRouteImport } from './routes/home/available-courses'
 import { Route as HomeLecturesLectureIdRouteImport } from './routes/home/lectures/$lectureId'
 import { Route as HomeCoursesNewRouteImport } from './routes/home/courses/new'
 import { Route as HomeAssignmentsAssignmentIdRouteImport } from './routes/home/assignments/$assignmentId'
@@ -50,6 +52,16 @@ const IndexRoute = IndexRouteImport.update({
 const HomeIndexRoute = HomeIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
+const HomeNotificationsRoute = HomeNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => HomeRouteRoute,
+} as any)
+const HomeAvailableCoursesRoute = HomeAvailableCoursesRouteImport.update({
+  id: '/available-courses',
+  path: '/available-courses',
   getParentRoute: () => HomeRouteRoute,
 } as any)
 const HomeLecturesLectureIdRoute = HomeLecturesLectureIdRouteImport.update({
@@ -93,6 +105,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
+  '/home/available-courses': typeof HomeAvailableCoursesRoute
+  '/home/notifications': typeof HomeNotificationsRoute
   '/home/': typeof HomeIndexRoute
   '/home/courses/$courseId': typeof HomeCoursesCourseIdRouteRouteWithChildren
   '/home/assignments/$assignmentId': typeof HomeAssignmentsAssignmentIdRoute
@@ -106,6 +120,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
+  '/home/available-courses': typeof HomeAvailableCoursesRoute
+  '/home/notifications': typeof HomeNotificationsRoute
   '/home': typeof HomeIndexRoute
   '/home/assignments/$assignmentId': typeof HomeAssignmentsAssignmentIdRoute
   '/home/courses/new': typeof HomeCoursesNewRoute
@@ -120,6 +136,8 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/pending-approval': typeof PendingApprovalRoute
   '/registration': typeof RegistrationRoute
+  '/home/available-courses': typeof HomeAvailableCoursesRoute
+  '/home/notifications': typeof HomeNotificationsRoute
   '/home/': typeof HomeIndexRoute
   '/home/courses/$courseId': typeof HomeCoursesCourseIdRouteRouteWithChildren
   '/home/assignments/$assignmentId': typeof HomeAssignmentsAssignmentIdRoute
@@ -136,6 +154,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/pending-approval'
     | '/registration'
+    | '/home/available-courses'
+    | '/home/notifications'
     | '/home/'
     | '/home/courses/$courseId'
     | '/home/assignments/$assignmentId'
@@ -149,6 +169,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/pending-approval'
     | '/registration'
+    | '/home/available-courses'
+    | '/home/notifications'
     | '/home'
     | '/home/assignments/$assignmentId'
     | '/home/courses/new'
@@ -162,6 +184,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/pending-approval'
     | '/registration'
+    | '/home/available-courses'
+    | '/home/notifications'
     | '/home/'
     | '/home/courses/$courseId'
     | '/home/assignments/$assignmentId'
@@ -221,6 +245,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/home/'
       preLoaderRoute: typeof HomeIndexRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
+    '/home/notifications': {
+      id: '/home/notifications'
+      path: '/notifications'
+      fullPath: '/home/notifications'
+      preLoaderRoute: typeof HomeNotificationsRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
+    '/home/available-courses': {
+      id: '/home/available-courses'
+      path: '/available-courses'
+      fullPath: '/home/available-courses'
+      preLoaderRoute: typeof HomeAvailableCoursesRouteImport
       parentRoute: typeof HomeRouteRoute
     }
     '/home/lectures/$lectureId': {
@@ -286,6 +324,8 @@ const HomeCoursesCourseIdRouteRouteWithChildren =
   )
 
 interface HomeRouteRouteChildren {
+  HomeAvailableCoursesRoute: typeof HomeAvailableCoursesRoute
+  HomeNotificationsRoute: typeof HomeNotificationsRoute
   HomeIndexRoute: typeof HomeIndexRoute
   HomeCoursesCourseIdRouteRoute: typeof HomeCoursesCourseIdRouteRouteWithChildren
   HomeAssignmentsAssignmentIdRoute: typeof HomeAssignmentsAssignmentIdRoute
@@ -294,6 +334,8 @@ interface HomeRouteRouteChildren {
 }
 
 const HomeRouteRouteChildren: HomeRouteRouteChildren = {
+  HomeAvailableCoursesRoute: HomeAvailableCoursesRoute,
+  HomeNotificationsRoute: HomeNotificationsRoute,
   HomeIndexRoute: HomeIndexRoute,
   HomeCoursesCourseIdRouteRoute: HomeCoursesCourseIdRouteRouteWithChildren,
   HomeAssignmentsAssignmentIdRoute: HomeAssignmentsAssignmentIdRoute,

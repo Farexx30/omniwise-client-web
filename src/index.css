@@ -99,7 +99,7 @@
     & h3 {
       @apply text-white font-bold text-base line-clamp-1;
     }
-  }
+  } 
 
   .login-and-registration-container {
     @apply fixed inset-0 flex items-center justify-center bg-login-and-registration-page bg-cover bg-center;
