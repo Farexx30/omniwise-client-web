@@ -315,3 +315,20 @@ export const createCourse = async(formData: FormData): Promise<number> => {
     const json = await response.json();
     return json.courseId;
 }
+
+
+
+
+export const deleteAssignment = async (id: number) => {
+    const url = `${BASE_API_URL_DEV}/assignments/${id}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error while deleting assignment: ${response.statusText}`);
+    }
+}

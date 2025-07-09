@@ -33,6 +33,8 @@ function Lecture() {
     queryFn: () => getLectureById(lectureId),
     staleTime: 60_000 * 5
   })
+
+  
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();

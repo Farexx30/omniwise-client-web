@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import Spinner from '../../../components/Spinner'
-import { getAssignmentById } from '../../../services/api'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { deleteAssignment, getAssignmentById } from '../../../services/api'
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import TransparentButton from '../../../components/TransparentButton'
 import TrashIcon from '/white-trash.svg'
 import EditIcon from '/edit.svg'
@@ -33,6 +33,18 @@ function Assignment() {
     staleTime: 60_000 * 5
   })
 
+  const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
+
+  const { mutate: removeAssignment } = useMutation({
+    mutationFn: deleteAssignment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["assignments"] });
+      navigate({ to: "/home" });
+    },
+  });
+
   return (
     <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
       <div className='flex flex-row justify-between pb-2 border-b-1'>
@@ -42,7 +54,10 @@ function Assignment() {
             iconSrc={EditIcon} />
           <div className='w-2'></div>
           <TransparentButton text=""
-            iconSrc={TrashIcon} />
+            iconSrc={TrashIcon}
+            onClick={() => {
+              removeAssignment(assignment.id);
+            }} />
         </div>
       </div>
       <div className='flex flex-row pb-2 border-b-1 mt-2'>
@@ -54,7 +69,7 @@ function Assignment() {
       </div>
       <div className='mt-4 overflow-y-auto flex-1'>
         {assignment.content}
-        <h3 className='mt-4'>Submissions: </h3>
+        <h3 className='mt-4'>Submissions:</h3>
         {assignment.submissions && assignment.submissions.length > 0 ? (
           <ul>
             {assignment.submissions.map(s => (
