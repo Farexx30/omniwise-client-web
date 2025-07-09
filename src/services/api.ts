@@ -7,8 +7,8 @@ import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDeta
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
 const BASE_API_URL_DEV = "https://localhost:7155/api"
 
-export const register = async(user: RegisterUser): Promise<RegisterResult> => {
-    const url = `${BASE_API_URL_DEV}/identity/register`; 
+export const register = async (user: RegisterUser): Promise<RegisterResult> => {
+    const url = `${BASE_API_URL_DEV}/identity/register`;
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -30,8 +30,8 @@ export const register = async(user: RegisterUser): Promise<RegisterResult> => {
     return "Success";
 }
 
-export const login = async(email: string, password: string): Promise<LoginResult> => {
-    const url = `${BASE_API_URL_DEV}/identity/login`; 
+export const login = async (email: string, password: string): Promise<LoginResult> => {
+    const url = `${BASE_API_URL_DEV}/identity/login`;
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -58,7 +58,7 @@ export const login = async(email: string, password: string): Promise<LoginResult
 }
 
 
-export const getEnrolledCourses = async(): Promise<Course[]> => {
+export const getEnrolledCourses = async (): Promise<Course[]> => {
     const url = `${BASE_API_URL_DEV}/courses/enrolled`;
     const response = await fetch(url, {
         method: "GET",
@@ -96,7 +96,7 @@ export const getAvailableCourses = async (query?: string): Promise<Course[]> => 
     return json as Course[];
 }
 
-export const getNotifications = async(): Promise<NotificationDetails[]> => {
+export const getNotifications = async (): Promise<NotificationDetails[]> => {
     const url = `${BASE_API_URL_DEV}/notifications`;
     const response = await fetch(url, {
         method: "GET",
@@ -114,7 +114,7 @@ export const getNotifications = async(): Promise<NotificationDetails[]> => {
     return json as NotificationDetails[];
 }
 
-export const deleteNotification = async(id: number) => {
+export const deleteNotification = async (id: number) => {
     const url = `${BASE_API_URL_DEV}/notifications/${id}`;
     const response = await fetch(url, {
         method: "DELETE",
@@ -123,8 +123,23 @@ export const deleteNotification = async(id: number) => {
         }
     });
 
-    if (!response.ok) { 
+    if (!response.ok) {
         throw new Error(`Error while deleting notification: ${response.statusText}`);
+    }
+}
+
+export const enrollInCourse = async (courseId: number): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/courses/${courseId}/members`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error enrolling in course: ${response.statusText}`);
     }
 }
 
@@ -145,6 +160,7 @@ export const getCourseById = async (id: number): Promise<Course> => {
     const json = await response.json();
     return json as Course;
 }
+
 
 export const getLecturesByCourseId = async (id: number): Promise<BasicLectureInfo[]> => {
     const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}/lectures`;
@@ -197,12 +213,12 @@ export const getMembersByCourseId = async (id: number): Promise<BasicUserInfo[]>
     }
 
     const json = await response.json();
-    const result: BasicUserInfo[] = Array.isArray(json) 
-            ? json.map((prop: { userId: string; firstName: string, lastName: string; }) => ({
-                id: prop.userId,
-                name: `${prop.firstName} ${prop.lastName}`
-            }))
-            : [];
+    const result: BasicUserInfo[] = Array.isArray(json)
+        ? json.map((prop: { userId: string; firstName: string, lastName: string; }) => ({
+            id: prop.userId,
+            name: `${prop.firstName} ${prop.lastName}`
+        }))
+        : [];
     return result;
 }
 
@@ -257,7 +273,7 @@ export const getCourseMemberById = async (courseId: number, memberId: string): P
     }
 
     const json = await response.json();
-        const result: CourseMemberWithDetails = {
+    const result: CourseMemberWithDetails = {
         ...json,
         id: json.userId,
         fullName: `${json.firstName} ${json.lastName}`

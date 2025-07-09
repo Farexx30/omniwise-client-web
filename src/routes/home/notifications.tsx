@@ -25,7 +25,7 @@ function Notifications() {
             queryClient.invalidateQueries({ queryKey: ["notifications"] }); // odśwież listę
         },
     });
-    
+
     let content: JSX.Element | null = null;
 
     if (isLoading) {
@@ -50,8 +50,9 @@ function Notifications() {
                             <div className="ml-4">
                                 <TransparentButton
                                     text="x"
-                                        onClick={() => {removeNotification(n.id);
-    }}
+                                    onClick={() => {
+                                        removeNotification(n.id);
+                                    }}
                                 />
                             </div>
                         </div>

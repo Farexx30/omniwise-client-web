@@ -1,7 +1,7 @@
 import plusIcon from "/plus.svg";
 import signupIcon from "/signup.svg";
 import bell from "/bell.svg";
-import ShadowButton from "./ShadowButton";
+import ShadowLink from "./ShadowLink";
 import { getEnrolledCourses } from "../services/api";
 import type { JSX } from "react";
 import Spinner from "./Spinner";
@@ -52,13 +52,15 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
     return (
         <div className="flex flex-col bg-transparent h-full w-44 p-3">
             <div className="flex flex-col gap-2 mb-4">  
-                <ShadowButton
+                <ShadowLink
                     iconSrc={plusIcon}
                     text="New course"
+                    to="/home/create-course"
                 />
-                <ShadowButton
+                <ShadowLink
                     iconSrc={signupIcon}
                     text="Join course"
+                    to="/home/available-courses"
                 />
                 <TransparentLink
                     to="/home/notifications"
@@ -71,10 +73,7 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
                 </span>
             </div>
             <div className="flex-1 pr-1 overflow-y-auto">
-                
                 {content}
-
-                {/* TODO: Add here list of courses using transparent button */}
             </div>
         </div>
     )
