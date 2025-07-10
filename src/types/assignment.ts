@@ -1,3 +1,5 @@
+import type { FileInfo } from "./file";
+
 export interface BasicAssignmentInfo {
     id: number;
     name: string;
@@ -9,6 +11,7 @@ export interface Assignment {
     content: string;
     deadline: string;
     maxGrade: number;  
+    files: FileInfo[];
     submissions?: Submission[];
 }
 

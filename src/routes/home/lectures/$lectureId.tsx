@@ -43,17 +43,6 @@ function Lecture() {
     staleTime: 60_000 * 5
   });
 
-  // !!!IMPORTANT!!!
-  // Reset the component state when navigating to different lecture, since React preserves the previous state even if
-  // lectureId param from Tanstack Router is differnt. 
-  // If not it would destroy component's behavior when isEditing would be set to true atleast once in the same course.
-  useEffect(() => {
-    setIsEditing(false);
-    setCourseName(lecture.name);
-    setCourseContent(lecture.content);
-    clearFiles();
-  }, [lecture])
-
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
@@ -77,7 +66,7 @@ function Lecture() {
 
   const { mutateAsync: modifyLecture } = useMutation({
     mutationFn: (formData: FormData) => updateLecture(formData, lectureId),
-    onSuccess: async() => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["lectures"] });
       await queryClient.invalidateQueries({ queryKey: ["lecture", lectureId] });
       setIsEditing(!isEditing)
@@ -92,6 +81,27 @@ function Lecture() {
   const [courseName, setCourseName] = useState(lecture.name);
   const [courseContent, setCourseContent] = useState<string | null>(lecture.content);
   const { files, setFiles, onChange, removeFile, clearFiles } = useFile({ multiple: true });
+
+  // !!!IMPORTANT!!!
+  // Reset the component state when navigating to different lecture, since React preserves the previous state even if
+  // lectureId param from Tanstack Router is different. 
+  // If not it would destroy component's behavior when isEditing would be set to true atleast once in the same course.
+  useEffect(() => {
+    setIsEditing(false);
+    setCourseName(lecture.name);
+    setCourseContent(lecture.content);
+    clearFiles();
+  }, [lecture])
+
+  useEffect(() => {
+    if (isEditing) {
+      return;
+    }
+
+    setCourseName(lecture.name);
+    setCourseContent(lecture.content);
+    clearFiles();
+  }, [isEditing])
 
   const handleUpdate = async (e: FormEvent) => {
     e.preventDefault();
