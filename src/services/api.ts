@@ -260,7 +260,27 @@ export const getAssignmentById = async (id: number): Promise<Assignment> => {
     }
 
     const json = await response.json();
-    return json as Assignment;
+    const result: Assignment = {
+        ...json,
+        files: json.fileInfos,
+        submissions: json.submissions
+    }
+    return result;
+}
+
+export const updateAssignment = async(formData: FormData, assignmentId: number): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/assignments/${encodeURIComponent(assignmentId)}`;
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error updating assignment: ${response.statusText}`);
+    }
 }
 
 export const getCourseMemberById = async (courseId: number, memberId: string): Promise<CourseMemberWithDetails> => {
@@ -349,4 +369,36 @@ export const createLecture = async (formData: FormData, courseId: number): Promi
 
     const json = await response.json();
     return json.lectureId;
+}
+
+export const createAssignment = async (formData: FormData, courseId: number): Promise<number> => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(courseId)}/assignments`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error creating assignment: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json.assignmentId;
+}
+
+export const deleteAssignment = async (id: number) => {
+    const url = `${BASE_API_URL_DEV}/assignments/${id}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error while deleting assignment: ${response.statusText}`);
+    }
 }
