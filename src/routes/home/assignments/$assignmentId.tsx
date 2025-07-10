@@ -67,7 +67,7 @@ function Assignment() {
       setIsEditing(!isEditing)
     },
     onError: () => {
-      alert("An error occured while updating lecture.")
+      alert("An error occured while updating assignment.")
       setIsEditing(!isEditing)
     },
   });

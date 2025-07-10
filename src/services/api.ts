@@ -371,6 +371,24 @@ export const createLecture = async (formData: FormData, courseId: number): Promi
     return json.lectureId;
 }
 
+export const createAssignment = async (formData: FormData, courseId: number): Promise<number> => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(courseId)}/assignments`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error creating assignment: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json.assignmentId;
+}
+
 export const deleteAssignment = async (id: number) => {
     const url = `${BASE_API_URL_DEV}/assignments/${id}`;
     const response = await fetch(url, {

@@ -114,7 +114,7 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
                                 destination = "/home/lectures/new"
                             }
                             else if (currentTab == "assignments") {
-                                destination = "??? will be implemented later"
+                                destination = "/home/assignments/new"
                             }
                             else if (currentTab == "members") {
                                 destination = "??? will be implemented later"
