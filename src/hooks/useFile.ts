@@ -12,10 +12,10 @@ export function useFile({ multiple = false }: { multiple?: boolean }) {
 
             setFiles(currentFiles => {
                 if (multiple) {
-                    const current = new Set(currentFiles.map(f => f.name));
-                    const merged = [...currentFiles];
-                    newFiles.forEach(f => {
-                        if (!current.has(f.name)) {
+                    const newFilesSet = new Set(newFiles.map(f => f.name));
+                    const merged = [...newFiles];
+                    currentFiles.forEach(f => {
+                        if (!newFilesSet.has(f.name)) {
                             merged.push(f);
                         }
                     });
@@ -37,6 +37,7 @@ export function useFile({ multiple = false }: { multiple?: boolean }) {
 
     return {
         files,
+        setFiles,
         onChange,
         removeFile,
         clearFiles,

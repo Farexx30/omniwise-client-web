@@ -1,18 +1,18 @@
 import React from 'react'
-import type { ReadonlyFile } from '../types/file';
+import type { FileInfo } from '../types/file';
 import { downloadAllFiles, downloadFile } from '../utils/file';
 import FileView from './FileView';
 
 interface ReadonlyFileList {
-    data: ReadonlyFile[];
+    data: FileInfo[];
     zipNameForDownloadAll: string;
     accept?: string;
 }
 
 const ReadonlyFileList = ({ data: files, zipNameForDownloadAll }: ReadonlyFileList) => {
     return (
-        <div className="w-full max-h-76 overflow-y-auto overflow-x-clip">
-            <ul className="grid grid-cols-1 gap-5 md:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 p-4">
+        <div className="w-full max-h-72 overflow-y-auto overflow-x-clip">
+            <ul className="grid grid-cols-1 gap-3 gap-x-5 md:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 p-4">
                 {files.map(f => (
                     <li key={f.name}>
                         <FileView

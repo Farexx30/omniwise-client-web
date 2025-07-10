@@ -1,6 +1,18 @@
 import JSZip from "jszip";
-import type { ReadonlyFile } from "../types/file";
+import type { FileInfo } from "../types/file";
 import { saveAs } from "file-saver";
+
+export async function fetchFiles(files: FileInfo[]): Promise<File[]> {
+    const result = await Promise.all(
+        files.map(async (f) => {
+            const response = await fetch(f.url);
+            const blob = await response.blob();
+            return new File([blob], f.name)
+        })
+    );
+
+    return result;
+}
 
 export async function downloadFile(fileName: string, url: string) {
     const response = await fetch(url);
@@ -19,18 +31,18 @@ export async function downloadFile(fileName: string, url: string) {
     URL.revokeObjectURL(blobUrl);
 }
 
-export async function downloadAllFiles(files: ReadonlyFile[], zipName: string) {
+export async function downloadAllFiles(files: FileInfo[], zipName: string) {
     const zip = new JSZip();
 
     await Promise.all(
-        files.map(async(f) => {
+        files.map(async (f) => {
             const response = await fetch(f.url);
             const blob = await response.blob();
             zip.file(f.name, blob);
         })
     )
 
-    const blobZip = await zip.generateAsync({type: "blob"});
+    const blobZip = await zip.generateAsync({ type: "blob" });
     saveAs(blobZip, zipName);
 }
 

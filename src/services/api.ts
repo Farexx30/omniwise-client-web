@@ -300,8 +300,6 @@ export const deleteLecture = async (id: number) => {
     }
 }
 
-
-
 export const createCourse = async(formData: FormData): Promise<number> => {
     const url = `${BASE_API_URL_DEV}/courses`;
     const response = await fetch(url, {
@@ -318,4 +316,19 @@ export const createCourse = async(formData: FormData): Promise<number> => {
 
     const json = await response.json();
     return json.courseId;
+}
+
+export const updateLecture = async(formData: FormData, lectureId: number): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/lectures/${encodeURIComponent(lectureId)}`;
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error updating lecture: ${response.statusText}`);
+    }
 }

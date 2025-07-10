@@ -1,4 +1,4 @@
-import type { ReadonlyFile } from "./file";
+import type { FileInfo } from "./file";
 
 export interface BasicLectureInfo {
     id: number;
@@ -9,5 +9,5 @@ export interface Lecture {
     id: number;
     name: string;
     content: string;
-    files: ReadonlyFile[]
+    files: FileInfo[]
 }

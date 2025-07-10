@@ -1,4 +1,4 @@
-export interface ReadonlyFile {
+export interface FileInfo {
     name: string;
     url: string;
 }
