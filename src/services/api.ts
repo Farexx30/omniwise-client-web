@@ -238,7 +238,11 @@ export const getLectureById = async (id: number): Promise<Lecture> => {
     }
 
     const json = await response.json();
-    return json as Lecture;
+    const result: Lecture = {
+        ...json,
+        files: json.fileInfos
+    }
+    return result;
 }
 
 export const getAssignmentById = async (id: number): Promise<Assignment> => {
@@ -282,7 +286,21 @@ export const getCourseMemberById = async (courseId: number, memberId: string): P
     return result;
 }
 
-export const createCourse = async(formData: FormData): Promise<number> => {
+export const deleteLecture = async (id: number) => {
+    const url = `${BASE_API_URL_DEV}/lectures/${id}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error while deleting lecture: ${response.statusText}`);
+    }
+}
+
+export const createCourse = async (formData: FormData): Promise<number> => {
     const url = `${BASE_API_URL_DEV}/courses`;
     const response = await fetch(url, {
         method: "POST",
@@ -298,4 +316,37 @@ export const createCourse = async(formData: FormData): Promise<number> => {
 
     const json = await response.json();
     return json.courseId;
+}
+
+export const updateLecture = async (formData: FormData, lectureId: number): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/lectures/${encodeURIComponent(lectureId)}`;
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error updating lecture: ${response.statusText}`);
+    }
+}
+
+export const createLecture = async (formData: FormData, courseId: number): Promise<number> => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(courseId)}/lectures`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error creating lecture: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json.lectureId;
 }

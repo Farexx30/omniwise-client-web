@@ -2,13 +2,14 @@ import { createFileRoute, Outlet } from '@tanstack/react-router'
 import CourseBar from '../../components/CourseBar'
 import Sidebar from '../../components/Sidebar'
 import WebHeader from '../../components/WebHeader'
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/home')({
     component: HomeLayout,
 })
 
 export const HomeContext = createContext<{
+    currentCourseId: number | null;
     setCurrentCourseId: (value: number) => void;
     setCurrentCourseName: (value: string) => void;
 } | null>(null);
@@ -36,7 +37,7 @@ function HomeLayout() {
                         />
                     </div>
                     <div className="w-[calc(100vw-29rem)] rounded-2xl mx-2 mb-4 overflow-y-auto">
-                        <HomeContext value={{ setCurrentCourseId, setCurrentCourseName }}>
+                        <HomeContext value={{ currentCourseId, setCurrentCourseId, setCurrentCourseName }}>
                             <Outlet />
                         </HomeContext>
                     </div>

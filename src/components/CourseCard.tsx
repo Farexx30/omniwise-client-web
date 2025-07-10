@@ -6,7 +6,7 @@ interface CourseCardProps {
     id: number;
     name: string;
     imgUrl?: string;
-    onClick: () => void;
+    onClick?: () => void;
     onEnroll?: (id: number) => void;
 }
 

@@ -22,7 +22,7 @@ function Notifications() {
     const { mutate: removeNotification } = useMutation({
         mutationFn: deleteNotification,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["notifications"] }); // odśwież listę
+            queryClient.invalidateQueries({ queryKey: ["notifications"] }); 
         },
     });
 

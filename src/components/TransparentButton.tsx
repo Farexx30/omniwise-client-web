@@ -3,14 +3,18 @@ interface TransparentButtonProps {
     text?: string;
     textSize?: string;
     onClick?: () => void; 
+    isSubmitType?: boolean
+    disabled?: boolean
 }
 
-const TransparentButton = ({ iconSrc, text, textSize, onClick }: TransparentButtonProps) => {
+const TransparentButton = ({ iconSrc, text, textSize, onClick, isSubmitType, disabled }: TransparentButtonProps) => {
     return (
         <button 
-            type="button"
-            className="flex items-center bg-transparent w-full cursor-pointer select-none group"
-            onClick={onClick}>
+            type={isSubmitType ? "submit" : "button"}
+            className="flex items-center bg-transparent w-full cursor-pointer select-none group disabled:cursor-default"
+            onClick={onClick}
+            disabled={disabled}
+            >
             {iconSrc && (
                 <img
                     itemType="image/svg+xml"
