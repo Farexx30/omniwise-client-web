@@ -8,6 +8,7 @@ import TransparentButton from '../../../components/TransparentButton'
 import TrashIcon from '/white-trash.svg'
 import EditIcon from '/edit.svg'
 import File from '../../../components/File'
+import { downloadFile } from '../../../utils/file'
 
 export const Route = createFileRoute('/home/lectures/$lectureId')({
   component: Lecture,
@@ -75,7 +76,7 @@ function Lecture() {
               <File
                 name={f.name}
                 canDownload={true}
-                onClick={() => true}
+                onClick={() => downloadFile(f.name, f.url)}
               />
             </li>
           ))}
