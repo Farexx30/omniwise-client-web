@@ -33,7 +33,7 @@ function FileInput({ data: files, onChange, onFileIconClick, onClear, multiple, 
                 </button>
             </div>
             <div className={`max-h-${maxHeight} w-full overflow-y-auto overflow-x-clip`}>
-                <ul className={`grid grid-cols-1 gap-5 w-full px-4 ${multiple ? `xs:grid-cols-2 md:grid-cols-3` : ""}`}>
+                <ul className={`grid grid-cols-1 gap-5 p-4 w-full px-4 ${multiple ? `md:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3` : ""}`}>
                     {files.map((f) => (
                         <li key={f.name}>
                             <File

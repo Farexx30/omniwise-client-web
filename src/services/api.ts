@@ -238,7 +238,11 @@ export const getLectureById = async (id: number): Promise<Lecture> => {
     }
 
     const json = await response.json();
-    return json as Lecture;
+    const result: Lecture = {
+        ...json,
+        files: json.fileInfos
+    }
+    return result;
 }
 
 export const getAssignmentById = async (id: number): Promise<Assignment> => {

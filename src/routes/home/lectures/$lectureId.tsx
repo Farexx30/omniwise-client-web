@@ -7,6 +7,7 @@ import Spinner from '../../../components/Spinner'
 import TransparentButton from '../../../components/TransparentButton'
 import TrashIcon from '/white-trash.svg'
 import EditIcon from '/edit.svg'
+import File from '../../../components/File'
 
 export const Route = createFileRoute('/home/lectures/$lectureId')({
   component: Lecture,
@@ -50,18 +51,38 @@ function Lecture() {
       <div className='flex flex-row justify-between pb-2 border-b-1'>
         <h2>{lecture.name}</h2>
         <div className='flex flex-row'>
-          <TransparentButton text=""
-            iconSrc={EditIcon} />
+          <TransparentButton
+            text=""
+            iconSrc={EditIcon}
+          />
           <div className='w-2'></div>
-          <TransparentButton text=""
+          <TransparentButton
+            text=""
             iconSrc={TrashIcon}
             onClick={() => {
               removeLecture(lecture.id);
-            }} />
+            }}
+          />
         </div>
       </div>
-      <div className='w-full h-44 bg-pink-50 mt-4'>
-        files
+      <div className="flex flex-row justify-between mt-4">
+        <h3>Files</h3>
+      </div>
+      <div className='w-full max-h-76 overflow-y-auto overflow-x-clip'>
+        <ul className="grid grid-cols-1 gap-5 md:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 p-4">
+          {lecture.files.map(f => (
+            <li key={f.name}>
+              <File
+                name={f.name}
+                canDownload={true}
+                onClick={() => true}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="flex flex-row justify-between mt-8">
+        <h2>Content</h2>
       </div>
       <div className='mt-4 overflow-y-auto flex-1'>
         {lecture.content}
