@@ -6,6 +6,7 @@ import { getAssignmentsByCourseId, getLecturesByCourseId, getMembersByCourseId }
 import { useEffect, useState } from "react";
 import type { BasicAssignmentInfo } from "../types/assignment";
 import type { BasicUserInfo } from "../types/user";
+import { useRouter } from "@tanstack/react-router";
 
 interface CourseBarProps {
     currentCourseId: number | null;
@@ -15,6 +16,8 @@ interface CourseBarProps {
 type Tab = "lectures" | "assignments" | "members";
 
 const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
+    const router = useRouter();
+
     const [currentTab, setCurrentTab] = useState<Tab>("lectures")
     const [currentData, setCurrentData] = useState<
         BasicLectureInfo[]
@@ -105,6 +108,22 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
                     <TransparentButton
                         text="Add"
                         textSize="text-sm"
+                        onClick={() => {
+                            let destination;
+                            if (currentTab == "lectures") {
+                                destination = "/home/lectures/new"
+                            }
+                            else if (currentTab == "assignments") {
+                                destination = "??? will be implemented later"
+                            }
+                            else if (currentTab == "members") {
+                                destination = "??? will be implemented later"
+                            }
+
+                            router.navigate({
+                                to: destination
+                            });
+                        }}
                     />
                 </div>
                 <div>

@@ -10,10 +10,11 @@ import EditIcon from '/edit.svg'
 import AcceptIcon from "/accept-icon.svg"
 import DiscardIcon from "/discard-icon.svg"
 import ReadonlyFileList from '../../../components/ReadonlyFileList'
-import { useState, type FormEvent } from 'react'
+import { useContext, useEffect, useState, type FormEvent } from 'react'
 import FileInput from '../../../components/FileInput'
 import { useFile } from '../../../hooks/useFile'
 import { fetchFiles } from '../../../utils/file'
+import { HomeContext } from '../route'
 
 export const Route = createFileRoute('/home/lectures/$lectureId')({
   component: Lecture,
@@ -34,12 +35,24 @@ export const Route = createFileRoute('/home/lectures/$lectureId')({
 
 function Lecture() {
   const { lectureId } = Route.useLoaderData();
+  const homeContext = useContext(HomeContext);
 
   const { data: lecture } = useSuspenseQuery({
     queryKey: ["lecture", lectureId],
     queryFn: () => getLectureById(lectureId),
     staleTime: 60_000 * 5
   });
+
+  // !!!IMPORTANT!!!
+  // Reset the component state when navigating to different lecture, since React preserves the previous state even if
+  // lectureId param from Tanstack Router is differnt. 
+  // If not it would destroy component's behavior when isEditing would be set to true atleast once in the same course.
+  useEffect(() => {
+    setIsEditing(false);
+    setCourseName(lecture.name);
+    setCourseContent(lecture.content);
+    clearFiles();
+  }, [lecture])
 
   const navigate = useNavigate();
 
@@ -49,7 +62,13 @@ function Lecture() {
     mutationFn: deleteLecture,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lectures"] });
-      navigate({ to: "/home" });
+
+      navigate({
+        to: "/home/courses/$courseId",
+        params: {
+          courseId: homeContext!.currentCourseId!.toString()
+        }
+      });
     },
     onError: () => {
       alert("An error occured while deleting lecture.")
@@ -58,15 +77,15 @@ function Lecture() {
 
   const { mutateAsync: modifyLecture } = useMutation({
     mutationFn: (formData: FormData) => updateLecture(formData, lectureId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lectures"] });
-      queryClient.invalidateQueries({ queryKey: ["lecture", lectureId] });
+    onSuccess: async() => {
+      await queryClient.invalidateQueries({ queryKey: ["lectures"] });
+      await queryClient.invalidateQueries({ queryKey: ["lecture", lectureId] });
       setIsEditing(!isEditing)
     },
     onError: () => {
       alert("An error occured while updating lecture.")
       setIsEditing(!isEditing)
-    }
+    },
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -100,7 +119,7 @@ function Lecture() {
         <div className='flex flex-row justify-between pb-2 border-b-1'>
           <input
             type="text"
-            placeholder="New course..."
+            placeholder="New lecture..."
             required
             value={courseName}
             onChange={(e) => setCourseName(e.target.value)}
@@ -111,7 +130,7 @@ function Lecture() {
               text=""
               iconSrc={AcceptIcon}
               isSubmitType={true}
-              disabled={courseName.length < 3 || files.length < 1}
+              disabled={courseName.trim().length < 3 || files.length < 1}
             />
             <div className='w-2'></div>
             <TransparentButton

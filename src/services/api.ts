@@ -300,7 +300,7 @@ export const deleteLecture = async (id: number) => {
     }
 }
 
-export const createCourse = async(formData: FormData): Promise<number> => {
+export const createCourse = async (formData: FormData): Promise<number> => {
     const url = `${BASE_API_URL_DEV}/courses`;
     const response = await fetch(url, {
         method: "POST",
@@ -318,7 +318,7 @@ export const createCourse = async(formData: FormData): Promise<number> => {
     return json.courseId;
 }
 
-export const updateLecture = async(formData: FormData, lectureId: number): Promise<void> => {
+export const updateLecture = async (formData: FormData, lectureId: number): Promise<void> => {
     const url = `${BASE_API_URL_DEV}/lectures/${encodeURIComponent(lectureId)}`;
     const response = await fetch(url, {
         method: "PATCH",
@@ -331,4 +331,22 @@ export const updateLecture = async(formData: FormData, lectureId: number): Promi
     if (!response.ok) {
         throw new Error(`Error updating lecture: ${response.statusText}`);
     }
+}
+
+export const createLecture = async (formData: FormData, courseId: number): Promise<number> => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(courseId)}/lectures`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error creating lecture: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json.lectureId;
 }
