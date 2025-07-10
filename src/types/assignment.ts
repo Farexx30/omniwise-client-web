@@ -18,3 +18,20 @@ export interface Submission {
     latestSubmissionDate: string;
     authorFullName: string;
 }
+
+export interface AssignmentSubmission
+{
+    id: number;
+    grade: number;    
+    latestSubmissionDate: string;
+    fileUrls?: string[];
+    comments?: Comment[];
+}
+
+export interface Comment
+{
+    id: number;
+    content: string;
+    sentDate: string;
+    authorFullName: string;
+}
