@@ -14,6 +14,8 @@
     "@tanstack/react-query": "^5.81.5",
     "@tanstack/react-router": "^1.124.0",
     "@tanstack/react-router-devtools": "^1.124.0",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "tailwind-scrollbar": "^4.0.2",
@@ -22,6 +24,7 @@
   "devDependencies": {
     "@eslint/js": "^9.29.0",
     "@tanstack/router-plugin": "^1.124.0",
+    "@types/file-saver": "^2.0.7",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.2",

@@ -1,17 +1,16 @@
 import React, { useRef, useState, type ChangeEvent } from "react";
-import File from "./File";
+import FileView from "./FileView";
 
 interface FileInputProps {
     data: File[];
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-    onFileIconClick: (name: string) => void;
+    onRemove: (name: string) => void;
     onClear: () => void;
     multiple?: boolean;
     accept?: string;
-    maxHeight: string;
 }
 
-function FileInput({ data: files, onChange, onFileIconClick, onClear, multiple, accept, maxHeight }: FileInputProps) {
+function FileInput({ data: files, onChange, onRemove, onClear, multiple, accept }: FileInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     return (
@@ -32,14 +31,14 @@ function FileInput({ data: files, onChange, onFileIconClick, onClear, multiple, 
                     />
                 </button>
             </div>
-            <div className={`max-h-${maxHeight} w-full overflow-y-auto overflow-x-clip`}>
+            <div className="max-h-76 w-full overflow-y-auto overflow-x-clip">
                 <ul className={`grid grid-cols-1 gap-5 p-4 w-full px-4 ${multiple ? `md:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3` : ""}`}>
                     {files.map((f) => (
                         <li key={f.name}>
-                            <File
+                            <FileView
                                 name={f.name}
                                 canDownload={false}
-                                onClick={onFileIconClick}
+                                onClick={onRemove}
                             />
                         </li>
                     ))}

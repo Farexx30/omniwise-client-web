@@ -7,8 +7,8 @@ import Spinner from '../../../components/Spinner'
 import TransparentButton from '../../../components/TransparentButton'
 import TrashIcon from '/white-trash.svg'
 import EditIcon from '/edit.svg'
-import File from '../../../components/File'
-import { downloadFile } from '../../../utils/file'
+import ReadonlyFileList from '../../../components/ReadonlyFileList'
+import type { downloadFile } from '../../../utils/file'
 
 export const Route = createFileRoute('/home/lectures/$lectureId')({
   component: Lecture,
@@ -69,19 +69,10 @@ function Lecture() {
       <div className="flex flex-row justify-between mt-4">
         <h3>Files</h3>
       </div>
-      <div className='w-full max-h-76 overflow-y-auto overflow-x-clip'>
-        <ul className="grid grid-cols-1 gap-5 md:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 p-4">
-          {lecture.files.map(f => (
-            <li key={f.name}>
-              <File
-                name={f.name}
-                canDownload={true}
-                onClick={() => downloadFile(f.name, f.url)}
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ReadonlyFileList
+        data={lecture.files}
+        zipNameForDownloadAll={`${lecture.name}_Files`}
+      />
       <div className="flex flex-row justify-between mt-8">
         <h2>Content</h2>
       </div>

@@ -75,11 +75,10 @@ function CreateCourse() {
                     <FileInput
                         data={imgs}
                         onChange={onChange}
-                        onFileIconClick={removeFile}
+                        onRemove={removeFile}
                         onClear={clearFiles}
                         multiple={false}
                         accept="image/png, image/jpg, image/jpeg, image/jfif, image/jiff, image/tiff, image/bmp, image/raw"
-                        maxHeight="76"
                     />
                 </div>
                 <div className="text-xl mt-4 [&>*]:px-18 w-fit">
