@@ -104,7 +104,7 @@ function Lecture() {
             required
             value={courseName}
             onChange={(e) => setCourseName(e.target.value)}
-            className="text-2xl border-gray-700 text-gray-200 w-full h-full bg-[#1E1E1E] p-4 rounded-4xl placeholder:text-gray-500"
+            className="focus:outline-none focus:ring-0 text-2xl border-gray-700 text-gray-200 w-full h-full bg-[#1E1E1E] p-2 rounded-4xl placeholder:text-gray-500"
           />
           <div className='flex flex-row'>
             <TransparentButton
@@ -134,7 +134,7 @@ function Lecture() {
         <div className="flex flex-row justify-between mt-8">
           <h2>Content</h2>
         </div>
-        <div className='mt-4 overflow-y-auto flex-1 '>
+        <div className='mt-4 flex-1'>
           <textarea
             placeholder="Content..."
             value={courseContent || ""}
@@ -145,7 +145,7 @@ function Lecture() {
       </form>
     ) : (
       <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
-        <div className='flex flex-row justify-between pb-2 border-b-1'>
+        <div className='flex flex-row justify-between pb-4 pt-1 border-b-1'>
           <h2>{lecture.name}</h2>
           <div className='flex flex-row'>
             <TransparentButton

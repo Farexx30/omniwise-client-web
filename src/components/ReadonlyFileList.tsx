@@ -1,4 +1,3 @@
-import React from 'react'
 import type { FileInfo } from '../types/file';
 import { downloadAllFiles, downloadFile } from '../utils/file';
 import FileView from './FileView';
