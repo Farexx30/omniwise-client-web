@@ -507,3 +507,21 @@ export const updateAssignmentSubmissionGrade = async (assignmentSubmissionId: nu
         throw new Error(`Error updating assignment submission: ${response.statusText}`);
     }
 }
+
+export const createAssignmentSubmission = async (formData: FormData, assignmentId: number): Promise<number> => {
+    const url = `${BASE_API_URL_DEV}/assignments/${encodeURIComponent(assignmentId)}/assignment-submissions`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error creating assignment submission: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json.assignmentSubmissionId;
+}

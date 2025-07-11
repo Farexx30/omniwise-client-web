@@ -21,10 +21,11 @@ import { Route as HomeLecturesNewRouteImport } from './routes/home/lectures/new'
 import { Route as HomeLecturesLectureIdRouteImport } from './routes/home/lectures/$lectureId'
 import { Route as HomeCoursesNewRouteImport } from './routes/home/courses/new'
 import { Route as HomeAssignmentsNewRouteImport } from './routes/home/assignments/new'
-import { Route as HomeAssignmentsAssignmentIdRouteImport } from './routes/home/assignments/$assignmentId'
 import { Route as HomeAssignmentSubmissionsAssignmentSubmissionIdRouteImport } from './routes/home/assignment-submissions/$assignmentSubmissionId'
 import { Route as HomeCoursesCourseIdRouteRouteImport } from './routes/home/courses/$courseId/route'
 import { Route as HomeCoursesCourseIdIndexRouteImport } from './routes/home/courses/$courseId/index'
+import { Route as HomeAssignmentsAssignmentIdIndexRouteImport } from './routes/home/assignments/$assignmentId/index'
+import { Route as HomeAssignmentsAssignmentIdNewSubmissionRouteImport } from './routes/home/assignments/$assignmentId/new-submission'
 import { Route as HomeCoursesCourseIdMembersMemberIdRouteImport } from './routes/home/courses/$courseId/members/$memberId'
 
 const RegistrationRoute = RegistrationRouteImport.update({
@@ -87,12 +88,6 @@ const HomeAssignmentsNewRoute = HomeAssignmentsNewRouteImport.update({
   path: '/assignments/new',
   getParentRoute: () => HomeRouteRoute,
 } as any)
-const HomeAssignmentsAssignmentIdRoute =
-  HomeAssignmentsAssignmentIdRouteImport.update({
-    id: '/assignments/$assignmentId',
-    path: '/assignments/$assignmentId',
-    getParentRoute: () => HomeRouteRoute,
-  } as any)
 const HomeAssignmentSubmissionsAssignmentSubmissionIdRoute =
   HomeAssignmentSubmissionsAssignmentSubmissionIdRouteImport.update({
     id: '/assignment-submissions/$assignmentSubmissionId',
@@ -110,6 +105,18 @@ const HomeCoursesCourseIdIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => HomeCoursesCourseIdRouteRoute,
+  } as any)
+const HomeAssignmentsAssignmentIdIndexRoute =
+  HomeAssignmentsAssignmentIdIndexRouteImport.update({
+    id: '/assignments/$assignmentId/',
+    path: '/assignments/$assignmentId/',
+    getParentRoute: () => HomeRouteRoute,
+  } as any)
+const HomeAssignmentsAssignmentIdNewSubmissionRoute =
+  HomeAssignmentsAssignmentIdNewSubmissionRouteImport.update({
+    id: '/assignments/$assignmentId/new-submission',
+    path: '/assignments/$assignmentId/new-submission',
+    getParentRoute: () => HomeRouteRoute,
   } as any)
 const HomeCoursesCourseIdMembersMemberIdRoute =
   HomeCoursesCourseIdMembersMemberIdRouteImport.update({
@@ -129,11 +136,12 @@ export interface FileRoutesByFullPath {
   '/home/': typeof HomeIndexRoute
   '/home/courses/$courseId': typeof HomeCoursesCourseIdRouteRouteWithChildren
   '/home/assignment-submissions/$assignmentSubmissionId': typeof HomeAssignmentSubmissionsAssignmentSubmissionIdRoute
-  '/home/assignments/$assignmentId': typeof HomeAssignmentsAssignmentIdRoute
   '/home/assignments/new': typeof HomeAssignmentsNewRoute
   '/home/courses/new': typeof HomeCoursesNewRoute
   '/home/lectures/$lectureId': typeof HomeLecturesLectureIdRoute
   '/home/lectures/new': typeof HomeLecturesNewRoute
+  '/home/assignments/$assignmentId/new-submission': typeof HomeAssignmentsAssignmentIdNewSubmissionRoute
+  '/home/assignments/$assignmentId': typeof HomeAssignmentsAssignmentIdIndexRoute
   '/home/courses/$courseId/': typeof HomeCoursesCourseIdIndexRoute
   '/home/courses/$courseId/members/$memberId': typeof HomeCoursesCourseIdMembersMemberIdRoute
 }
@@ -146,11 +154,12 @@ export interface FileRoutesByTo {
   '/home/notifications': typeof HomeNotificationsRoute
   '/home': typeof HomeIndexRoute
   '/home/assignment-submissions/$assignmentSubmissionId': typeof HomeAssignmentSubmissionsAssignmentSubmissionIdRoute
-  '/home/assignments/$assignmentId': typeof HomeAssignmentsAssignmentIdRoute
   '/home/assignments/new': typeof HomeAssignmentsNewRoute
   '/home/courses/new': typeof HomeCoursesNewRoute
   '/home/lectures/$lectureId': typeof HomeLecturesLectureIdRoute
   '/home/lectures/new': typeof HomeLecturesNewRoute
+  '/home/assignments/$assignmentId/new-submission': typeof HomeAssignmentsAssignmentIdNewSubmissionRoute
+  '/home/assignments/$assignmentId': typeof HomeAssignmentsAssignmentIdIndexRoute
   '/home/courses/$courseId': typeof HomeCoursesCourseIdIndexRoute
   '/home/courses/$courseId/members/$memberId': typeof HomeCoursesCourseIdMembersMemberIdRoute
 }
@@ -166,11 +175,12 @@ export interface FileRoutesById {
   '/home/': typeof HomeIndexRoute
   '/home/courses/$courseId': typeof HomeCoursesCourseIdRouteRouteWithChildren
   '/home/assignment-submissions/$assignmentSubmissionId': typeof HomeAssignmentSubmissionsAssignmentSubmissionIdRoute
-  '/home/assignments/$assignmentId': typeof HomeAssignmentsAssignmentIdRoute
   '/home/assignments/new': typeof HomeAssignmentsNewRoute
   '/home/courses/new': typeof HomeCoursesNewRoute
   '/home/lectures/$lectureId': typeof HomeLecturesLectureIdRoute
   '/home/lectures/new': typeof HomeLecturesNewRoute
+  '/home/assignments/$assignmentId/new-submission': typeof HomeAssignmentsAssignmentIdNewSubmissionRoute
+  '/home/assignments/$assignmentId/': typeof HomeAssignmentsAssignmentIdIndexRoute
   '/home/courses/$courseId/': typeof HomeCoursesCourseIdIndexRoute
   '/home/courses/$courseId/members/$memberId': typeof HomeCoursesCourseIdMembersMemberIdRoute
 }
@@ -187,11 +197,12 @@ export interface FileRouteTypes {
     | '/home/'
     | '/home/courses/$courseId'
     | '/home/assignment-submissions/$assignmentSubmissionId'
-    | '/home/assignments/$assignmentId'
     | '/home/assignments/new'
     | '/home/courses/new'
     | '/home/lectures/$lectureId'
     | '/home/lectures/new'
+    | '/home/assignments/$assignmentId/new-submission'
+    | '/home/assignments/$assignmentId'
     | '/home/courses/$courseId/'
     | '/home/courses/$courseId/members/$memberId'
   fileRoutesByTo: FileRoutesByTo
@@ -204,11 +215,12 @@ export interface FileRouteTypes {
     | '/home/notifications'
     | '/home'
     | '/home/assignment-submissions/$assignmentSubmissionId'
-    | '/home/assignments/$assignmentId'
     | '/home/assignments/new'
     | '/home/courses/new'
     | '/home/lectures/$lectureId'
     | '/home/lectures/new'
+    | '/home/assignments/$assignmentId/new-submission'
+    | '/home/assignments/$assignmentId'
     | '/home/courses/$courseId'
     | '/home/courses/$courseId/members/$memberId'
   id:
@@ -223,11 +235,12 @@ export interface FileRouteTypes {
     | '/home/'
     | '/home/courses/$courseId'
     | '/home/assignment-submissions/$assignmentSubmissionId'
-    | '/home/assignments/$assignmentId'
     | '/home/assignments/new'
     | '/home/courses/new'
     | '/home/lectures/$lectureId'
     | '/home/lectures/new'
+    | '/home/assignments/$assignmentId/new-submission'
+    | '/home/assignments/$assignmentId/'
     | '/home/courses/$courseId/'
     | '/home/courses/$courseId/members/$memberId'
   fileRoutesById: FileRoutesById
@@ -326,13 +339,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeAssignmentsNewRouteImport
       parentRoute: typeof HomeRouteRoute
     }
-    '/home/assignments/$assignmentId': {
-      id: '/home/assignments/$assignmentId'
-      path: '/assignments/$assignmentId'
-      fullPath: '/home/assignments/$assignmentId'
-      preLoaderRoute: typeof HomeAssignmentsAssignmentIdRouteImport
-      parentRoute: typeof HomeRouteRoute
-    }
     '/home/assignment-submissions/$assignmentSubmissionId': {
       id: '/home/assignment-submissions/$assignmentSubmissionId'
       path: '/assignment-submissions/$assignmentSubmissionId'
@@ -353,6 +359,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/home/courses/$courseId/'
       preLoaderRoute: typeof HomeCoursesCourseIdIndexRouteImport
       parentRoute: typeof HomeCoursesCourseIdRouteRoute
+    }
+    '/home/assignments/$assignmentId/': {
+      id: '/home/assignments/$assignmentId/'
+      path: '/assignments/$assignmentId'
+      fullPath: '/home/assignments/$assignmentId'
+      preLoaderRoute: typeof HomeAssignmentsAssignmentIdIndexRouteImport
+      parentRoute: typeof HomeRouteRoute
+    }
+    '/home/assignments/$assignmentId/new-submission': {
+      id: '/home/assignments/$assignmentId/new-submission'
+      path: '/assignments/$assignmentId/new-submission'
+      fullPath: '/home/assignments/$assignmentId/new-submission'
+      preLoaderRoute: typeof HomeAssignmentsAssignmentIdNewSubmissionRouteImport
+      parentRoute: typeof HomeRouteRoute
     }
     '/home/courses/$courseId/members/$memberId': {
       id: '/home/courses/$courseId/members/$memberId'
@@ -387,11 +407,12 @@ interface HomeRouteRouteChildren {
   HomeIndexRoute: typeof HomeIndexRoute
   HomeCoursesCourseIdRouteRoute: typeof HomeCoursesCourseIdRouteRouteWithChildren
   HomeAssignmentSubmissionsAssignmentSubmissionIdRoute: typeof HomeAssignmentSubmissionsAssignmentSubmissionIdRoute
-  HomeAssignmentsAssignmentIdRoute: typeof HomeAssignmentsAssignmentIdRoute
   HomeAssignmentsNewRoute: typeof HomeAssignmentsNewRoute
   HomeCoursesNewRoute: typeof HomeCoursesNewRoute
   HomeLecturesLectureIdRoute: typeof HomeLecturesLectureIdRoute
   HomeLecturesNewRoute: typeof HomeLecturesNewRoute
+  HomeAssignmentsAssignmentIdNewSubmissionRoute: typeof HomeAssignmentsAssignmentIdNewSubmissionRoute
+  HomeAssignmentsAssignmentIdIndexRoute: typeof HomeAssignmentsAssignmentIdIndexRoute
 }
 
 const HomeRouteRouteChildren: HomeRouteRouteChildren = {
@@ -401,11 +422,13 @@ const HomeRouteRouteChildren: HomeRouteRouteChildren = {
   HomeCoursesCourseIdRouteRoute: HomeCoursesCourseIdRouteRouteWithChildren,
   HomeAssignmentSubmissionsAssignmentSubmissionIdRoute:
     HomeAssignmentSubmissionsAssignmentSubmissionIdRoute,
-  HomeAssignmentsAssignmentIdRoute: HomeAssignmentsAssignmentIdRoute,
   HomeAssignmentsNewRoute: HomeAssignmentsNewRoute,
   HomeCoursesNewRoute: HomeCoursesNewRoute,
   HomeLecturesLectureIdRoute: HomeLecturesLectureIdRoute,
   HomeLecturesNewRoute: HomeLecturesNewRoute,
+  HomeAssignmentsAssignmentIdNewSubmissionRoute:
+    HomeAssignmentsAssignmentIdNewSubmissionRoute,
+  HomeAssignmentsAssignmentIdIndexRoute: HomeAssignmentsAssignmentIdIndexRoute,
 }
 
 const HomeRouteRouteWithChildren = HomeRouteRoute._addFileChildren(
