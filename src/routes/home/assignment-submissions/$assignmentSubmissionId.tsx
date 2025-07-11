@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useLocation } from '@tanstack/react-router'
 import TransparentButton from '../../../components/TransparentButton';
 import { formatDate } from '../../../utils/date';
 import EditIcon from '/edit.svg'
@@ -22,9 +22,10 @@ export const Route = createFileRoute('/home/assignment-submissions/$assignmentSu
 
       return {
         assignmentSubmissionId: Number(params.assignmentSubmissionId)
-      }
+      };
     }
   })
+
 
 function AssignmentSubmission() {
   const [newComment, setNewComment] = useState("");
@@ -36,6 +37,13 @@ function AssignmentSubmission() {
     staleTime: 60_000 * 5
   })
 
+
+  const location = useLocation();
+  const locationState = location.state as {
+    assignmentName?: string;
+    deadline?: string;
+    maxGrade?: number;
+  };
 
   const queryClient = useQueryClient();
 
@@ -65,7 +73,7 @@ function AssignmentSubmission() {
   return (
     <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
       <div className='flex flex-row justify-between pb-2 border-b-1'>
-        <h2>assignmentname</h2>
+        <h2>{locationState.assignmentName ?? "Assignment"}</h2>
       </div>
       <div className='flex flex-row pb-2 border-b-1 mt-2'>
         <span><strong>Submission date:</strong> {formatDate(assignmentSubmission.latestSubmissionDate)}</span>

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate} from '@tanstack/react-router'
 import Spinner from '../../../components/Spinner'
 import { deleteAssignment, getAssignmentById } from '../../../services/api'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
@@ -6,6 +6,8 @@ import TransparentButton from '../../../components/TransparentButton'
 import TrashIcon from '/white-trash.svg'
 import EditIcon from '/edit.svg'
 import { formatDate } from '../../../utils/date'
+import { Route as SubmissionRoute } from '../assignment-submissions/$assignmentSubmissionId';
+
 
 export const Route = createFileRoute('/home/assignments/$assignmentId')({
   component: Assignment,
@@ -26,7 +28,6 @@ export const Route = createFileRoute('/home/assignments/$assignmentId')({
 
 function Assignment() {
   const { assignmentId } = Route.useLoaderData();
-
   const { data: assignment } = useSuspenseQuery({
     queryKey: ["assignment", assignmentId],
     queryFn: () => getAssignmentById(assignmentId),
@@ -34,7 +35,6 @@ function Assignment() {
   })
 
   const navigate = useNavigate();
-
   const queryClient = useQueryClient();
 
   const { mutate: removeAssignment } = useMutation({
@@ -73,13 +73,19 @@ function Assignment() {
         {assignment.submissions && assignment.submissions.length > 0 ? (
           <ul>
             {assignment.submissions.map(s => (
-              <li key={s.id} className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
-                <p><strong> {s.authorFullName}</strong></p>
-                <div className="flex flex-row ">
-                  <p><strong>Grade:</strong> {s.grade != null ? s.grade : "-"}/{assignment.maxGrade}</p>
+              <li key={s.id}>
+                <Link
+                  to={SubmissionRoute.to}
+                  params={{ assignmentSubmissionId: String(s.id) }}
+                  className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4"
+                >
+                  <p><strong> {s.authorFullName}</strong></p>
+                  <div className="flex flex-row ">
+                    <p><strong>Grade:</strong> {s.grade != null ? s.grade : "-"}/{assignment.maxGrade}</p>
 
-                  <p className='ml-8'><strong>Date:</strong> {formatDate(s.latestSubmissionDate)}</p>
-                </div>
+                    <p className='ml-8'><strong>Date:</strong> {formatDate(s.latestSubmissionDate)}</p>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>
@@ -87,6 +93,6 @@ function Assignment() {
           <p className="italic text-secondary-grey">No submissions yet.</p>
         )}
       </div>
-    </div>
+    </div >
   )
 }
