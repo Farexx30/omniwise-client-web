@@ -2,7 +2,7 @@ import type { Assignment, BasicAssignmentInfo } from "../types/assignment";
 import type { Course } from "../types/course";
 import type { NotificationDetails } from "../types/notification";
 import type { BasicLectureInfo, Lecture } from "../types/lecture";
-import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, RegisterResult, RegisterUser } from "../types/user";
+import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, RegisterResult, RegisterUser, UserRole } from "../types/user";
 
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
 const BASE_API_URL_DEV = "https://localhost:7155/api"
@@ -53,6 +53,26 @@ export const login = async (email: string, password: string): Promise<LoginResul
     localStorage.setItem("accessToken", json.accessToken);
     localStorage.setItem("expiresIn", json.expiresIn.toString());
     localStorage.setItem("refreshToken", json.refreshToken);
+
+    return "Success";
+}
+
+export const getUserRole = async (): Promise<LoginResult> => {
+    const url = `${BASE_API_URL_DEV}/identity/my-role`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+    });
+
+    if (response.status === 401) {
+        return "Unauthorized"
+    }
+
+    const json = await response.json();
+    localStorage.setItem("role", json.role);
 
     return "Success";
 }
@@ -268,7 +288,7 @@ export const getAssignmentById = async (id: number): Promise<Assignment> => {
     return result;
 }
 
-export const updateAssignment = async(formData: FormData, assignmentId: number): Promise<void> => {
+export const updateAssignment = async (formData: FormData, assignmentId: number): Promise<void> => {
     const url = `${BASE_API_URL_DEV}/assignments/${encodeURIComponent(assignmentId)}`;
     const response = await fetch(url, {
         method: "PATCH",

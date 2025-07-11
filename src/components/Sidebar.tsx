@@ -2,17 +2,20 @@ import plusIcon from "/plus.svg";
 import signupIcon from "/signup.svg";
 import bell from "/bell.svg";
 import { getEnrolledCourses } from "../services/api";
-import type { JSX } from "react";
+import { useContext, type JSX } from "react";
 import Spinner from "./Spinner";
 import TransparentLink from "./TransparentLink";
 import { useQuery } from "@tanstack/react-query";
 import ShadowLink from "./ShadowLink";
+import { UserContext } from "../routes/home/route";
 
 interface SidebarProps {
     onCourseClick: (courseId: number, courseName: string) => void;
 }
 
 const Sidebar = ({ onCourseClick }: SidebarProps) => {
+    const userContext = useContext(UserContext)!;
+
     const {data: courses, isLoading, isError } = useQuery({
         queryKey: ["courses"],
         queryFn: () => getEnrolledCourses(),
@@ -48,14 +51,15 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
         )
     }
 
+    console.log(userContext.role);
     return (
         <div className="flex flex-col bg-transparent h-full w-44 p-3">
             <div className="flex flex-col gap-2 mb-4">  
-                <ShadowLink
+                {userContext.role === "Teacher" && <ShadowLink
                     to="/home/courses/new"
                     iconSrc={plusIcon}
                     text="New course"
-                />
+                />}
                 <ShadowLink
                     iconSrc={signupIcon}
                     text="Join course"

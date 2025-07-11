@@ -18,7 +18,6 @@ function NewAssignment() {
   const queryClient = useQueryClient();
   const homeContext = useContext(HomeContext);
 
-  const [isEditing, setIsEditing] = useState(false);
   const [assignmentName, setAssignmentName] = useState("");
   const [assignmentContent, setAssignmentContent] = useState<string | null>(null);
   const [assignmentDeadline, setAssignmentDeadline] = useState<string>("");
