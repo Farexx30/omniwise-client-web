@@ -61,8 +61,8 @@ function Assignment() {
         </div>
       </div>
       <div className='flex flex-row pb-2 border-b-1 mt-2'>
-        <span>{formatDate(assignment.deadline)}</span>
-        <span className='ml-8'>Maximum grade: {assignment.maxGrade}</span>
+        <span><strong>Deadline:</strong> {formatDate(assignment.deadline)}</span>
+        <span className='ml-8'><strong>Maximum grade:</strong> {assignment.maxGrade}</span>
       </div>
       <div className='w-full h-44 bg-pink-50 mt-4'>
         files

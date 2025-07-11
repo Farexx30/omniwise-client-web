@@ -23,9 +23,13 @@ export interface AssignmentSubmission
 {
     id: number;
     grade: number;    
+    maxGrade: number;
     latestSubmissionDate: string;
-    fileUrls?: string[];
+    deadline: string;
     comments?: Comment[];
+    authorFullName: string;
+    assignmentId: number;
+    assignmentName: string;
 }
 
 export interface Comment

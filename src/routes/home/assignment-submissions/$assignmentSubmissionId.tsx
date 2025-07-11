@@ -37,14 +37,6 @@ function AssignmentSubmission() {
     staleTime: 60_000 * 5
   })
 
-
-  const location = useLocation();
-  const locationState = location.state as {
-    assignmentName?: string;
-    deadline?: string;
-    maxGrade?: number;
-  };
-
   const queryClient = useQueryClient();
 
 
@@ -73,11 +65,12 @@ function AssignmentSubmission() {
   return (
     <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
       <div className='flex flex-row justify-between pb-2 border-b-1'>
-        <h2>{locationState.assignmentName ?? "Assignment"}</h2>
+        <h2>{assignmentSubmission.assignmentName}</h2>
       </div>
-      <div className='flex flex-row pb-2 border-b-1 mt-2'>
+      <div className='flex flex-row pb-2 border-b-1 mt-2 justify-between'>
+        <span><strong>Author: </strong> {assignmentSubmission.authorFullName}</span>
         <span><strong>Submission date:</strong> {formatDate(assignmentSubmission.latestSubmissionDate)}</span>
-        <span className='ml-8'><strong>Deadline date:</strong> </span>
+        <span><strong>Deadline date:</strong> {formatDate(assignmentSubmission.deadline)}</span>
       </div>
       <div className='w-full h-44 bg-pink-50 mt-4'>
         files
@@ -85,7 +78,7 @@ function AssignmentSubmission() {
       <div className='mt-4 overflow-y-auto flex-1 overflow-x-hidden w-full pr-2'>
         <h3>Grade:</h3>
         <div className='flex flex-row'>
-          <span className='text-xl mr-4'>{assignmentSubmission.grade != null ? assignmentSubmission.grade : "-"}/max</span>
+          <span className='text-xl mr-4'>{assignmentSubmission.grade != null ? assignmentSubmission.grade : "-"}/{assignmentSubmission.maxGrade}</span>
           <TransparentButton text=""
             iconSrc={EditIcon} />
         </div>
