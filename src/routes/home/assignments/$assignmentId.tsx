@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate} from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import Spinner from '../../../components/Spinner'
 import { deleteAssignment, getAssignmentById, updateAssignment } from '../../../services/api'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
@@ -59,6 +59,9 @@ function Assignment() {
           courseId: homeContext!.currentCourseId!.toString()
         }
       });
+    },
+    onError: () => {
+      alert("An error occured while deleting assignment.")
     },
   });
 
@@ -205,12 +208,18 @@ function Assignment() {
           {assignment.submissions && assignment.submissions.length > 0 ? (
             <ul>
               {assignment.submissions.map(s => (
-                <li key={s.id} className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
-                  <p><strong> {s.authorFullName}</strong></p>
-                  <div className="flex flex-row ">
-                    <p><strong>Grade:</strong> {s.grade !== null ? s.grade : "-"}/{assignment.maxGrade}</p>
-                    <p className='ml-8'><strong>Date:</strong> {formatDate(s.latestSubmissionDate)}</p>
-                  </div>
+                <li key={s.id}>
+                  <Link
+                    to="/home/assignment-submissions/$assignmentSubmissionId"
+                    params={{ assignmentSubmissionId: s.id.toString() }
+                    }>
+                    <div className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
+                      <AssignmentSubmission
+                        submission={s}
+                        assignmentMaxGrade={assignment.maxGrade}
+                      />
+                    </div>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -263,11 +272,18 @@ function Assignment() {
               {assignment.submissions && assignment.submissions.length > 0 ? (
                 <ul>
                   {assignment.submissions.map(s => (
-                    <li key={s.id} className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
-                      <AssignmentSubmission
-                        submission={s}
-                        assignmentMaxGrade={assignment.maxGrade}
-                      />
+                    <li key={s.id}>
+                      <Link
+                        to="/home/assignment-submissions/$assignmentSubmissionId"
+                        params={{ assignmentSubmissionId: s.id.toString() }
+                        }>
+                        <div className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
+                          <AssignmentSubmission
+                            submission={s}
+                            assignmentMaxGrade={assignment.maxGrade}
+                          />
+                        </div>
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -278,13 +294,19 @@ function Assignment() {
           ) : (
             <>
               <h3 className='mt-4'>Your Submission:</h3>
-              {assignment.submissions!.length > 0 ? (
-                <div className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
-                  <AssignmentSubmission
-                    submission={assignment.submissions![0]}
-                    assignmentMaxGrade={assignment.maxGrade}
-                  />
-                </div>) : (
+              {assignment.submissions.length > 0 ? (
+                <Link
+                    to="/home/assignment-submissions/$assignmentSubmissionId"
+                    params={{ assignmentSubmissionId: assignment.submissions[0].id.toString() }
+                    }>
+                    <div className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
+                      <AssignmentSubmission
+                        submission={assignment.submissions[0]}
+                        assignmentMaxGrade={assignment.maxGrade}
+                      />
+                    </div>
+                  </Link>
+                ) : (
                 <p className="italic text-secondary-grey">You haven't submitted yet.</p>
               )}
             </>

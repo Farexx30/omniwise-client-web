@@ -1,8 +1,9 @@
-import type { Assignment, AssignmentSubmission, BasicAssignmentInfo } from "../types/assignment";
+import type { Assignment, BasicAssignmentInfo } from "../types/assignment";
 import type { Course } from "../types/course";
 import type { NotificationDetails } from "../types/notification";
 import type { BasicLectureInfo, Lecture } from "../types/lecture";
 import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, RegisterResult, RegisterUser, UserRole } from "../types/user";
+import type { AssignmentSubmission } from "../types/assignmentSubmission";
 
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
 const BASE_API_URL_DEV = "https://localhost:7155/api"
@@ -410,7 +411,7 @@ export const createAssignment = async (formData: FormData, courseId: number): Pr
 }
 
 export const deleteAssignment = async (id: number) => {
-    const url = `${BASE_API_URL_DEV}/assignments/${id}`;
+    const url = `${BASE_API_URL_DEV}/assignments/${encodeURIComponent(id)}`;
     const response = await fetch(url, {
         method: "DELETE",
         headers: {
@@ -423,8 +424,7 @@ export const deleteAssignment = async (id: number) => {
     }
 }
 
-
-export const getAssignmentSubmissionById = async (id: number): Promise<AssignmentSubmission > => {
+export const getAssignmentSubmissionById = async (id: number): Promise<AssignmentSubmission> => {
     const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(id)}`;
     const response = await fetch(url, {
         method: "GET",
@@ -439,11 +439,15 @@ export const getAssignmentSubmissionById = async (id: number): Promise<Assignmen
     }
 
     const json = await response.json();
-    return json as AssignmentSubmission;
+    const result: AssignmentSubmission = {
+        ...json,
+        files: json.fileInfos
+    }
+    return result;
 }
 
 
-export const createAssignmentSubmissionComment = async(id: number, content: string) => {
+export const createAssignmentSubmissionComment = async (id: number, content: string) => {
     const url = `${BASE_API_URL_DEV}/assignment-submissions/${id}/assignment-submission-comments`;
     const response = await fetch(url, {
         method: "POST",
@@ -455,6 +459,51 @@ export const createAssignmentSubmissionComment = async(id: number, content: stri
     });
 
     if (!response.ok) {
-        throw new Error(`Error creating a new comment: ${response.statusText}`);
+        throw new Error(`Error while creating a new comment: ${response.statusText}`);
+    }
+}
+
+export const deleteAssignmentSubmission = async (id: number) => {
+    const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(id)}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error while deleting assignment submission: ${response.statusText}`);
+    }
+}
+
+export const updateAssignmentSubmission = async (formData: FormData, assignmentSubmissionId: number): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(assignmentSubmissionId)}`;
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error updating assignment submission: ${response.statusText}`);
+    }
+}
+
+export const updateAssignmentSubmissionGrade = async (assignmentSubmissionId: number, grade: Number | null): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(assignmentSubmissionId)}/grade`;
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: JSON.stringify({ grade })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error updating assignment submission: ${response.statusText}`);
     }
 }
