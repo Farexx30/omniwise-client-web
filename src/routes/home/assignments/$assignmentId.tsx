@@ -163,7 +163,6 @@ function Assignment() {
             min={new Date().toISOString().slice(0, 16)}
             value={assignmentDeadline}
             onChange={(e) => setAssignmentDeadline(e.target.value)}
-            className=""
           />
           <span className='ml-8'>
             <span className="mr-1">Maximum grade: </span>

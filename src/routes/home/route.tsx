@@ -26,11 +26,30 @@ function HomeLayout() {
 
     useEffect(() => {
         setCurrentUserRole(localStorage.getItem("role") as UserRole);
-    }, [])
+
+        const courseId = localStorage.getItem("currentCourseId");
+        if (courseId !== null) {
+            setCurrentCourseId(Number(courseId));
+        }
+
+        const courseName = localStorage.getItem("currentCourseName");
+        if (courseName !== null) {
+            setCurrentCourseName(courseName);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (currentCourseId === null || currentCourseName === null) {
+            return;
+        }
+
+        localStorage.setItem("currentCourseId", currentCourseId.toString());
+        localStorage.setItem("currentCourseName", currentCourseName);
+    }, [currentCourseId, currentCourseName]);
 
     return (
         <main>
-            <UserContext value ={{role: currentUserRole}}>
+            <UserContext value={{ role: currentUserRole }}>
                 <div className="bg-main-page w-screen h-screen bg-center bg-cover fixed inset-0 z-0 overflow-hidden flex flex-col">
                     <WebHeader />
                     <div className="flex flex-row h-[calc(100vh-2rem)] w-full">
