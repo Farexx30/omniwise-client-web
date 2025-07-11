@@ -1,8 +1,7 @@
 import logo from '/logo.svg';
 import logoutIcon from '/logout.svg';
-import TransparentLink from './TransparentLink';
 import TransparentButton from './TransparentButton';
-import { useRouter } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 
 
@@ -10,7 +9,7 @@ const WebHeader = () => {
     const router = useRouter();
     const queryClient = useQueryClient();
 
-    const handleLogout = async() => {
+    const handleLogout = async () => {
         localStorage.removeItem("tokenType");
         localStorage.removeItem("accessToken");
         localStorage.removeItem("expiresIn");
@@ -27,10 +26,12 @@ const WebHeader = () => {
 
     return (
         <div className="bg-transparent w-full h-8 flex items-center select-none justify-between p-5">
-            <div className="flex items-center text-white font-bold">
-                <img src={logo} alt="Logo" className="w-8 h-8" />
-                <span className="ml-2 font-light">Omniwise</span>
-            </div>
+            <Link to="/home">
+                <div className="flex items-center text-white font-bold">
+                    <img src={logo} alt="Logo" className="w-8 h-8" />
+                    <span className="ml-2 font-light">Omniwise</span>
+                </div>
+            </Link>
             <div>
                 <TransparentButton
                     iconSrc={logoutIcon}
