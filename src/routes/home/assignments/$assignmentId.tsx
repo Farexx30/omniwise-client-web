@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate} from '@tanstack/react-router'
 import Spinner from '../../../components/Spinner'
 import { deleteAssignment, getAssignmentById, updateAssignment } from '../../../services/api'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
@@ -15,6 +15,8 @@ import { fetchFiles } from '../../../utils/file'
 import FileInput from '../../../components/FileInput'
 import { HomeContext, UserContext } from '../route'
 import AssignmentSubmission from '../../../components/AssignmentSubmission'
+import { Route as SubmissionRoute } from '../assignment-submissions/$assignmentSubmissionId';
+
 
 export const Route = createFileRoute('/home/assignments/$assignmentId')({
   component: Assignment,
@@ -45,7 +47,6 @@ function Assignment() {
   })
 
   const navigate = useNavigate();
-
   const queryClient = useQueryClient();
 
   const { mutate: removeAssignment } = useMutation({

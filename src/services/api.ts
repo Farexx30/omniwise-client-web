@@ -1,4 +1,4 @@
-import type { Assignment, BasicAssignmentInfo } from "../types/assignment";
+import type { Assignment, AssignmentSubmission, BasicAssignmentInfo } from "../types/assignment";
 import type { Course } from "../types/course";
 import type { NotificationDetails } from "../types/notification";
 import type { BasicLectureInfo, Lecture } from "../types/lecture";
@@ -420,5 +420,41 @@ export const deleteAssignment = async (id: number) => {
 
     if (!response.ok) {
         throw new Error(`Error while deleting assignment: ${response.statusText}`);
+    }
+}
+
+
+export const getAssignmentSubmissionById = async (id: number): Promise<AssignmentSubmission > => {
+    const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(id)}`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching assignment submission: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    return json as AssignmentSubmission;
+}
+
+
+export const createAssignmentSubmissionComment = async(id: number, content: string) => {
+    const url = `${BASE_API_URL_DEV}/assignment-submissions/${id}/assignment-submission-comments`;
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ content }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error creating a new comment: ${response.statusText}`);
     }
 }
