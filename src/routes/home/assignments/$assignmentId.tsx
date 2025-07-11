@@ -13,7 +13,8 @@ import { useContext, useEffect, useState, type FormEvent } from 'react'
 import { useFile } from '../../../hooks/useFile'
 import { fetchFiles } from '../../../utils/file'
 import FileInput from '../../../components/FileInput'
-import { HomeContext } from '../route'
+import { HomeContext, UserContext } from '../route'
+import AssignmentSubmission from '../../../components/AssignmentSubmission'
 
 export const Route = createFileRoute('/home/assignments/$assignmentId')({
   component: Assignment,
@@ -34,6 +35,7 @@ export const Route = createFileRoute('/home/assignments/$assignmentId')({
 
 function Assignment() {
   const { assignmentId } = Route.useLoaderData();
+  const userContext = useContext(UserContext)!;
   const homeContext = useContext(HomeContext);
 
   const { data: assignment } = useSuspenseQuery({
@@ -154,6 +156,7 @@ function Assignment() {
           </div>
         </div>
         <div className='flex flex-row pb-2 border-b-1 mt-2'>
+          <span className="mt-2 mr-1">Deadline: </span>
           <input
             type="datetime-local"
             required
@@ -163,7 +166,7 @@ function Assignment() {
             className=""
           />
           <span className='ml-8'>
-            Maximum grade:
+            <span className="mr-1">Maximum grade: </span>
             <input
               type="number"
               placeholder="100"
@@ -219,7 +222,7 @@ function Assignment() {
       <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
         <div className='flex flex-row justify-between pb-2 border-b-1'>
           <h2>{assignment.name}</h2>
-          <div className='flex flex-row'>
+          {userContext.role === "Teacher" && <div className='flex flex-row'>
             <TransparentButton
               text=""
               iconSrc={EditIcon}
@@ -235,10 +238,10 @@ function Assignment() {
               onClick={() => {
                 removeAssignment(assignment.id);
               }} />
-          </div>
+          </div>}
         </div>
         <div className='flex flex-row pb-2 border-b-1 mt-2'>
-          <span>{formatDate(assignment.deadline)}</span>
+          <span>Deadline: {formatDate(assignment.deadline)}</span>
           <span className='ml-8'>Maximum grade: {assignment.maxGrade}</span>
         </div>
         <div className="flex flex-row justify-between mt-4">
@@ -253,22 +256,37 @@ function Assignment() {
         </div>
         <div className='mt-4 overflow-y-auto flex-1'>
           {assignment.content}
-          <h3 className='mt-4'>Submissions:</h3>
-          {assignment.submissions && assignment.submissions.length > 0 ? (
-            <ul>
-              {assignment.submissions.map(s => (
-                <li key={s.id} className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
-                  <p><strong> {s.authorFullName}</strong></p>
-                  <div className="flex flex-row ">
-                    <p><strong>Grade:</strong> {s.grade !== null ? s.grade : "-"}/{assignment.maxGrade}</p>
-
-                    <p className='ml-8'><strong>Date:</strong> {formatDate(s.latestSubmissionDate)}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+          {userContext.role === "Teacher" ? (
+            <>
+              <h3 className='mt-4'>Submissions:</h3>
+              {assignment.submissions && assignment.submissions.length > 0 ? (
+                <ul>
+                  {assignment.submissions.map(s => (
+                    <li key={s.id} className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
+                      <AssignmentSubmission
+                        submission={s}
+                        assignmentMaxGrade={assignment.maxGrade}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="italic text-secondary-grey">No submissions yet.</p>
+              )}
+            </>
           ) : (
-            <p className="italic text-secondary-grey">No submissions yet.</p>
+            <>
+              <h3 className='mt-4'>Your Submission:</h3>
+              {assignment.submissions!.length > 0 ? (
+                <div className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
+                  <AssignmentSubmission
+                    submission={assignment.submissions![0]}
+                    assignmentMaxGrade={assignment.maxGrade}
+                  />
+                </div>) : (
+                <p className="italic text-secondary-grey">You haven't submitted yet.</p>
+              )}
+            </>
           )}
         </div>
       </div>
