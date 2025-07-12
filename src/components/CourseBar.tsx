@@ -3,10 +3,11 @@ import type { BasicLectureInfo } from "../types/lecture";
 import TransparentButton from "./TransparentButton"
 import TransparentLink from "./TransparentLink";
 import { getAssignmentsByCourseId, getLecturesByCourseId, getMembersByCourseId } from "../services/api";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import type { BasicAssignmentInfo } from "../types/assignment";
 import type { BasicUserInfo } from "../types/user";
 import { useRouter } from "@tanstack/react-router";
+import { UserContext } from "../routes/home/route";
 
 interface CourseBarProps {
     currentCourseId: number | null;
@@ -17,6 +18,7 @@ type Tab = "lectures" | "assignments" | "members";
 
 const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
     const router = useRouter();
+    const userContext = useContext(UserContext)!;
 
     const [currentTab, setCurrentTab] = useState<Tab>("lectures")
     const [currentData, setCurrentData] = useState<
@@ -103,7 +105,7 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
                     ))}
                 </ul>
             </div>
-            <div className="flex flex-row w-full justify-between px-2 pt-2">
+            {userContext.role === "Teacher" && <div className="flex flex-row w-full justify-between px-2 pt-2">
                 <div>
                     <TransparentButton
                         text="Add"
@@ -132,7 +134,7 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
                         textSize="text-sm"
                     />
                 </div>
-            </div>
+            </div>}
         </div>
     )
 }

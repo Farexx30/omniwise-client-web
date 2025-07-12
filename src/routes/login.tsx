@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { login } from "../services/api";
+import { getBasicUserData, login } from "../services/api";
 
 export const Route = createFileRoute('/login')({
     component: LoginForm,
@@ -17,15 +17,22 @@ function LoginForm() {
         setIsLoading(true);
 
         try {
-            const result = await login(email, password);
+            const loginResult = await login(email, password);
 
-            if (result === "Unauthorized") {
+            if (loginResult === "Unauthorized") {
                 alert("Login failed: Invalid email or password.");
                 return;
             }
 
-            if (result === "Forbidden") {
+            if (loginResult === "Forbidden") {
                 router.navigate({ to: '/pending-approval' });
+                return;
+            }
+
+            const getBasicUserDataResult = await getBasicUserData();        
+            
+            if (getBasicUserDataResult === "Unauthorized") {
+                alert("Login failed: Couldn't fetch your basic data.");
                 return;
             }
 

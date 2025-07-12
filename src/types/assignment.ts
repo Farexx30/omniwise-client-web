@@ -1,3 +1,4 @@
+import type { BasicAssignmentSubmission } from "./assignmentSubmission";
 import type { FileInfo } from "./file";
 
 export interface BasicAssignmentInfo {
@@ -12,12 +13,5 @@ export interface Assignment {
     deadline: string;
     maxGrade: number;  
     files: FileInfo[];
-    submissions?: Submission[];
-}
-
-export interface Submission {
-    id: number;
-    grade: number;
-    latestSubmissionDate: string;
-    authorFullName: string;
+    submissions: BasicAssignmentSubmission[];
 }

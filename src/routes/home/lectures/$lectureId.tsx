@@ -14,7 +14,7 @@ import { useContext, useEffect, useState, type FormEvent } from 'react'
 import FileInput from '../../../components/FileInput'
 import { useFile } from '../../../hooks/useFile'
 import { fetchFiles } from '../../../utils/file'
-import { HomeContext } from '../route'
+import { HomeContext, UserContext } from '../route'
 
 export const Route = createFileRoute('/home/lectures/$lectureId')({
   component: Lecture,
@@ -35,6 +35,7 @@ export const Route = createFileRoute('/home/lectures/$lectureId')({
 
 function Lecture() {
   const { lectureId } = Route.useLoaderData();
+  const userContext = useContext(UserContext)!;
   const homeContext = useContext(HomeContext);
 
   const { data: lecture } = useSuspenseQuery({
@@ -176,7 +177,7 @@ function Lecture() {
       <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
         <div className='flex flex-row justify-between pb-4 pt-1 border-b-1'>
           <h2>{lecture.name}</h2>
-          <div className='flex flex-row'>
+          {userContext.role === "Teacher" && <div className='flex flex-row'>
             <TransparentButton
               text=""
               iconSrc={EditIcon}
@@ -192,7 +193,7 @@ function Lecture() {
               iconSrc={TrashIcon}
               onClick={() => removeLecture(lecture.id)}
             />
-          </div>
+          </div>}
         </div>
         <div className="flex flex-row justify-between mt-4">
           <h3>Files</h3>

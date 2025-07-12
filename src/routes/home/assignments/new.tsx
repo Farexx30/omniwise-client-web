@@ -18,7 +18,6 @@ function NewAssignment() {
   const queryClient = useQueryClient();
   const homeContext = useContext(HomeContext);
 
-  const [isEditing, setIsEditing] = useState(false);
   const [assignmentName, setAssignmentName] = useState("");
   const [assignmentContent, setAssignmentContent] = useState<string | null>(null);
   const [assignmentDeadline, setAssignmentDeadline] = useState<string>("");
@@ -38,7 +37,7 @@ function NewAssignment() {
       })
     },
     onError: () => {
-      alert("An error occured while creating a lecture.")
+      alert("An error occured while creating an assignment.")
     }
   })
 
