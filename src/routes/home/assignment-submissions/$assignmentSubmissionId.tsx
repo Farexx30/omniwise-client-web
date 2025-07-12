@@ -39,7 +39,7 @@ export const Route = createFileRoute('/home/assignment-submissions/$assignmentSu
 function AssignmentSubmission() {
   const { assignmentSubmissionId } = Route.useLoaderData();
   const router = useRouter();
-  const { userId } = useContext(UserContext)!;
+  const { userId, role } = useContext(UserContext)!;
 
   const { data: assignmentSubmission } = useSuspenseQuery({
     queryKey: ["assignmentSubmission", assignmentSubmissionId],
@@ -94,10 +94,17 @@ function AssignmentSubmission() {
       await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission", assignmentSubmissionId] });
       await queryClient.invalidateQueries({ queryKey: ["assignment", assignmentSubmission.assignmentId] });
       setIsGrading(!isGrading)
+
+      const trimmedGrade = grade?.trim();
+      const gradeAsNumber = trimmedGrade === "" || trimmedGrade === null
+        ? null
+        : Number(trimmedGrade);
+      setGrade(gradeAsNumber?.toString() || null);
     },
     onError: () => {
       alert("An error occured while updating grade.")
       setIsGrading(!isGrading);
+      setGrade(assignmentSubmission.grade?.toString() || null);
     },
   });
 
@@ -134,9 +141,10 @@ function AssignmentSubmission() {
   const handleGradeUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const gradeAsNumber = Number(grade?.trim()) || null
-
-    console.log(gradeAsNumber);
+    const trimmedGrade = grade?.trim();
+    const gradeAsNumber = trimmedGrade === "" || trimmedGrade === null
+      ? null
+      : Number(trimmedGrade);
 
     await updateGrade(gradeAsNumber);
   }
@@ -149,41 +157,42 @@ function AssignmentSubmission() {
       >
         <div className='flex flex-row justify-between pb-2 border-b-1'>
           <h2>{assignmentSubmission.assignmentName}</h2>
-          <div className='flex flex-row'>
-            {isEditing ? (
-              <>
-                <TransparentButton
-                  text=""
-                  iconSrc={AcceptIcon}
-                  isSubmitType={true}
-                  disabled={files.length < 1}
-                />
-                <div className='w-2'></div>
-                <TransparentButton
-                  text=""
-                  iconSrc={DiscardIcon}
-                  onClick={() => setIsEditing(!isEditing)}
-                />
-              </>
-            ) : (
-              <>
-                <TransparentButton
-                  text=""
-                  iconSrc={EditIcon}
-                  onClick={async () => {
-                    const existingFiles = await fetchFiles(assignmentSubmission.files);
-                    setFiles(existingFiles);
-                    setIsEditing(!isEditing);
-                  }}
-                />
-                <div className='w-2'></div>
-                <TransparentButton text=""
-                  iconSrc={TrashIcon}
-                  onClick={() => removeAssignmentSubmission(assignmentSubmission.id)}
-                />
-              </>
-            )}
-          </div>
+          {role == "Student" &&
+            <div className='flex flex-row'>
+              {isEditing ? (
+                <>
+                  <TransparentButton
+                    text=""
+                    iconSrc={AcceptIcon}
+                    isSubmitType={true}
+                    disabled={files.length < 1}
+                  />
+                  <div className='w-2'></div>
+                  <TransparentButton
+                    text=""
+                    iconSrc={DiscardIcon}
+                    onClick={() => setIsEditing(!isEditing)}
+                  />
+                </>
+              ) : (
+                <>
+                  <TransparentButton
+                    text=""
+                    iconSrc={EditIcon}
+                    onClick={async () => {
+                      const existingFiles = await fetchFiles(assignmentSubmission.files);
+                      setFiles(existingFiles);
+                      setIsEditing(!isEditing);
+                    }}
+                  />
+                  <div className='w-2'></div>
+                  <TransparentButton text=""
+                    iconSrc={TrashIcon}
+                    onClick={() => removeAssignmentSubmission(assignmentSubmission.id)}
+                  />
+                </>
+              )}
+            </div>}
         </div>
         <div className='flex flex-row pb-2 border-b-1 mt-2 justify-between'>
           <span><strong>Author: </strong> {assignmentSubmission.authorFullName}</span>
@@ -246,12 +255,14 @@ function AssignmentSubmission() {
             {assignmentSubmission.grade != null ? assignmentSubmission.grade : "-"}
             /{assignmentSubmission.maxGrade}
           </span>
-          <div className='flex flex-row'>
-            <TransparentButton text=""
-              iconSrc={EditIcon}
-              onClick={() => setIsGrading(!isGrading)}
-            />
-          </div>
+          {role === "Teacher" &&
+            <div className='flex flex-row'>
+              <TransparentButton text=""
+                iconSrc={EditIcon}
+                onClick={() => setIsGrading(!isGrading)}
+              />
+            </div>
+          }
         </div>
       )}
 
@@ -263,7 +274,7 @@ function AssignmentSubmission() {
               <li key={c.id} className={`flex flex-col ${c.authorId === userId ? "bg-primary/80" : "bg-white/10"} rounded-lg p-4 shadow-md my-4`}>
                 <CommentView
                   assignmentSubmissionId={assignmentSubmissionId}
-                  {...c}
+                  {...c}  
                 />
               </li>
             ))}
