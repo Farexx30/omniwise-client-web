@@ -130,7 +130,7 @@ function NewAssignment() {
       <div className="flex flex-row justify-between mt-8">
         <h2>Content</h2>
       </div>
-      <div className='mt-4 max-h-24 flex-1'>
+      <div className='mt-4 flex-1'>
         <textarea
           placeholder="Content..."
           value={assignmentContent || ""}

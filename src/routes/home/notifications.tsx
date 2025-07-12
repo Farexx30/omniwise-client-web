@@ -40,7 +40,7 @@ function Notifications() {
     else {
         content = (
             <ul>
-                {notifications.map(n => (
+                {notifications && notifications.length > 0 ? (notifications.map(n => (
                     <li key={n.id} className="bg-white/10 rounded-lg p-4 shadow-md my-4">
                         <div className="flex flex-row w-full">
                             <div className="w-full">
@@ -57,7 +57,9 @@ function Notifications() {
                             </div>
                         </div>
                     </li>
-                ))}
+                ))) : (
+                    <p className="italic text-secondary-grey">No notifications yet.</p>
+                )}
             </ul>
         )
     }

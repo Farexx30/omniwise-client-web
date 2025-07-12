@@ -162,9 +162,9 @@ function Lecture() {
           multiple={true}
         />
         <div className="flex flex-row justify-between mt-8">
-          <h2>Content</h2>
+          <h2>Lecture description</h2>
         </div>
-        <div className='mt-4 flex-1'>
+        <div className='mt-2 flex-1'>
           <textarea
             placeholder="Content..."
             value={courseContent || ""}
@@ -203,11 +203,15 @@ function Lecture() {
           zipNameForDownloadAll={`${lecture.name}_Files`}
         />
         <div className="flex flex-row justify-between mt-8">
-          <h2>Content</h2>
+          <h2>Lecture description</h2>
         </div>
-        <div className='mt-4 overflow-y-auto flex-1'>
-          {lecture.content}
-        </div>
+        {lecture.content ? (
+          <div className='mt-2 overflow-y-auto flex-1 whitespace-pre-line'>
+            {lecture.content}
+          </div>
+        ) : (
+          <p className="italic text-secondary-grey">No description for this lecture.</p>
+        )}
       </div>
     )
   )

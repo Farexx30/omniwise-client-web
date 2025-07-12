@@ -3,6 +3,7 @@ import logoutIcon from '/logout.svg';
 import TransparentButton from './TransparentButton';
 import { Link, useRouter } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
+import { resetLocalStorage } from '../utils/appHelpers';
 
 
 const WebHeader = () => {
@@ -10,15 +11,9 @@ const WebHeader = () => {
     const queryClient = useQueryClient();
 
     const handleLogout = async () => {
-        localStorage.removeItem("tokenType");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("expiresIn");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("role");
-        localStorage.removeItem("currentUserId");
-        localStorage.removeItem("currentCourseId");
-        localStorage.removeItem("currentCourseName");
+        resetLocalStorage();
 
+        // Clear all cached data and ongoing queries.
         await queryClient.cancelQueries();
         queryClient.clear();
 
