@@ -26,5 +26,6 @@ export interface Comment
     id: number;
     content: string;
     sentDate: string;
+    authorId: string;
     authorFullName: string;
 }

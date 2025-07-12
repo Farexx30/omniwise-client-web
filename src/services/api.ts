@@ -58,8 +58,8 @@ export const login = async (email: string, password: string): Promise<LoginResul
     return "Success";
 }
 
-export const getUserRole = async (): Promise<LoginResult> => {
-    const url = `${BASE_API_URL_DEV}/identity/my-role`;
+export const getBasicUserData = async (): Promise<LoginResult> => {
+    const url = `${BASE_API_URL_DEV}/identity/my-basic-data`;
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -74,6 +74,7 @@ export const getUserRole = async (): Promise<LoginResult> => {
 
     const json = await response.json();
     localStorage.setItem("role", json.role);
+    localStorage.setItem("currentUserId", json.userId);
 
     return "Success";
 }
@@ -524,4 +525,35 @@ export const createAssignmentSubmission = async (formData: FormData, assignmentI
 
     const json = await response.json();
     return json.assignmentSubmissionId;
+}
+
+export const updateAssignmentSubmissionComment = async (id: number, content: string): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/assignment-submission-comments/${encodeURIComponent(id)}`;
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+        body: JSON.stringify({ content })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error updating assignment submission comment: ${response.statusText}`);
+    }
+}
+
+export const deleteAssignmentSubmissionComment = async (id: number): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/assignment-submission-comments/${encodeURIComponent(id)}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error deleting assignment submission comment: ${response.statusText}`);
+    }
 }

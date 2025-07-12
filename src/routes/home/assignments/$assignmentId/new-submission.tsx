@@ -30,8 +30,6 @@ function NewAssignmentSubmission() {
     const { assignmentId } = Route.useLoaderData();
     const router = useRouter();
     const queryClient = useQueryClient();
-    const userContext = useContext(UserContext)!;
-    const homeContext = useContext(HomeContext);
 
     const { data: assignment } = useSuspenseQuery({
         queryKey: ["assignment", assignmentId],

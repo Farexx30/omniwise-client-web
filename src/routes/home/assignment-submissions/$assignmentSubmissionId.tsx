@@ -4,7 +4,7 @@ import { formatDate } from '../../../utils/date';
 import { useSuspenseQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import Spinner from '../../../components/Spinner';
 import { createAssignmentSubmissionComment, deleteAssignmentSubmission, getAssignmentSubmissionById, updateAssignmentSubmission, updateAssignmentSubmissionGrade } from '../../../services/api';
-import { Children, useState, type JSX, type ReactNode } from 'react';
+import { Children, useContext, useState, type JSX, type ReactNode } from 'react';
 import ReadonlyFileList from '../../../components/ReadonlyFileList';
 import FileInput from '../../../components/FileInput';
 import { useFile } from '../../../hooks/useFile';
@@ -14,6 +14,8 @@ import AcceptIcon from "/accept-icon.svg"
 import DiscardIcon from "/discard-icon.svg"
 import { fetchFiles } from '../../../utils/file';
 import ConditionalWrapper from '../../../components/ConditionalWrapper';
+import CommentView from '../../../components/CommentView';
+import { UserContext } from '../route';
 
 
 export const Route = createFileRoute('/home/assignment-submissions/$assignmentSubmissionId')({
@@ -37,6 +39,7 @@ export const Route = createFileRoute('/home/assignment-submissions/$assignmentSu
 function AssignmentSubmission() {
   const { assignmentSubmissionId } = Route.useLoaderData();
   const router = useRouter();
+  const { userId } = useContext(UserContext)!;
 
   const { data: assignmentSubmission } = useSuspenseQuery({
     queryKey: ["assignmentSubmission", assignmentSubmissionId],
@@ -97,6 +100,7 @@ function AssignmentSubmission() {
       setIsGrading(!isGrading);
     },
   });
+
 
 
 
@@ -256,14 +260,11 @@ function AssignmentSubmission() {
         {assignmentSubmission.comments && assignmentSubmission.comments.length > 0 ? (
           <ul>
             {assignmentSubmission.comments.map(c => (
-              <li key={c.id} className="flex flex-col bg-white/10 rounded-lg p-4 shadow-md my-4">
-                <div className="flex flex-row justify-between">
-                  <p><strong> {c.authorFullName}</strong></p>
-                  <p>{formatDate(c.sentDate)}</p>
-                </div>
-                <p className="break-words whitespace-pre-wrap w-full max-w-full">
-                  {c.content}
-                </p>
+              <li key={c.id} className={`flex flex-col ${c.authorId === userId ? "bg-primary/80" : "bg-white/10"} rounded-lg p-4 shadow-md my-4`}>
+                <CommentView
+                  assignmentSubmissionId={assignmentSubmissionId}
+                  {...c}
+                />
               </li>
             ))}
           </ul>
@@ -276,7 +277,7 @@ function AssignmentSubmission() {
             onChange={(e) => setNewComment(e.target.value)}
             rows={4}
             placeholder="Add a comment..."
-            className="w-full bg-white/10 text-white p-2 rounded-lg resize-none border-none focus:outline-none"
+            className={`w-full bg-white/10 text-white p-2 rounded-lg resize-none border-none focus:outline-none`}
             required
           />
           <button

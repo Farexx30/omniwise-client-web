@@ -2,7 +2,7 @@ interface TransparentButtonProps {
     iconSrc?: string;
     text?: string;
     textSize?: string;
-    onClick?: () => void; 
+    onClick?: any; 
     isSubmitType?: boolean
     disabled?: boolean
 }
