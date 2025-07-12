@@ -37,7 +37,7 @@ function NewAssignment() {
       })
     },
     onError: () => {
-      alert("An error occured while creating a lecture.")
+      alert("An error occured while creating an assignment.")
     }
   })
 

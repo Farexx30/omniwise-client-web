@@ -11,6 +11,7 @@ export const Route = createFileRoute('/home')({
 
 export const UserContext = createContext<{
     role: UserRole | null;
+    userId: string | null;
 } | null>(null);
 
 export const HomeContext = createContext<{
@@ -21,11 +22,13 @@ export const HomeContext = createContext<{
 
 function HomeLayout() {
     const [currentUserRole, setCurrentUserRole] = useState<UserRole | null>(null);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [currentCourseId, setCurrentCourseId] = useState<number | null>(null);
     const [currentCourseName, setCurrentCourseName] = useState<string | null>(null);
 
     useEffect(() => {
         setCurrentUserRole(localStorage.getItem("role") as UserRole);
+        setCurrentUserId(localStorage.getItem("currentUserId"))
 
         const courseId = localStorage.getItem("currentCourseId");
         if (courseId !== null) {
@@ -36,7 +39,7 @@ function HomeLayout() {
         if (courseName !== null) {
             setCurrentCourseName(courseName);
         }
-    }, []);
+    }, [])
 
     useEffect(() => {
         if (currentCourseId === null || currentCourseName === null) {
@@ -49,7 +52,7 @@ function HomeLayout() {
 
     return (
         <main>
-            <UserContext value={{ role: currentUserRole }}>
+            <UserContext value={{ role: currentUserRole, userId: currentUserId }}>
                 <div className="bg-main-page w-screen h-screen bg-center bg-cover fixed inset-0 z-0 overflow-hidden flex flex-col">
                     <WebHeader />
                     <div className="flex flex-row h-[calc(100vh-2rem)] w-full">

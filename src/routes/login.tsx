@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { getUserRole, login } from "../services/api";
+import { getBasicUserData, login } from "../services/api";
 
 export const Route = createFileRoute('/login')({
     component: LoginForm,
@@ -29,10 +29,10 @@ function LoginForm() {
                 return;
             }
 
-            const getRoleResult = await getUserRole();        
+            const getBasicUserDataResult = await getBasicUserData();        
             
-            if (getRoleResult === "Unauthorized") {
-                alert("Login failed: Couldn't fetch your role.");
+            if (getBasicUserDataResult === "Unauthorized") {
+                alert("Login failed: Couldn't fetch your basic data.");
                 return;
             }
 
