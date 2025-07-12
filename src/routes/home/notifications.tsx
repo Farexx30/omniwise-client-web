@@ -44,7 +44,7 @@ function Notifications() {
                     <li key={n.id} className="bg-white/10 rounded-lg p-4 shadow-md my-4">
                         <div className="flex flex-row w-full">
                             <div className="w-full">
-                                <p className="text-base">{n.content}</p>
+                                <p className="text-base flex-1 break-words break-all hyphens-auto">{n.content}</p>
                                 <p className="text-sm text-secondary-grey">{formatDate(n.sentDate)}</p>
                             </div>
                             <div className="ml-4">
@@ -63,7 +63,7 @@ function Notifications() {
     }
 
     return (
-        <div className="bg-black/20 h-full w-full p-4 text-white">
+        <div className="bg-black/20 h-full w-full p-4 text-white overflow-x-hidden">
             <h2 className="8 text-xl font-bold mb-4">Notifications</h2>
             {content}
         </div>
