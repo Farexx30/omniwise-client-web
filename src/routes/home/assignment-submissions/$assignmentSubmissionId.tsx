@@ -274,7 +274,7 @@ function AssignmentSubmission() {
               <li key={c.id} className={`flex flex-col ${c.authorId === userId ? "bg-primary/80" : "bg-white/10"} rounded-lg p-4 shadow-md my-4`}>
                 <CommentView
                   assignmentSubmissionId={assignmentSubmissionId}
-                  {...c}  
+                  {...c}
                 />
               </li>
             ))}
@@ -290,6 +290,16 @@ function AssignmentSubmission() {
             placeholder="Add a comment..."
             className={`w-full bg-white/10 text-white p-2 rounded-lg resize-none border-none focus:outline-none`}
             required
+            onKeyDown={async(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                if (!e.currentTarget.value.trim()) {
+                  e.preventDefault();
+                  return;
+                }
+
+                await handleSubmit(e)
+              }
+            }}
           />
           <button
             type="submit"
