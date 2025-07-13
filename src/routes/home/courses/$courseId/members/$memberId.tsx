@@ -68,7 +68,7 @@ function CourseMember() {
           <h2>{courseMember.fullName}</h2>
           <span className='ml-4 text-secondary-grey'>{courseMember.roleName}</span>
         </div>
-        {userContext.userId !== memberId && (
+        {(userContext.userId !== memberId && userContext.role === "Teacher") && (
           <div>
             <TransparentButton
               text=""
