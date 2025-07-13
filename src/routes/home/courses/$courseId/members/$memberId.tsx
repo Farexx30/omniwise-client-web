@@ -47,7 +47,8 @@ function CourseMember() {
     mutationFn: ({ courseId, userId }: { courseId: string; userId: string }) =>
       removeCourseMember(courseId, userId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["courseMembers"] });
+      queryClient.invalidateQueries({ queryKey: ["courseMembers"] })
+      queryClient.invalidateQueries({ queryKey: ["courseMember"] });
 
       navigate({
         to: "/home/courses/$courseId",
