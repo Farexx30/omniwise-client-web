@@ -1,10 +1,16 @@
 export function resetLocalStorage() {
-    localStorage.removeItem("tokenType");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("expiresIn");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("role");
-    localStorage.removeItem("currentUserId");
-    localStorage.removeItem("currentCourseId");
-    localStorage.removeItem("currentCourseName");
+    localStorage.removeItem("auth");
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("courseInfo");
+}
+
+export function getObjFromJSONLocalStorage(key: string): any {
+    const json = localStorage.getItem(key);
+
+    if(!json) {
+        return;
+    }
+
+    const obj = JSON.parse(json);
+    return obj;
 }

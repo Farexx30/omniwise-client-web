@@ -4,6 +4,8 @@ import type { NotificationDetails } from "../types/notification";
 import type { BasicLectureInfo, Lecture } from "../types/lecture";
 import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, RegisterResult, RegisterUser, UserRole } from "../types/user";
 import type { AssignmentSubmission } from "../types/assignmentSubmission";
+import type { Auth, UserInfo } from "../types/localStorage";
+import { getObjFromJSONLocalStorage } from "../utils/appHelpers";
 
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
 const BASE_API_URL_DEV = "https://localhost:7155/api"
@@ -50,21 +52,20 @@ export const login = async (email: string, password: string): Promise<LoginResul
     }
 
     const json = await response.json() as AuthenticationSuccessResponse
-    localStorage.setItem("tokenType", json.tokenType);
-    localStorage.setItem("accessToken", json.accessToken);
-    localStorage.setItem("expiresIn", json.expiresIn.toString());
-    localStorage.setItem("refreshToken", json.refreshToken);
+    const authObj: Auth = { ...json }
+    localStorage.setItem("auth", JSON.stringify(authObj))
 
     return "Success";
 }
 
 export const getBasicUserData = async (): Promise<LoginResult> => {
     const url = `${BASE_API_URL_DEV}/identity/my-basic-data`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
     });
 
@@ -73,8 +74,8 @@ export const getBasicUserData = async (): Promise<LoginResult> => {
     }
 
     const json = await response.json();
-    localStorage.setItem("role", json.role);
-    localStorage.setItem("currentUserId", json.userId);
+    const userInfoObj: UserInfo = { ...json }
+    localStorage.setItem("userInfo", JSON.stringify(userInfoObj))
 
     return "Success";
 }
@@ -83,11 +84,13 @@ export const getBasicUserData = async (): Promise<LoginResult> => {
 export const getEnrolledCourses = async (query?: string): Promise<Course[]> => {
     query = query?.trim() || "";
     const url = `${BASE_API_URL_DEV}/courses/enrolled?searchPhrase=${encodeURIComponent(query)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
+    console.log(tokenType);
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -101,13 +104,13 @@ export const getEnrolledCourses = async (query?: string): Promise<Course[]> => {
 
 export const getAvailableCourses = async (query?: string): Promise<Course[]> => {
     query = query?.trim() || "";
-    console.log(query)
     const url = `${BASE_API_URL_DEV}/courses/available?searchPhrase=${encodeURIComponent(query)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -121,11 +124,12 @@ export const getAvailableCourses = async (query?: string): Promise<Course[]> => 
 
 export const getNotifications = async (): Promise<NotificationDetails[]> => {
     const url = `${BASE_API_URL_DEV}/notifications`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -138,11 +142,12 @@ export const getNotifications = async (): Promise<NotificationDetails[]> => {
 }
 
 export const deleteNotification = async (id: number) => {
-    const url = `${BASE_API_URL_DEV}/notifications/${id}`;
+    const url = `${BASE_API_URL_DEV}/notifications/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -152,12 +157,13 @@ export const deleteNotification = async (id: number) => {
 }
 
 export const enrollInCourse = async (courseId: number): Promise<void> => {
-    const url = `${BASE_API_URL_DEV}/courses/${courseId}/members`;
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(courseId)}/members`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -168,11 +174,12 @@ export const enrollInCourse = async (courseId: number): Promise<void> => {
 
 export const getCourseById = async (id: number): Promise<Course> => {
     const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -184,14 +191,46 @@ export const getCourseById = async (id: number): Promise<Course> => {
     return json as Course;
 }
 
+export const deleteCourse = async (id: number) => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `${tokenType} ${accessToken}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error while deleting course: ${response.statusText}`);
+    }
+}
+
+export const updateCourse = async (formData: FormData, courseId: number): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(courseId)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Authorization": `${tokenType} ${accessToken}`
+        },
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error updating course: ${response.statusText}`);
+    }
+}
+
 
 export const getLecturesByCourseId = async (id: number): Promise<BasicLectureInfo[]> => {
     const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}/lectures`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -205,11 +244,12 @@ export const getLecturesByCourseId = async (id: number): Promise<BasicLectureInf
 
 export const getAssignmentsByCourseId = async (id: number): Promise<BasicAssignmentInfo[]> => {
     const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}/assignments`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -223,11 +263,12 @@ export const getAssignmentsByCourseId = async (id: number): Promise<BasicAssignm
 
 export const getMembersByCourseId = async (id: number): Promise<BasicUserInfo[]> => {
     const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}/members/enrolled`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -247,11 +288,12 @@ export const getMembersByCourseId = async (id: number): Promise<BasicUserInfo[]>
 
 export const getLectureById = async (id: number): Promise<Lecture> => {
     const url = `${BASE_API_URL_DEV}/lectures/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -269,11 +311,12 @@ export const getLectureById = async (id: number): Promise<Lecture> => {
 
 export const getAssignmentById = async (id: number): Promise<Assignment> => {
     const url = `${BASE_API_URL_DEV}/assignments/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -292,10 +335,11 @@ export const getAssignmentById = async (id: number): Promise<Assignment> => {
 
 export const updateAssignment = async (formData: FormData, assignmentId: number): Promise<void> => {
     const url = `${BASE_API_URL_DEV}/assignments/${encodeURIComponent(assignmentId)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "PATCH",
         headers: {
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
         body: formData
     });
@@ -307,11 +351,12 @@ export const updateAssignment = async (formData: FormData, assignmentId: number)
 
 export const getCourseMemberById = async (courseId: number, memberId: string): Promise<CourseMemberWithDetails> => {
     const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(courseId)}/members/${encodeURIComponent(memberId)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -329,11 +374,12 @@ export const getCourseMemberById = async (courseId: number, memberId: string): P
 }
 
 export const deleteLecture = async (id: number) => {
-    const url = `${BASE_API_URL_DEV}/lectures/${id}`;
+    const url = `${BASE_API_URL_DEV}/lectures/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -344,10 +390,11 @@ export const deleteLecture = async (id: number) => {
 
 export const createCourse = async (formData: FormData): Promise<number> => {
     const url = `${BASE_API_URL_DEV}/courses`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "POST",
         headers: {
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
         body: formData
     });
@@ -362,10 +409,11 @@ export const createCourse = async (formData: FormData): Promise<number> => {
 
 export const updateLecture = async (formData: FormData, lectureId: number): Promise<void> => {
     const url = `${BASE_API_URL_DEV}/lectures/${encodeURIComponent(lectureId)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "PATCH",
         headers: {
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
         body: formData
     });
@@ -377,10 +425,11 @@ export const updateLecture = async (formData: FormData, lectureId: number): Prom
 
 export const createLecture = async (formData: FormData, courseId: number): Promise<number> => {
     const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(courseId)}/lectures`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "POST",
         headers: {
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
         body: formData
     });
@@ -395,10 +444,11 @@ export const createLecture = async (formData: FormData, courseId: number): Promi
 
 export const createAssignment = async (formData: FormData, courseId: number): Promise<number> => {
     const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(courseId)}/assignments`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "POST",
         headers: {
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
         body: formData
     });
@@ -413,10 +463,11 @@ export const createAssignment = async (formData: FormData, courseId: number): Pr
 
 export const deleteAssignment = async (id: number) => {
     const url = `${BASE_API_URL_DEV}/assignments/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -427,11 +478,12 @@ export const deleteAssignment = async (id: number) => {
 
 export const getAssignmentSubmissionById = async (id: number): Promise<AssignmentSubmission> => {
     const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -449,12 +501,14 @@ export const getAssignmentSubmissionById = async (id: number): Promise<Assignmen
 
 
 export const createAssignmentSubmissionComment = async (id: number, content: string) => {
-    const url = `${BASE_API_URL_DEV}/assignment-submissions/${id}/assignment-submission-comments`;
+    const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(id)}/assignment-submission-comments`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "POST",
         headers: {
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `${tokenType} ${accessToken}`
+
         },
         body: JSON.stringify({ content }),
     });
@@ -466,10 +520,11 @@ export const createAssignmentSubmissionComment = async (id: number, content: str
 
 export const deleteAssignmentSubmission = async (id: number) => {
     const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "DELETE",
         headers: {
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -480,10 +535,11 @@ export const deleteAssignmentSubmission = async (id: number) => {
 
 export const updateAssignmentSubmission = async (formData: FormData, assignmentSubmissionId: number): Promise<void> => {
     const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(assignmentSubmissionId)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "PATCH",
         headers: {
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
         body: formData
     });
@@ -495,11 +551,12 @@ export const updateAssignmentSubmission = async (formData: FormData, assignmentS
 
 export const updateAssignmentSubmissionGrade = async (assignmentSubmissionId: number, grade: Number | null): Promise<void> => {
     const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(assignmentSubmissionId)}/grade`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
         body: JSON.stringify({ grade })
     });
@@ -511,10 +568,11 @@ export const updateAssignmentSubmissionGrade = async (assignmentSubmissionId: nu
 
 export const createAssignmentSubmission = async (formData: FormData, assignmentId: number): Promise<number> => {
     const url = `${BASE_API_URL_DEV}/assignments/${encodeURIComponent(assignmentId)}/assignment-submissions`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "POST",
         headers: {
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
         body: formData
     });
@@ -529,11 +587,12 @@ export const createAssignmentSubmission = async (formData: FormData, assignmentI
 
 export const updateAssignmentSubmissionComment = async (id: number, content: string): Promise<void> => {
     const url = `${BASE_API_URL_DEV}/assignment-submission-comments/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
         body: JSON.stringify({ content })
     });
@@ -545,11 +604,12 @@ export const updateAssignmentSubmissionComment = async (id: number, content: str
 
 export const deleteAssignmentSubmissionComment = async (id: number): Promise<void> => {
     const url = `${BASE_API_URL_DEV}/assignment-submission-comments/${encodeURIComponent(id)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         },
     });
 

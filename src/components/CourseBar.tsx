@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { BasicLectureInfo } from "../types/lecture";
 import TransparentButton from "./TransparentButton"
 import TransparentLink from "./TransparentLink";
-import { getAssignmentsByCourseId, getLecturesByCourseId, getMembersByCourseId } from "../services/api";
+import { deleteCourse, getAssignmentsByCourseId, getLecturesByCourseId, getMembersByCourseId } from "../services/api";
 import { useContext, useEffect, useState } from "react";
 import type { BasicAssignmentInfo } from "../types/assignment";
 import type { BasicUserInfo } from "../types/user";
@@ -11,7 +11,9 @@ import { UserContext } from "../routes/home/route";
 
 interface CourseBarProps {
     currentCourseId: number | null;
+    setCurrentCourseId: (value: number | null) => void;
     currentCourseName: string | null;
+    setCurrentCourseName: (value: string | null) => void;
 }
 
 type Tab = "lectures" | "assignments" | "members";
@@ -22,8 +24,9 @@ const mapToAddButton: Record<Tab, string> = {
     "members": "Members"
 }
 
-const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
+const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, setCurrentCourseName }: CourseBarProps) => {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const userContext = useContext(UserContext)!;
 
     const [currentTab, setCurrentTab] = useState<Tab>("lectures")
@@ -53,6 +56,19 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
         enabled: currentCourseId !== null && currentTab === "members",
         staleTime: 60_000 * 5
     })
+
+    const { mutate: removeCourse } = useMutation({
+        mutationFn: () => deleteCourse(currentCourseId!),
+        onSuccess: async () => {
+            setCurrentCourseId(null);
+            setCurrentCourseName(null);
+            await queryClient.invalidateQueries({ queryKey: ["courses"] });
+            router.navigate({ to: "/home" });
+        },
+        onError: () => {
+            alert("An error occured while deleting course.")
+        }
+    });
 
     useEffect(() => {
         if (currentTab == "lectures") setCurrentData(lectures || []);
@@ -146,7 +162,11 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
                         />
                     </div>
                     <div className="mr-1">
-                        <TransparentButton text="Delete course" textSize="text-l" />
+                        <TransparentButton
+                            text="Delete course"
+                            textSize="text-l"
+                            onClick={removeCourse}
+                        />
                     </div>
                 </div>
             )}

@@ -41,7 +41,7 @@ function NewAssignmentSubmission() {
 
     const { mutateAsync: addAssignmentSubmission } = useMutation({
         mutationFn: (formData: FormData) => createAssignmentSubmission(formData, assignmentId),
-        onSuccess: async(assignmentSubmissionId) => {
+        onSuccess: async (assignmentSubmissionId) => {
             await queryClient.invalidateQueries({ queryKey: ["assignment", assignmentId] })
             router.navigate({
                 to: "/home/assignment-submissions/$assignmentSubmissionId",
@@ -72,7 +72,12 @@ function NewAssignmentSubmission() {
             onSubmit={handleSubmit}
         >
             <div className='flex flex-row justify-between pb-2 border-b-1'>
-                <h2>{assignment.name}</h2>
+                <h2
+                    className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
+                    title={assignment.name}
+                >
+                    {assignment.name}
+                </h2>
                 <div className='flex flex-row'>
                     <TransparentButton
                         text=""

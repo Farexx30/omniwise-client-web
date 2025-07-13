@@ -2,6 +2,14 @@ import JSZip from "jszip";
 import type { FileInfo } from "../types/file";
 import { saveAs } from "file-saver";
 
+export async function fetchFile(file: FileInfo): Promise<File> {
+    const response = await fetch(file.url);
+    const blob = await response.blob();
+    const result = new File([blob], file.name);
+
+    return result;
+}
+
 export async function fetchFiles(files: FileInfo[]): Promise<File[]> {
     const result = await Promise.all(
         files.map(async (f) => {
