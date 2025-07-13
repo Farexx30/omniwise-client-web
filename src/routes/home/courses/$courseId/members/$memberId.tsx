@@ -99,11 +99,11 @@ function CourseMember() {
                   to="/home/assignment-submissions/$assignmentSubmissionId"
                   params={{ assignmentSubmissionId: as.id.toString() }
                   }>
-                  <div className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
-                    <span><strong>{as.name}</strong></span>
-                    <span><strong>Grade: </strong>{as.grade != null ? as.grade : "-"}</span>
-                    <span><strong>Submission date: </strong>{formatDate(as.latestSubmissionDate)}</span>
-                    <span><strong>Deadline: </strong>{formatDate(as.deadline)}</span>
+                  <div className="flex w-full flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
+                    <span className='w-1/3 overflow-hidden text-ellipsis whitespace-nowrap'><strong>{as.name}</strong></span>
+                    <span className='w-1/6 overflow-hidden text-ellipsis whitespace-nowrap'><strong>Grade: </strong>{as.grade != null ? as.grade : "-"}</span>
+                    <span className='w-1/4 overflow-hidden text-ellipsis whitespace-nowrap'><strong>Submitted: </strong>{formatDate(as.latestSubmissionDate)}</span>
+                    <span className='w-1/4 overflow-hidden text-ellipsis whitespace-nowrap text-right'><strong>Deadline: </strong>{formatDate(as.deadline)}</span>
                   </div>
                 </Link>
               </li>
