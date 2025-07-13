@@ -29,7 +29,8 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
         mutationFn: (content: string) => updateAssignmentSubmissionComment(id, content),
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission", assignmentSubmissionId] });
-            setIsEditing(!isEditing)
+            setIsEditing(!isEditing);
+            setNewContent(newContent.trim());
         },
         onError: () => {
             alert("An error occured while updating assignment submission comment.")
@@ -39,7 +40,7 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
 
     const { mutateAsync: deleteComment } = useMutation({
         mutationFn: deleteAssignmentSubmissionComment,
-        onSuccess: async() => {
+        onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission", assignmentSubmissionId] });
         },
         onError: () => {
@@ -50,17 +51,21 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
     const handleCommentUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!newContent.trim()) {
+            return;
+        }
+
         await updateComment(newContent)
     }
 
-    const handleCommentDelete = async() => {
+    const handleCommentDelete = async () => {
         await deleteComment(id);
     }
 
     return (
         <ConditionalWrapper
             condition={isEditing}
-            wrapper={(children) => <form onSubmit={async(e) => handleCommentUpdate(e)}>{children}</form>}
+            wrapper={(children) => <form onSubmit={async (e) => handleCommentUpdate(e)}>{children}</form>}
         >
             <div className="flex flex-row justify-between items-start">
                 <p><strong>{authorFullName}</strong></p>
@@ -74,7 +79,7 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
                                         text=""
                                         iconSrc={AcceptIcon}
                                         isSubmitType={true}
-                                        disabled={newContent.length < 1}
+                                        disabled={newContent.trim().length < 1}
                                     />
                                     <TransparentButton
                                         text=""
@@ -95,7 +100,7 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
                                     <TransparentButton
                                         text=""
                                         iconSrc={TrashIcon}
-                                        onClick={async() => handleCommentDelete()}
+                                        onClick={async () => handleCommentDelete()}
                                     />
                                 </>
                             )}
@@ -111,6 +116,16 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
                     placeholder="Content..."
                     className="w-full bg-white/10 text-white p-2 rounded-lg resize-none border-none focus:outline-none"
                     required
+                    onKeyDown={async (e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            if (!e.currentTarget.value.trim()) {
+                                e.preventDefault();
+                                return;
+                            }
+
+                            await handleCommentUpdate(e)
+                        }
+                    }}
                 />
             ) : (
                 <p className="break-words whitespace-pre-wrap w-full max-w-full">

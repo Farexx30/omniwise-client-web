@@ -30,7 +30,7 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
         content = <p className="text-red-500">Error.</p>;
     }
     else if (!courses || courses.length === 0) {
-        content = <p>No courses found.</p>;
+        content = <p className="text-white italic">No courses found.</p>;
     }
     else {
         content = (

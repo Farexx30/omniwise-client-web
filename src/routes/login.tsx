@@ -60,6 +60,7 @@ function LoginForm() {
                                 placeholder="Email"
                                 required
                                 value={email}
+                                maxLength={256}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
@@ -71,6 +72,7 @@ function LoginForm() {
                                 placeholder="Password"
                                 required
                                 value={password}
+                                maxLength={36}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>

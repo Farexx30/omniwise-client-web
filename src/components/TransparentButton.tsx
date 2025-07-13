@@ -3,15 +3,18 @@ interface TransparentButtonProps {
     text?: string;
     textSize?: string;
     onClick?: any; 
-    isSubmitType?: boolean
-    disabled?: boolean
+    isSubmitType?: boolean;
+    disabled?: boolean;
+    withEffect?: boolean;
 }
 
-const TransparentButton = ({ iconSrc, text, textSize, onClick, isSubmitType, disabled }: TransparentButtonProps) => {
+const TransparentButton = ({ iconSrc, text, textSize, onClick, isSubmitType, disabled, withEffect }: TransparentButtonProps) => {
+
+
     return (
         <button 
             type={isSubmitType ? "submit" : "button"}
-            className="flex items-center bg-transparent w-full cursor-pointer select-none group disabled:cursor-default"
+            className={`flex items-center w-full p-1 cursor-pointer select-none group disabled:cursor-default ${withEffect ? "bg-primary rounded-2xl" : "bg-transparent"}`}
             onClick={onClick}
             disabled={disabled}
             >
@@ -23,7 +26,7 @@ const TransparentButton = ({ iconSrc, text, textSize, onClick, isSubmitType, dis
                     className="w-5 h-5 mr-2 group-hover:brightness-125 transition"
                 />
             )}
-            <span className={`text-secondary-grey pb-0.5 group-hover:brightness-125 transition overflow-hidden whitespace-nowrap text-ellipsis ${textSize}`}>
+            <span className={`${withEffect ? "text-white" : "text-secondary-grey"} pb-0.5 group-hover:brightness-125 transition overflow-hidden whitespace-nowrap text-ellipsis ${textSize}`}>
                 {text}
             </span>
         </button>
