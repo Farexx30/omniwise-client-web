@@ -31,7 +31,7 @@ function Course() {
   })
 
   return (
-    <div className="flex text-center items-center justify-center text-5xl text-white">
+    <div className="flex flex-1 break-words break-all hyphens-auto text-center items-center justify-center text-5xl text-white ">
       Welcome to {course.name} 😊
     </div>
   )

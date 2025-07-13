@@ -73,6 +73,7 @@ function Assignment() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["assignments"] });
       await queryClient.invalidateQueries({ queryKey: ["assignment", assignmentId] });
+      await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission"] });
       setIsEditing(!isEditing)
     },
     onError: () => {
@@ -234,7 +235,12 @@ function Assignment() {
     ) : (
       <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
         <div className='flex flex-row justify-between pb-2 border-b-1'>
-          <h2>{assignment.name}</h2>
+          <h2
+            className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
+            title={assignment.name}
+          >
+            {assignment.name}
+          </h2>
           {userContext.role === "Teacher" && <div className="flex flex-row">
             <TransparentButton
               text=""

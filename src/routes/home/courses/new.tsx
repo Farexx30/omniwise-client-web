@@ -64,6 +64,7 @@ function CreateCourse() {
                         placeholder="New course..."
                         required
                         value={courseName}
+                        maxLength={256}
                         onChange={(e) => setCourseName(e.target.value)}
                         className="text-2xl border-gray-700 text-gray-200 w-full h-full bg-[#1E1E1E] p-4 rounded-4xl placeholder:text-gray-500"
                     />

@@ -22,7 +22,7 @@ function Notifications() {
     const { mutate: removeNotification } = useMutation({
         mutationFn: deleteNotification,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["notifications"] }); 
+            queryClient.invalidateQueries({ queryKey: ["notifications"] });
         },
     });
 
@@ -35,7 +35,7 @@ function Notifications() {
         content = <p className="text-red-500">Error.</p>;
     }
     else if (!notifications || notifications.length === 0) {
-        content = <p>No notifications found.</p>;
+        content = <p className="text-white italic">No notifications found.</p>;
     }
     else {
         content = (

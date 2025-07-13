@@ -30,19 +30,19 @@ function HomePage() {
         content = <p className="text-red-500">Error.</p>;
     }
     else if (!courses || courses.length === 0) {
-        content = <p>No courses found.</p>;
+        content = <p className="text-white text-center text-xl mt-8 italic">No courses found.</p>;
     }
     else {
         content = (
             <ul className="grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 p-4">
                 {courses.map(c => (
                     <li key={c.id}>
-                        <CourseCard 
-                        {...c}
-                        onClick={() => {
-                            homeContext?.setCurrentCourseId(c.id);
-                            homeContext?.setCurrentCourseName(c.name);
-                        }} />
+                        <CourseCard
+                            {...c}
+                            onClick={() => {
+                                homeContext?.setCurrentCourseId(c.id);
+                                homeContext?.setCurrentCourseName(c.name);
+                            }} />
                     </li>
                 ))}
             </ul>

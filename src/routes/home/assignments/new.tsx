@@ -72,6 +72,7 @@ function NewAssignment() {
           placeholder="New assignment..."
           required
           value={assignmentName}
+          maxLength={256}
           onChange={(e) => setAssignmentName(e.target.value)}
           className="focus:outline-none focus:ring-0 text-2xl border-gray-700 text-gray-200 w-full h-full bg-[#1E1E1E] p-2 rounded-4xl placeholder:text-gray-500"
         />

@@ -18,8 +18,8 @@ function NewLecture() {
   const queryClient = useQueryClient();
   const homeContext = useContext(HomeContext);
 
-  const [courseName, setCourseName] = useState("");
-  const [courseContent, setCourseContent] = useState<string | null>(null);
+  const [lectureName, setLectureName] = useState("");
+  const [lectureContent, setLectureContent] = useState<string | null>(null);
   const { files, onChange, removeFile, clearFiles } = useFile({ multiple: true });
 
   const { mutateAsync: addLecture } = useMutation({
@@ -43,10 +43,10 @@ function NewLecture() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("name", courseName);
+    formData.append("name", lectureName);
 
-    if (courseContent !== null) {
-      formData.append("content", courseContent)
+    if (lectureContent !== null) {
+      formData.append("content", lectureContent)
     }
 
     files.forEach((f) => {
@@ -66,8 +66,9 @@ function NewLecture() {
           type="text"
           placeholder="New lecture..."
           required
-          value={courseName}
-          onChange={(e) => setCourseName(e.target.value)}
+          value={lectureName}
+          maxLength={256}
+          onChange={(e) => setLectureName(e.target.value)}
           className="focus:outline-none focus:ring-0 text-2xl border-gray-700 text-gray-200 w-full h-full bg-[#1E1E1E] p-2 rounded-4xl placeholder:text-gray-500"
         />
         <div className='flex flex-row'>
@@ -75,7 +76,7 @@ function NewLecture() {
             text=""
             iconSrc={AcceptIcon}
             isSubmitType={true}
-            disabled={courseName.trim().length < 3 || files.length < 1}
+            disabled={lectureName.trim().length < 3 || files.length < 1}
           />
           <div className='w-2'></div>
           <TransparentButton
@@ -106,8 +107,8 @@ function NewLecture() {
       <div className='mt-4 flex-1'>
         <textarea
           placeholder="Content..."
-          value={courseContent || ""}
-          onChange={(e) => setCourseContent(e.target.value)}
+          value={lectureContent || ""}
+          onChange={(e) => setLectureContent(e.target.value)}
           className=" text-gray-200 w-full h-full bg-[#1E1E1E] p-4 rounded-4xl placeholder:text-gray-500 focus:outline-none focus:ring-0"
         />
       </div>

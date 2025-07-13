@@ -11,7 +11,7 @@ import { UserContext } from "../routes/home/route";
 
 interface CourseBarProps {
     currentCourseId: number | null;
-    currentCourseName: string | null
+    currentCourseName: string | null;
 }
 
 type Tab = "lectures" | "assignments" | "members";
@@ -65,8 +65,11 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
     return (
         <div className="flex flex-col bg-black/20 rounded-2xl h-full w-72 op-0 bottom-0 left-0 overflow-y-auto">
             <div className="flex flex-col p-5 flex-grow overflow-y-auto">
-                <span className="font-bold text-xl text-secondary-grey select-none whitespace-nowrap text-ellipsis pb-2 border-b border-secondary-grey border-2/20">
-                    {currentCourseName || <p className="italic text-secondary-grey">No course selected</p>}
+                <span
+                    className="font-bold text-xl text-secondary-grey select-none overflow-hidden whitespace-nowrap text-ellipsis pb-2 border-b border-secondary-grey border-2/20"
+                    title={currentCourseName || "No course selected"}
+                >
+                    {currentCourseName || <span className="italic text-secondary-grey">No course selected</span>}
                 </span>
                 {currentCourseId && (
                     <>
@@ -120,7 +123,7 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
                     </>
                 )}
             </div>
-            {(currentCourseId && userContext.role) === "Teacher" && (
+            {(currentCourseId && userContext.role === "Teacher") && (
                 <div className="flex flex-row w-full justify-between px-2 pt-2 pb-2">
                     <div className="ml-1">
                         <TransparentButton

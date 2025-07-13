@@ -79,8 +79,8 @@ function Lecture() {
   });
 
   const [isEditing, setIsEditing] = useState(false);
-  const [courseName, setCourseName] = useState(lecture.name);
-  const [courseContent, setCourseContent] = useState<string | null>(lecture.content);
+  const [lectureName, setLectureName] = useState(lecture.name);
+  const [lectureContent, setLectureContent] = useState<string | null>(lecture.content);
   const { files, setFiles, onChange, removeFile, clearFiles } = useFile({ multiple: true });
 
   // !!!IMPORTANT!!!
@@ -89,8 +89,8 @@ function Lecture() {
   // If not it would destroy component's behavior when isEditing would be set to true atleast once in the same course.
   useEffect(() => {
     setIsEditing(false);
-    setCourseName(lecture.name);
-    setCourseContent(lecture.content);
+    setLectureName(lecture.name);
+    setLectureContent(lecture.content);
     clearFiles();
   }, [lecture])
 
@@ -99,8 +99,8 @@ function Lecture() {
       return;
     }
 
-    setCourseName(lecture.name);
-    setCourseContent(lecture.content);
+    setLectureName(lecture.name);
+    setLectureContent(lecture.content);
     clearFiles();
   }, [isEditing])
 
@@ -108,10 +108,10 @@ function Lecture() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("name", courseName);
+    formData.append("name", lectureName);
 
-    if (courseContent !== null) {
-      formData.append("content", courseContent)
+    if (lectureContent !== null) {
+      formData.append("content", lectureContent)
     }
 
     files.forEach((f) => {
@@ -132,8 +132,8 @@ function Lecture() {
             type="text"
             placeholder="New lecture..."
             required
-            value={courseName}
-            onChange={(e) => setCourseName(e.target.value)}
+            value={lectureName}
+            onChange={(e) => setLectureName(e.target.value)}
             className="focus:outline-none focus:ring-0 text-2xl border-gray-700 text-gray-200 w-full h-full bg-[#1E1E1E] p-2 rounded-4xl placeholder:text-gray-500"
           />
           <div className='flex flex-row'>
@@ -141,7 +141,7 @@ function Lecture() {
               text=""
               iconSrc={AcceptIcon}
               isSubmitType={true}
-              disabled={courseName.trim().length < 3 || files.length < 1}
+              disabled={lectureName.trim().length < 3 || files.length < 1}
             />
             <div className='w-2'></div>
             <TransparentButton
@@ -167,8 +167,8 @@ function Lecture() {
         <div className='mt-2 flex-1'>
           <textarea
             placeholder="Content..."
-            value={courseContent || ""}
-            onChange={(e) => setCourseContent(e.target.value)}
+            value={lectureContent || ""}
+            onChange={(e) => setLectureContent(e.target.value)}
             className=" text-gray-200 w-full h-full bg-[#1E1E1E] p-4 rounded-4xl placeholder:text-gray-500 focus:outline-none focus:ring-0"
           />
         </div>
@@ -176,24 +176,30 @@ function Lecture() {
     ) : (
       <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
         <div className='flex flex-row justify-between pb-4 pt-1 border-b-1'>
-          <h2>{lecture.name}</h2>
-          {userContext.role === "Teacher" && <div className='flex flex-row'>
-            <TransparentButton
-              text=""
-              iconSrc={EditIcon}
-              onClick={async () => {
-                const existingFiles = await fetchFiles(lecture.files);
-                setFiles(existingFiles);
-                setIsEditing(!isEditing);
-              }}
-            />
-            <div className='w-2'></div>
-            <TransparentButton
-              text=""
-              iconSrc={TrashIcon}
-              onClick={() => removeLecture(lecture.id)}
-            />
-          </div>}
+          <h2
+            className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
+            title={lecture.name}
+          >
+            {lecture.name}
+          </h2>
+          {userContext.role === "Teacher" &&
+            <div className='flex flex-row'>
+              <TransparentButton
+                text=""
+                iconSrc={EditIcon}
+                onClick={async () => {
+                  const existingFiles = await fetchFiles(lecture.files);
+                  setFiles(existingFiles);
+                  setIsEditing(!isEditing);
+                }}
+              />
+              <div className='w-2'></div>
+              <TransparentButton
+                text=""
+                iconSrc={TrashIcon}
+                onClick={() => removeLecture(lecture.id)}
+              />
+            </div>}
         </div>
         <div className="flex flex-row justify-between mt-4">
           <h3>Files</h3>
