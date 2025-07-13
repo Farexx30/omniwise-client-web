@@ -142,7 +142,7 @@ function Course() {
           Welcome to {course.name} 😊
         </div>
         <div className="text-xl mt-8 [&>*]:px-18 w-fit">
-          {userContext.role === "Teacher" &&
+          {(userContext.role === "Teacher" && userContext.userId === course.ownerId) &&
             <ShadowButton
               text="Edit"
               iconSrc={EditIcon}

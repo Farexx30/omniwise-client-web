@@ -150,6 +150,7 @@ function HomePage() {
                             onClick={() => {
                                 homeContext?.setCurrentCourseId(c.id);
                                 homeContext?.setCurrentCourseName(c.name);
+                                homeContext?.setCurrentCourseOwnerId(c.ownerId);
                             }} />
                     </li>
                 ))}

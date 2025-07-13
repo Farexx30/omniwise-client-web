@@ -3,4 +3,5 @@ export interface Course {
     name: string;
     imgUrl?: string;
     imgName?: string;
+    ownerId: string;
 }

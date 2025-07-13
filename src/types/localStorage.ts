@@ -15,5 +15,6 @@ export interface UserInfo {
 export interface CourseInfo {
     id: number | null;
     name: string | null;
+    ownerId: string | null;
 }
 
