@@ -2,7 +2,7 @@ import type { Assignment, BasicAssignmentInfo } from "../types/assignment";
 import type { Course } from "../types/course";
 import type { NotificationDetails } from "../types/notification";
 import type { BasicLectureInfo, Lecture } from "../types/lecture";
-import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, RegisterResult, RegisterUser, UserRole } from "../types/user";
+import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, PendingCourseMember, RegisterResult, RegisterUser, UserRole } from "../types/user";
 import type { AssignmentSubmission } from "../types/assignmentSubmission";
 import type { Auth, UserInfo } from "../types/localStorage";
 import { getObjFromJSONLocalStorage } from "../utils/appHelpers";
@@ -615,5 +615,61 @@ export const deleteAssignmentSubmissionComment = async (id: number): Promise<voi
 
     if (!response.ok) {
         throw new Error(`Error deleting assignment submission comment: ${response.statusText}`);
+    }
+}
+
+
+export const removeCourseMember = async (courseId: string, userId: string) => {
+    const url = `${BASE_API_URL_DEV}/courses/${courseId}/members/${userId}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error while removing member: ${response.statusText}`);
+    }
+}
+
+export const getPendingMembersByCourseId = async (id: number): Promise<PendingCourseMember[]> => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}/members/pending`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching pending members for course: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    const result: PendingCourseMember[] = Array.isArray(json)
+        ? json.map((prop: { userId: string; firstName: string, lastName: string; role: string;}) => ({
+            id: prop.userId,
+            name: `${prop.firstName} ${prop.lastName}`,
+            role: prop.role
+        }))
+        : [];
+    return result;
+}
+
+
+export const acceptMemberToCourse = async (courseId: string, userId: string) => {
+    const url = `${BASE_API_URL_DEV}/courses/${courseId}/members/${userId}/accept`;
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error accepting member to course: ${response.statusText}`);
     }
 }

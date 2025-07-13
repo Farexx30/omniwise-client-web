@@ -154,7 +154,7 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                                     destination = "/home/assignments/new";
                                 }
                                 else if (currentTab == "members") {
-                                    destination = "??? will be implemented later";
+                                    destination = "/home/courses/$courseId/members/pending"
                                 }
 
                                 router.navigate({ to: destination });
