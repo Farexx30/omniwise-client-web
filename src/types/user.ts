@@ -1,3 +1,5 @@
+import type { AssignmentSubmissionCourseMemberList } from "./assignmentSubmission";
+
 export type UserRole = "Student" | "Teacher" | "Admin";
 
 export interface RegisterUser {
@@ -19,7 +21,7 @@ export interface CourseMemberWithDetails {
     fullName: string;
     email: string;
     roleName: string;
-    //will add assignmentSubmissions in the future.
+    assignmentSubmissions?: AssignmentSubmissionCourseMemberList[];
 }
 
 export type RegisterResult = "BadRequest" | "Success";

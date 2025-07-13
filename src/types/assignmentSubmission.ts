@@ -21,6 +21,15 @@ export interface AssignmentSubmission
     files: FileInfo[];
 }
 
+export interface AssignmentSubmissionCourseMemberList
+{
+    id: number;
+    name: string;
+    latestSubmissionDate: string;
+    deadline: string;
+    grade: number;
+}
+
 export interface Comment
 {
     id: number;
