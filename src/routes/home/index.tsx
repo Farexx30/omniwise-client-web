@@ -11,6 +11,8 @@ import TransparentButton from '../../components/TransparentButton';
 import type { UserStatus } from '../../types/user';
 import UserAccept from "/user-accept.svg"
 import UserDelete from "/user-delete.svg"
+import UserArchive from "/archive.svg"
+import UndoArchive from "/undo-archive.svg"
 
 export const Route = createFileRoute('/home/')({
     component: HomePage
@@ -110,7 +112,7 @@ function HomePage() {
                                 <div className='flex flex-row'>
                                     <div className='ml-2'></div>
                                     <TransparentButton
-                                        iconSrc={UserDelete}
+                                        iconSrc={UserArchive}
                                         onClick={async () => await modifyUserStatus({
                                             userId: u.id, 
                                             statusIndex: 2
@@ -121,7 +123,7 @@ function HomePage() {
                                 <div className='flex flex-row'>
                                     <div className='ml-2'></div>
                                     <TransparentButton
-                                        iconSrc={UserAccept}
+                                        iconSrc={UndoArchive}
                                         onClick={async () => await modifyUserStatus({
                                             userId: u.id, 
                                             statusIndex: 1
