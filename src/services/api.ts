@@ -2,7 +2,7 @@ import type { Assignment, BasicAssignmentInfo } from "../types/assignment";
 import type { Course } from "../types/course";
 import type { NotificationDetails } from "../types/notification";
 import type { BasicLectureInfo, Lecture } from "../types/lecture";
-import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, RegisterResult, RegisterUser, UserRole } from "../types/user";
+import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, PendingCourseMember, RegisterResult, RegisterUser, UserRole } from "../types/user";
 import type { AssignmentSubmission } from "../types/assignmentSubmission";
 
 const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
@@ -570,5 +570,45 @@ export const removeCourseMember = async (courseId: string, userId: string) => {
 
     if (!response.ok) {
         throw new Error(`Error while removing member: ${response.statusText}`);
+    }
+}
+
+export const getPendingMembersByCourseId = async (id: number): Promise<PendingCourseMember[]> => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}/members/pending`;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error fetching pending members for course: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    const result: PendingCourseMember[] = Array.isArray(json)
+        ? json.map((prop: { userId: string; courseId: number; isAccepted: boolean; firstName: string, lastName: string; }) => ({
+            id: prop.userId,
+            name: `${prop.firstName} ${prop.lastName}`
+        }))
+        : [];
+    return result;
+}
+
+
+export const acceptMemberToCourse = async (courseId: string, userId: string) => {
+    const url = `${BASE_API_URL_DEV}/courses/${courseId}/members/${userId}/accept`;
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error accepting member to course: ${response.statusText}`);
     }
 }

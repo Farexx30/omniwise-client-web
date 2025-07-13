@@ -34,3 +34,8 @@ export interface AuthenticationSuccessResponse {
     expiresIn: number;
     refreshToken: string;
 }
+
+export interface PendingCourseMember{
+    id: string;
+    name: string;
+}

@@ -68,16 +68,20 @@ function CourseMember() {
           <h2>{courseMember.fullName}</h2>
           <span className='ml-4 text-secondary-grey'>{courseMember.roleName}</span>
         </div>
-        <div>
-          <TransparentButton text=""
-            iconSrc={UserDelete}
-            onClick={() =>
-              removeMember({
-                courseId: homeContext!.currentCourseId!.toString(),
-                userId: courseMember.id,
-              })}
-          />
-        </div>
+        {userContext.userId !== memberId && (
+          <div>
+            <TransparentButton
+              text=""
+              iconSrc={UserDelete}
+              onClick={() =>
+                removeMember({
+                  courseId: homeContext!.currentCourseId!.toString(),
+                  userId: courseMember.id,
+                })
+              }
+            />
+          </div>
+        )}
       </div>
       <div className='flex flex-row pb-2  border-b-1 mt-2 mb-4'>
         <span><strong>E-mail: </strong>{courseMember.email}</span>
