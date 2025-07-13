@@ -66,7 +66,9 @@ function HomeLayout() {
                         <div className="mb-4">
                             <CourseBar
                                 currentCourseId={currentCourseId}
+                                setCurrentCourseId={setCurrentCourseId}
                                 currentCourseName={currentCourseName}
+                                setCurrentCourseName={setCurrentCourseName}
                             />
                         </div>
                         <div className="w-[calc(100vw-29rem)] rounded-2xl mx-2 mb-4 overflow-y-auto">

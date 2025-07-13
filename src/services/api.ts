@@ -184,6 +184,20 @@ export const getCourseById = async (id: number): Promise<Course> => {
     return json as Course;
 }
 
+export const deleteCourse = async (id: number) => {
+    const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error while deleting course: ${response.statusText}`);
+    }
+}
+
 
 export const getLecturesByCourseId = async (id: number): Promise<BasicLectureInfo[]> => {
     const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}/lectures`;
@@ -329,7 +343,7 @@ export const getCourseMemberById = async (courseId: number, memberId: string): P
 }
 
 export const deleteLecture = async (id: number) => {
-    const url = `${BASE_API_URL_DEV}/lectures/${id}`;
+    const url = `${BASE_API_URL_DEV}/lectures/${encodeURIComponent(id)}`;
     const response = await fetch(url, {
         method: "DELETE",
         headers: {
@@ -449,7 +463,7 @@ export const getAssignmentSubmissionById = async (id: number): Promise<Assignmen
 
 
 export const createAssignmentSubmissionComment = async (id: number, content: string) => {
-    const url = `${BASE_API_URL_DEV}/assignment-submissions/${id}/assignment-submission-comments`;
+    const url = `${BASE_API_URL_DEV}/assignment-submissions/${encodeURIComponent(id)}/assignment-submission-comments`;
     const response = await fetch(url, {
         method: "POST",
         headers: {
