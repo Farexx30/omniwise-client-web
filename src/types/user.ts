@@ -1,3 +1,5 @@
+import type { AssignmentSubmissionCourseMemberList } from "./assignmentSubmission";
+
 export type UserRole = "Student" | "Teacher" | "Admin";
 export type UserStatus = "Pending" | "Active" | "Archived";
 
@@ -27,7 +29,7 @@ export interface CourseMemberWithDetails {
     fullName: string;
     email: string;
     roleName: string;
-    //will add assignmentSubmissions in the future.
+    assignmentSubmissions?: AssignmentSubmissionCourseMemberList[];
 }
 
 export type RegisterResult = "BadRequest" | "Success";
@@ -39,4 +41,10 @@ export interface AuthenticationSuccessResponse {
     accessToken: string;
     expiresIn: number;
     refreshToken: string;
+}
+
+export interface PendingCourseMember{
+    id: string;
+    name: string;
+    role: string;
 }

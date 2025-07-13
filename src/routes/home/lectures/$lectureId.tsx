@@ -175,7 +175,7 @@ function Lecture() {
       </form>
     ) : (
       <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
-        <div className='flex flex-row justify-between pb-4 pt-1 border-b-1'>
+        <div className='flex flex-row justify-between pb-2 border-b-1'>
           <h2
             className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
             title={lecture.name}

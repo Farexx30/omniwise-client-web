@@ -26,6 +26,7 @@ import { Route as HomeCoursesCourseIdRouteRouteImport } from './routes/home/cour
 import { Route as HomeCoursesCourseIdIndexRouteImport } from './routes/home/courses/$courseId/index'
 import { Route as HomeAssignmentsAssignmentIdIndexRouteImport } from './routes/home/assignments/$assignmentId/index'
 import { Route as HomeAssignmentsAssignmentIdNewSubmissionRouteImport } from './routes/home/assignments/$assignmentId/new-submission'
+import { Route as HomeCoursesCourseIdMembersPendingRouteImport } from './routes/home/courses/$courseId/members/pending'
 import { Route as HomeCoursesCourseIdMembersMemberIdRouteImport } from './routes/home/courses/$courseId/members/$memberId'
 
 const RegistrationRoute = RegistrationRouteImport.update({
@@ -118,6 +119,12 @@ const HomeAssignmentsAssignmentIdNewSubmissionRoute =
     path: '/assignments/$assignmentId/new-submission',
     getParentRoute: () => HomeRouteRoute,
   } as any)
+const HomeCoursesCourseIdMembersPendingRoute =
+  HomeCoursesCourseIdMembersPendingRouteImport.update({
+    id: '/members/pending',
+    path: '/members/pending',
+    getParentRoute: () => HomeCoursesCourseIdRouteRoute,
+  } as any)
 const HomeCoursesCourseIdMembersMemberIdRoute =
   HomeCoursesCourseIdMembersMemberIdRouteImport.update({
     id: '/members/$memberId',
@@ -144,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/home/assignments/$assignmentId': typeof HomeAssignmentsAssignmentIdIndexRoute
   '/home/courses/$courseId/': typeof HomeCoursesCourseIdIndexRoute
   '/home/courses/$courseId/members/$memberId': typeof HomeCoursesCourseIdMembersMemberIdRoute
+  '/home/courses/$courseId/members/pending': typeof HomeCoursesCourseIdMembersPendingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -162,6 +170,7 @@ export interface FileRoutesByTo {
   '/home/assignments/$assignmentId': typeof HomeAssignmentsAssignmentIdIndexRoute
   '/home/courses/$courseId': typeof HomeCoursesCourseIdIndexRoute
   '/home/courses/$courseId/members/$memberId': typeof HomeCoursesCourseIdMembersMemberIdRoute
+  '/home/courses/$courseId/members/pending': typeof HomeCoursesCourseIdMembersPendingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -183,6 +192,7 @@ export interface FileRoutesById {
   '/home/assignments/$assignmentId/': typeof HomeAssignmentsAssignmentIdIndexRoute
   '/home/courses/$courseId/': typeof HomeCoursesCourseIdIndexRoute
   '/home/courses/$courseId/members/$memberId': typeof HomeCoursesCourseIdMembersMemberIdRoute
+  '/home/courses/$courseId/members/pending': typeof HomeCoursesCourseIdMembersPendingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -205,6 +215,7 @@ export interface FileRouteTypes {
     | '/home/assignments/$assignmentId'
     | '/home/courses/$courseId/'
     | '/home/courses/$courseId/members/$memberId'
+    | '/home/courses/$courseId/members/pending'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -223,6 +234,7 @@ export interface FileRouteTypes {
     | '/home/assignments/$assignmentId'
     | '/home/courses/$courseId'
     | '/home/courses/$courseId/members/$memberId'
+    | '/home/courses/$courseId/members/pending'
   id:
     | '__root__'
     | '/'
@@ -243,6 +255,7 @@ export interface FileRouteTypes {
     | '/home/assignments/$assignmentId/'
     | '/home/courses/$courseId/'
     | '/home/courses/$courseId/members/$memberId'
+    | '/home/courses/$courseId/members/pending'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -374,6 +387,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeAssignmentsAssignmentIdNewSubmissionRouteImport
       parentRoute: typeof HomeRouteRoute
     }
+    '/home/courses/$courseId/members/pending': {
+      id: '/home/courses/$courseId/members/pending'
+      path: '/members/pending'
+      fullPath: '/home/courses/$courseId/members/pending'
+      preLoaderRoute: typeof HomeCoursesCourseIdMembersPendingRouteImport
+      parentRoute: typeof HomeCoursesCourseIdRouteRoute
+    }
     '/home/courses/$courseId/members/$memberId': {
       id: '/home/courses/$courseId/members/$memberId'
       path: '/members/$memberId'
@@ -387,6 +407,7 @@ declare module '@tanstack/react-router' {
 interface HomeCoursesCourseIdRouteRouteChildren {
   HomeCoursesCourseIdIndexRoute: typeof HomeCoursesCourseIdIndexRoute
   HomeCoursesCourseIdMembersMemberIdRoute: typeof HomeCoursesCourseIdMembersMemberIdRoute
+  HomeCoursesCourseIdMembersPendingRoute: typeof HomeCoursesCourseIdMembersPendingRoute
 }
 
 const HomeCoursesCourseIdRouteRouteChildren: HomeCoursesCourseIdRouteRouteChildren =
@@ -394,6 +415,8 @@ const HomeCoursesCourseIdRouteRouteChildren: HomeCoursesCourseIdRouteRouteChildr
     HomeCoursesCourseIdIndexRoute: HomeCoursesCourseIdIndexRoute,
     HomeCoursesCourseIdMembersMemberIdRoute:
       HomeCoursesCourseIdMembersMemberIdRoute,
+    HomeCoursesCourseIdMembersPendingRoute:
+      HomeCoursesCourseIdMembersPendingRoute,
   }
 
 const HomeCoursesCourseIdRouteRouteWithChildren =
