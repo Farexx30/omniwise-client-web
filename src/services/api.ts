@@ -589,9 +589,10 @@ export const getPendingMembersByCourseId = async (id: number): Promise<PendingCo
 
     const json = await response.json();
     const result: PendingCourseMember[] = Array.isArray(json)
-        ? json.map((prop: { userId: string; courseId: number; isAccepted: boolean; firstName: string, lastName: string; }) => ({
+        ? json.map((prop: { userId: string; firstName: string, lastName: string; role: string;}) => ({
             id: prop.userId,
-            name: `${prop.firstName} ${prop.lastName}`
+            name: `${prop.firstName} ${prop.lastName}`,
+            role: prop.role
         }))
         : [];
     return result;

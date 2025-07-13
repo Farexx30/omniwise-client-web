@@ -101,7 +101,7 @@ function CourseMember() {
                   }>
                   <div className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
                     <span><strong>{as.name}</strong></span>
-                    <span><strong>Grade: </strong>{as.grade}</span>
+                    <span><strong>Grade: </strong>{as.grade != null ? as.grade : "-"}</span>
                     <span><strong>Submission date: </strong>{formatDate(as.latestSubmissionDate)}</span>
                     <span><strong>Deadline: </strong>{formatDate(as.deadline)}</span>
                   </div>

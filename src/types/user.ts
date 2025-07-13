@@ -38,4 +38,5 @@ export interface AuthenticationSuccessResponse {
 export interface PendingCourseMember{
     id: string;
     name: string;
+    role: string;
 }

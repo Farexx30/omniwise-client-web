@@ -27,8 +27,8 @@ function RouteComponent() {
     const { mutate: removeMember } = useMutation({
         mutationFn: ({ courseId, userId }: { courseId: string; userId: string }) =>
             removeCourseMember(courseId, userId),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["pendingMembers", homeContext.currentCourseId] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["pendingMembers", homeContext.currentCourseId] });
         },
         onError: () => {
             alert("An error occured while deleting course member.")
@@ -39,12 +39,13 @@ function RouteComponent() {
         mutationFn: ({ courseId, userId }: { courseId: string; userId: string }) =>
             acceptMemberToCourse(courseId, userId),
         onSuccess: async () => {
-          queryClient.invalidateQueries({ queryKey: ["pendingMembers", homeContext.currentCourseId] });
+            await queryClient.invalidateQueries({ queryKey: ["pendingMembers", homeContext.currentCourseId] });
+            await queryClient.invalidateQueries({ queryKey: ["members", homeContext.currentCourseId] });
         },
         onError: () => {
-          alert("An error occured while accepting member.")
+            alert("An error occured while accepting member.")
         },
-      });
+    });
 
     return <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
         <h2 className='mb-4'>Applicants</h2>
@@ -55,6 +56,7 @@ function RouteComponent() {
                         <li key={pm.id}>
                             <div className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
                                 <span><strong>{pm.name}</strong></span>
+                                <span>{pm.role}</span>
                                 <div className='flex flex-row'>
                                     <TransparentButton
                                         iconSrc={UserAccept}
