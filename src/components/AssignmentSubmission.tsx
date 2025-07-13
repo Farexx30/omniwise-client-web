@@ -1,9 +1,10 @@
 import React from 'react'
-import type { Assignment, Submission } from '../types/assignment'
+import type { BasicAssignmentSubmission} from '../types/assignmentSubmission'
+
 import { formatDate } from '../utils/date';
 
 interface AssignmentSubmissionProps {
-    submission: Submission;
+    submission: BasicAssignmentSubmission;
     assignmentMaxGrade: number;
 }
 

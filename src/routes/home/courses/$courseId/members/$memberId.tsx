@@ -4,8 +4,9 @@ import Spinner from '../../../../../components/Spinner'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import TransparentButton from '../../../../../components/TransparentButton'
 import TrashIcon from '/white-trash.svg'
-import AssignmentSubmission from '../../../../../components/AssignmentSubmission'
 import { formatDate } from '../../../../../utils/date'
+import { UserContext } from '../../../route'
+import { useContext } from 'react'
 
 export const Route = createFileRoute(
   '/home/courses/$courseId/members/$memberId',
@@ -28,6 +29,7 @@ export const Route = createFileRoute(
 })
 
 function CourseMember() {
+  const userContext = useContext(UserContext)!;
   const { courseId, memberId } = Route.useLoaderData();
 
   const { data: courseMember } = useSuspenseQuery({
@@ -55,27 +57,38 @@ function CourseMember() {
         <span className='ml-8'><strong>Enrolled on: </strong>{courseMember.joinDate}</span>
       </div>
       <h3>Grades</h3>
-      {courseMember.assignmentSubmissions && courseMember.assignmentSubmissions.length > 0 ? (
-        <ul>
-          {courseMember.assignmentSubmissions.map(as => (
-            <li key={as.id}>
-              <Link
-                to="/home/assignment-submissions/$assignmentSubmissionId"
-                params={{ assignmentSubmissionId: as.id.toString() }
-                }>
-                <div className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
-                  <span><strong>{as.name}</strong></span>                  
-                  <span><strong>Grade: </strong>{as.grade}</span>
-                  <span><strong>Submission date: </strong>{formatDate(as.latestSubmissionDate)}</span>
-                  <span><strong>Deadline: </strong>{formatDate(as.deadline)}</span>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="italic text-secondary-grey">No submissions yet.</p>
-      )}
-    </div>
+      {courseMember.assignmentSubmissions
+        && courseMember.assignmentSubmissions.length > 0
+        && (courseMember.id === userContext.userId || userContext.role === "Teacher")
+        ? (
+          <ul>
+            {courseMember.assignmentSubmissions.map(as => (
+              <li key={as.id}>
+                <Link
+                  to="/home/assignment-submissions/$assignmentSubmissionId"
+                  params={{ assignmentSubmissionId: as.id.toString() }
+                  }>
+                  <div className="flex flex-row justify-between bg-white/10 rounded-lg p-4 shadow-md my-4">
+                    <span><strong>{as.name}</strong></span>
+                    <span><strong>Grade: </strong>{as.grade}</span>
+                    <span><strong>Submission date: </strong>{formatDate(as.latestSubmissionDate)}</span>
+                    <span><strong>Deadline: </strong>{formatDate(as.deadline)}</span>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          courseMember.id !== userContext.userId && userContext.role === "Student" ?
+            (
+              <p className="italic text-secondary-grey">You cannot view other member grades.</p>
+            ) :
+            (
+              <p className="italic text-secondary-grey">No submissions yet.</p>
+            )
+
+        )
+      }
+    </div >
   )
 }
