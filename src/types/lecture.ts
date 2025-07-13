@@ -8,6 +8,6 @@ export interface BasicLectureInfo {
 export interface Lecture {
     id: number;
     name: string;
-    content: string;
+    content: string | null;
     files: FileInfo[]
 }

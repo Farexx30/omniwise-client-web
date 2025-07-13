@@ -32,7 +32,7 @@ function FileInput({ data: files, onChange, onRemove, onClear, multiple, accept 
                 </button>
             </div>
             <div className="max-h-72 w-full overflow-y-auto overflow-x-clip">
-                <ul className={`grid grid-cols-1 gap-5 p-4 w-full px-4 ${multiple ? `md:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3` : ""}`}>
+                {files && files.length > 0 ? (<ul className={`grid grid-cols-1 gap-5 p-4 w-full px-4 ${multiple ? `md:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3` : ""}`}>
                     {files.map((f) => (
                         <li key={f.name}>
                             <FileView
@@ -42,7 +42,9 @@ function FileInput({ data: files, onChange, onRemove, onClear, multiple, accept 
                             />
                         </li>
                     ))}
-                </ul>
+                </ul>) : (
+                    <p className="italic text-center text-secondary-grey">{`No ${multiple ? "files" : "file"} selected.`}</p>
+                )}
                 {(files.length > 0 && multiple) && (
                     <div className="flex w-full justify-center items-center py-4">
                         <button

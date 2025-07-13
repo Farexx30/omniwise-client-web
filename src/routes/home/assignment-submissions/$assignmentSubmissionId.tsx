@@ -156,7 +156,12 @@ function AssignmentSubmission() {
         wrapper={(children) => <form onSubmit={handleAssignmentSubmissionUpdate}>{children}</form>}
       >
         <div className='flex flex-row justify-between pb-2 border-b-1'>
-          <h2>{assignmentSubmission.assignmentName}</h2>
+          <h2
+            className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
+            title={assignmentSubmission.assignmentName}
+          >
+            {assignmentSubmission.assignmentName}
+          </h2>
           {role == "Student" &&
             <div className='flex flex-row'>
               {isEditing ? (
@@ -197,7 +202,7 @@ function AssignmentSubmission() {
         <div className='flex flex-row pb-2 border-b-1 mt-2 justify-between'>
           <span><strong>Author: </strong> {assignmentSubmission.authorFullName}</span>
           <span><strong>Submission date:</strong> {formatDate(assignmentSubmission.latestSubmissionDate)}</span>
-          <span><strong>Deadline date:</strong> {formatDate(assignmentSubmission.deadline)}</span>
+          <span><strong>Deadline:</strong> {formatDate(assignmentSubmission.deadline)}</span>
         </div>
         <div className="flex flex-row justify-between mt-4">
           <h3>Files</h3>
@@ -274,7 +279,7 @@ function AssignmentSubmission() {
               <li key={c.id} className={`flex flex-col ${c.authorId === userId ? "bg-primary/80" : "bg-white/10"} rounded-lg p-4 shadow-md my-4`}>
                 <CommentView
                   assignmentSubmissionId={assignmentSubmissionId}
-                  {...c}  
+                  {...c}
                 />
               </li>
             ))}
@@ -290,6 +295,16 @@ function AssignmentSubmission() {
             placeholder="Add a comment..."
             className={`w-full bg-white/10 text-white p-2 rounded-lg resize-none border-none focus:outline-none`}
             required
+            onKeyDown={async (e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                if (!e.currentTarget.value.trim()) {
+                  e.preventDefault();
+                  return;
+                }
+
+                await handleSubmit(e)
+              }
+            }}
           />
           <button
             type="submit"

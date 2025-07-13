@@ -2,8 +2,10 @@ import { createFileRoute, Outlet } from '@tanstack/react-router'
 import CourseBar from '../../components/CourseBar'
 import Sidebar from '../../components/Sidebar'
 import WebHeader from '../../components/WebHeader'
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useMemo, useState } from 'react'
 import type { UserRole } from "../../types/user"
+import { getObjFromJSONLocalStorage } from '../../utils/appHelpers'
+import type { CourseInfo, UserInfo } from '../../types/localStorage'
 
 export const Route = createFileRoute('/home')({
     component: HomeLayout,
@@ -21,19 +23,29 @@ export const HomeContext = createContext<{
 } | null>(null);
 
 function HomeLayout() {
-    const [currentUserRole, setCurrentUserRole] = useState<UserRole | null>(null);
-    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-    const [currentCourseId, setCurrentCourseId] = useState<number | null>(null);
-    const [currentCourseName, setCurrentCourseName] = useState<string | null>(null);
+    const { role: currentUserRole, userId: currentUserId } = getObjFromJSONLocalStorage("userInfo") as UserInfo;
+
+    const [currentCourseId, setCurrentCourseId] = useState<number | null>(() => {
+        const courseInfoObj = getObjFromJSONLocalStorage("courseInfo") as CourseInfo | null;
+        return courseInfoObj?.id || null;
+    });
+    const [currentCourseName, setCurrentCourseName] = useState<string | null>(() => {
+        const courseInfoObj = getObjFromJSONLocalStorage("courseInfo") as CourseInfo | null;
+        return courseInfoObj?.name || null;
+    });
 
     useEffect(() => {
-        setCurrentUserRole(localStorage.getItem("role") as UserRole);
-        setCurrentUserId(localStorage.getItem("currentUserId"))
-    }, [])
+        const courseInfoObj: CourseInfo = {
+            id: currentCourseId,
+            name: currentCourseName
+        }
+
+        localStorage.setItem("courseInfo", JSON.stringify(courseInfoObj))
+    }, [currentCourseId, currentCourseName]);
 
     return (
         <main>
-            <UserContext value ={{role: currentUserRole, userId: currentUserId}}>
+            <UserContext value={{ role: currentUserRole, userId: currentUserId }}>
                 <div className="bg-main-page w-screen h-screen bg-center bg-cover fixed inset-0 z-0 overflow-hidden flex flex-col">
                     <WebHeader />
                     <div className="flex flex-row h-[calc(100vh-2rem)] w-full">
@@ -47,7 +59,9 @@ function HomeLayout() {
                         <div className="mb-4">
                             <CourseBar
                                 currentCourseId={currentCourseId}
+                                setCurrentCourseId={setCurrentCourseId}
                                 currentCourseName={currentCourseName}
+                                setCurrentCourseName={setCurrentCourseName}
                             />
                         </div>
                         <div className="w-[calc(100vw-29rem)] rounded-2xl mx-2 mb-4 overflow-y-auto">

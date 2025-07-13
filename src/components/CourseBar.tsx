@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { BasicLectureInfo } from "../types/lecture";
 import TransparentButton from "./TransparentButton"
 import TransparentLink from "./TransparentLink";
-import { getAssignmentsByCourseId, getLecturesByCourseId, getMembersByCourseId } from "../services/api";
+import { deleteCourse, getAssignmentsByCourseId, getLecturesByCourseId, getMembersByCourseId } from "../services/api";
 import { useContext, useEffect, useState } from "react";
 import type { BasicAssignmentInfo } from "../types/assignment";
 import type { BasicUserInfo } from "../types/user";
@@ -11,13 +11,22 @@ import { UserContext } from "../routes/home/route";
 
 interface CourseBarProps {
     currentCourseId: number | null;
-    currentCourseName: string | null
+    setCurrentCourseId: (value: number | null) => void;
+    currentCourseName: string | null;
+    setCurrentCourseName: (value: string | null) => void;
 }
 
 type Tab = "lectures" | "assignments" | "members";
 
-const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
+const mapToAddButton: Record<Tab, string> = {
+    "lectures": "Lecture",
+    "assignments": "Assignment",
+    "members": "Members"
+}
+
+const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, setCurrentCourseName }: CourseBarProps) => {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const userContext = useContext(UserContext)!;
 
     const [currentTab, setCurrentTab] = useState<Tab>("lectures")
@@ -48,6 +57,19 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
         staleTime: 60_000 * 5
     })
 
+    const { mutate: removeCourse } = useMutation({
+        mutationFn: () => deleteCourse(currentCourseId!),
+        onSuccess: async () => {
+            setCurrentCourseId(null);
+            setCurrentCourseName(null);
+            await queryClient.invalidateQueries({ queryKey: ["courses"] });
+            router.navigate({ to: "/home" });
+        },
+        onError: () => {
+            alert("An error occured while deleting course.")
+        }
+    });
+
     useEffect(() => {
         if (currentTab == "lectures") setCurrentData(lectures || []);
         else if (currentTab == "assignments") setCurrentData(assignments || []);
@@ -57,84 +79,98 @@ const CourseBar = ({ currentCourseId, currentCourseName }: CourseBarProps) => {
     const tabs = ["Lectures", "Assignments", "Members"];
 
     return (
-        <div className="flex flex-col bg-black/20 rounded-2xl h-full w-72 op-0 bottom-0 left-0 p-5 overflow-y-auto">
-            <span className="font-bold text-xl text-secondary-grey select-none whitespace-nowrap text-ellipsis pb-2 border-b border-secondary-grey border-2/20">
-                {currentCourseName || ""}
-            </span>
-            <div className="flex justify-between my-1">
-                {tabs.map((tab, i) => (
-                    <div key={i}>
+        <div className="flex flex-col bg-black/20 rounded-2xl h-full w-72 op-0 bottom-0 left-0 overflow-y-auto">
+            <div className="flex flex-col p-5 flex-grow overflow-y-auto">
+                <span
+                    className="font-bold text-xl text-secondary-grey select-none overflow-hidden whitespace-nowrap text-ellipsis pb-2 border-b border-secondary-grey border-2/20"
+                    title={currentCourseName || "No course selected"}
+                >
+                    {currentCourseName || <span className="italic text-secondary-grey">No course selected</span>}
+                </span>
+                {currentCourseId && (
+                    <>
+                        <div className="flex justify-between my-1">
+                            {tabs.map((tab, i) => (
+                                <div key={i}>
+                                    <TransparentButton
+                                        text={tab}
+                                        onClick={() => setCurrentTab(tab.toLowerCase() as Tab)}
+                                        withEffect={tab.toLowerCase() === currentTab}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex-grow overflow-auto">
+                            <ul>
+                                {(currentData && currentData.length > 0) ? (currentData.map(d => (
+                                    <li key={`${currentTab}-${d.id}`}>
+                                        {currentTab === "lectures" ? (
+                                            <TransparentLink
+                                                to="/home/lectures/$lectureId"
+                                                params={{
+                                                    lectureId: d.id
+                                                }}
+                                                text={d.name}
+                                            />
+                                        ) : currentTab === "assignments" ? (
+                                            <TransparentLink
+                                                to="/home/assignments/$assignmentId"
+                                                params={{
+                                                    assignmentId: d.id
+                                                }}
+                                                text={d.name}
+                                            />
+                                        ) : (
+                                            <TransparentLink
+                                                to="/home/courses/$courseId/members/$memberId"
+                                                params={{
+                                                    courseId: currentCourseId!,
+                                                    memberId: d.id
+                                                }}
+                                                text={d.name}
+                                            />
+                                        )}
+                                    </li>
+                                ))) : (
+                                    <p className="italic text-secondary-grey">No {currentTab.toString()} yet.</p>
+                                )}
+                            </ul>
+                        </div>
+                    </>
+                )}
+            </div>
+            {(currentCourseId && userContext.role === "Teacher") && (
+                <div className="flex flex-row w-full justify-between px-2 pt-2 pb-2">
+                    <div className="ml-1">
                         <TransparentButton
-                            text={tab}
-                            onClick={() => setCurrentTab(tab.toLowerCase() as Tab)}
+                            text={`Add ${mapToAddButton[currentTab]}`}
+                            textSize="text-l"
+                            onClick={() => {
+                                let destination;
+                                if (currentTab == "lectures") {
+                                    destination = "/home/lectures/new";
+                                }
+                                else if (currentTab == "assignments") {
+                                    destination = "/home/assignments/new";
+                                }
+                                else if (currentTab == "members") {
+                                    destination = "/home/courses/$courseId/members/pending"
+                                }
+
+                                router.navigate({ to: destination });
+                            }}
                         />
                     </div>
-                ))}
-            </div>
-            <div className="flex-grow overflow-auto">
-                <ul>
-                    {currentData.map(d => (
-                        <li key={`${currentTab}-${d.id}`}>
-                            {currentTab === "lectures" ? (
-                                <TransparentLink
-                                    to="/home/lectures/$lectureId"
-                                    params={{
-                                        lectureId: d.id
-                                    }}
-                                    text={d.name}
-                                />
-                            ) : currentTab === "assignments" ? (
-                                <TransparentLink
-                                    to="/home/assignments/$assignmentId"
-                                    params={{
-                                        assignmentId: d.id
-                                    }}
-                                    text={d.name}
-                                />
-                            ) : (
-                                <TransparentLink
-                                    to="/home/courses/$courseId/members/$memberId"
-                                    params={{
-                                        courseId: currentCourseId!,
-                                        memberId: d.id
-                                    }}
-                                    text={d.name}
-                                />
-                            )}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            {userContext.role === "Teacher" && <div className="flex flex-row w-full justify-between px-2 pt-2">
-                <div>
-                    <TransparentButton
-                        text="Add"
-                        textSize="text-sm"
-                        onClick={() => {
-                            let destination;
-                            if (currentTab == "lectures") {
-                                destination = "/home/lectures/new"
-                            }
-                            else if (currentTab == "assignments") {
-                                destination = "/home/assignments/new"
-                            }
-                            else if (currentTab == "members") {
-                                destination = "/home/courses/$courseId/members/pending"
-                            }
+                    <div className="mr-1">
+                        <TransparentButton
+                            text="Delete course"
+                            textSize="text-l"
+                            onClick={removeCourse}
+                        />
+                    </div>
+                </div>
+            )}
 
-                            router.navigate({
-                                to: destination
-                            });
-                        }}
-                    />
-                </div>
-                <div>
-                    <TransparentButton
-                        text="Delete"
-                        textSize="text-sm"
-                    />
-                </div>
-            </div>}
         </div>
     )
 }

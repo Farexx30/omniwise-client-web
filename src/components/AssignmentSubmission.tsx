@@ -1,6 +1,4 @@
-import React from 'react'
-import type { BasicAssignmentSubmission} from '../types/assignmentSubmission'
-
+import type { BasicAssignmentSubmission } from '../types/assignmentSubmission';
 import { formatDate } from '../utils/date';
 
 interface AssignmentSubmissionProps {

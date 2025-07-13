@@ -7,6 +7,7 @@ import SearchBar from '../../components/SearchBar';
 import Spinner from '../../components/Spinner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { enrollInCourse } from '../../services/api';
+import { useDebounce } from '../../hooks/useDebounce';
 
 
 export const Route = createFileRoute('/home/available-courses')({
@@ -15,25 +16,26 @@ export const Route = createFileRoute('/home/available-courses')({
 
 function AvailableCourses() {
     const [searchValue, setSearchValue] = useState("");
+    const debouncedSearchValue = useDebounce(searchValue.trim(), 500);
 
     const { data: courses, isLoading, isError } = useQuery({
         queryFn: () => getAvailableCourses(searchValue),
-        queryKey: ["courses", searchValue]
+        queryKey: ["courses", { debouncedSearchValue }]
     })
 
-    
+
     const queryClient = useQueryClient();
 
     const { mutate: enroll } = useMutation({
-    mutationFn: enrollInCourse, 
-    onSuccess: () => {
-        alert("Successfully enrolled!");
-        queryClient.invalidateQueries({ queryKey: ["courses"] });
-    },
-    onError: () => {
-        alert("Failed to enroll in the course.");
-    }
-});
+        mutationFn: enrollInCourse,
+        onSuccess: () => {
+            alert("Successfully enrolled!");
+            queryClient.invalidateQueries({ queryKey: ["courses"] });
+        },
+        onError: () => {
+            alert("Failed to enroll in the course.");
+        }
+    });
 
     let content: JSX.Element | null = null;
 
@@ -44,7 +46,7 @@ function AvailableCourses() {
         content = <p className="text-red-500">Error.</p>;
     }
     else if (!courses || courses.length === 0) {
-        content = <p>No courses found.</p>;
+        content = <p className="text-white text-center text-xl mt-8 italic">No courses found.</p>;
     }
     else {
         content = (

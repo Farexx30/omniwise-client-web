@@ -24,7 +24,7 @@ function RegistrationForm() {
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
 
-        if(!passwordRegex.test(password)) {
+        if (!passwordRegex.test(password)) {
             return false;
         }
 
@@ -35,7 +35,7 @@ function RegistrationForm() {
         return true;
     }
 
-    const handleSubmit = async(e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
@@ -77,6 +77,7 @@ function RegistrationForm() {
                                 placeholder="Email"
                                 required
                                 value={email}
+                                maxLength={256}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
@@ -88,6 +89,7 @@ function RegistrationForm() {
                                 placeholder="First name"
                                 required
                                 value={firstName}
+                                maxLength={256}
                                 onChange={(e) => setFirstName(e.target.value)}
                             />
                         </div>
@@ -99,6 +101,7 @@ function RegistrationForm() {
                                 placeholder="Last name"
                                 required
                                 value={lastName}
+                                maxLength={256}
                                 onChange={(e) => setLastName(e.target.value)}
                             />
                         </div>
@@ -110,6 +113,7 @@ function RegistrationForm() {
                                 placeholder="Password"
                                 required
                                 value={password}
+                                maxLength={36}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
@@ -121,6 +125,7 @@ function RegistrationForm() {
                                 placeholder="Confirm password"
                                 required
                                 value={confirmPassword}
+                                maxLength={36}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                             />
                         </div>

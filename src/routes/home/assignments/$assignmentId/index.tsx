@@ -73,6 +73,7 @@ function Assignment() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["assignments"] });
       await queryClient.invalidateQueries({ queryKey: ["assignment", assignmentId] });
+      await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission"] });
       setIsEditing(!isEditing)
     },
     onError: () => {
@@ -90,7 +91,7 @@ function Assignment() {
 
   // !!!IMPORTANT!!!
   // Reset the component state when navigating to different lecture, since React preserves the previous state even if
-  // lectureId param from Tanstack Router is different. 
+  // assignmentId param from Tanstack Router is different. 
   // If not it would destroy component's behavior when isEditing would be set to true atleast once in the same course.
   useEffect(() => {
     setIsEditing(false);
@@ -196,9 +197,9 @@ function Assignment() {
           multiple={true}
         />
         <div className="flex flex-row justify-between mt-8">
-          <h2>Content</h2>
+          <h2>Assignment description</h2>
         </div>
-        <div className='mt-4 max-h-24 flex-1'>
+        <div className='mt-2 flex-1'>
           <textarea
             placeholder="Content..."
             value={assignmentContent || ""}
@@ -234,7 +235,12 @@ function Assignment() {
     ) : (
       <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
         <div className='flex flex-row justify-between pb-2 border-b-1'>
-          <h2>{assignment.name}</h2>
+          <h2
+            className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
+            title={assignment.name}
+          >
+            {assignment.name}
+          </h2>
           {userContext.role === "Teacher" && <div className="flex flex-row">
             <TransparentButton
               text=""
@@ -265,10 +271,17 @@ function Assignment() {
           zipNameForDownloadAll={`${assignment.name}_Files`}
         />
         <div className="flex flex-row justify-between mt-8">
-          <h2>Content</h2>
+          <h2>Assignment description</h2>
         </div>
-        <div className='mt-4 overflow-y-auto flex-1'>
-          {assignment.content}
+
+        <div className='overflow-y-auto flex-1'>
+          {assignment.content ? (
+            <div className='mt-2 overflow-y-auto flex-1 whitespace-pre-line'>
+              {assignment.content}
+            </div>
+          ) : (
+            <p className="italic text-secondary-grey">No description for this assignment.</p>
+          )}
           {userContext.role === "Teacher" ? (
             <>
               <h3 className='mt-4'>Submissions:</h3>
@@ -328,7 +341,7 @@ function Assignment() {
             </>
           )}
         </div>
-      </div>
+      </div >
     )
   )
 }
