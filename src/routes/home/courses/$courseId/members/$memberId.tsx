@@ -1,11 +1,11 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { getCourseMemberById } from '../../../../../services/api'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { getCourseMemberById, removeCourseMember } from '../../../../../services/api'
 import Spinner from '../../../../../components/Spinner'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import TransparentButton from '../../../../../components/TransparentButton'
-import TrashIcon from '/white-trash.svg'
+import UserDelete from '/user-delete.svg'
 import { formatDate } from '../../../../../utils/date'
-import { UserContext } from '../../../route'
+import { HomeContext, UserContext } from '../../../route'
 import { useContext } from 'react'
 
 export const Route = createFileRoute(
@@ -30,6 +30,7 @@ export const Route = createFileRoute(
 
 function CourseMember() {
   const userContext = useContext(UserContext)!;
+  const homeContext = useContext(HomeContext)!;
   const { courseId, memberId } = Route.useLoaderData();
 
   const { data: courseMember } = useSuspenseQuery({
@@ -37,6 +38,28 @@ function CourseMember() {
     queryFn: () => getCourseMemberById(courseId, memberId),
     staleTime: 60_000 * 5
   })
+
+  const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
+
+  const { mutate: removeMember } = useMutation({
+    mutationFn: ({ courseId, userId }: { courseId: string; userId: string }) =>
+      removeCourseMember(courseId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courseMembers"] });
+
+      navigate({
+        to: "/home/courses/$courseId",
+        params: {
+          courseId: homeContext!.currentCourseId!.toString()
+        }
+      });
+    },
+    onError: () => {
+      alert("An error occured while deleting course member.")
+    }
+  });
 
   return (
     <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
@@ -47,8 +70,12 @@ function CourseMember() {
         </div>
         <div>
           <TransparentButton text=""
-            iconSrc={TrashIcon}
-            onClick={() => { }}
+            iconSrc={UserDelete}
+            onClick={() =>
+              removeMember({
+                courseId: homeContext!.currentCourseId!.toString(),
+                userId: courseMember.id,
+              })}
           />
         </div>
       </div>

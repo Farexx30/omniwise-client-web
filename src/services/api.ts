@@ -557,3 +557,18 @@ export const deleteAssignmentSubmissionComment = async (id: number): Promise<voi
         throw new Error(`Error deleting assignment submission comment: ${response.statusText}`);
     }
 }
+
+
+export const removeCourseMember = async (courseId: string, userId: string) => {
+    const url = `${BASE_API_URL_DEV}/courses/${courseId}/members/${userId}`;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error while removing member: ${response.statusText}`);
+    }
+}
