@@ -2,8 +2,10 @@ import { createFileRoute, Outlet } from '@tanstack/react-router'
 import CourseBar from '../../components/CourseBar'
 import Sidebar from '../../components/Sidebar'
 import WebHeader from '../../components/WebHeader'
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useMemo, useState } from 'react'
 import type { UserRole } from "../../types/user"
+import { getObjFromJSONLocalStorage } from '../../utils/appHelpers'
+import type { CourseInfo, UserInfo } from '../../types/localStorage'
 
 export const Route = createFileRoute('/home')({
     component: HomeLayout,
@@ -21,33 +23,24 @@ export const HomeContext = createContext<{
 } | null>(null);
 
 function HomeLayout() {
-    const [currentUserRole, setCurrentUserRole] = useState<UserRole | null>(null);
-    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-    const [currentCourseId, setCurrentCourseId] = useState<number | null>(null);
-    const [currentCourseName, setCurrentCourseName] = useState<string | null>(null);
+    const { role: currentUserRole, userId: currentUserId } = getObjFromJSONLocalStorage("userInfo") as UserInfo;
+
+    const [currentCourseId, setCurrentCourseId] = useState<number | null>(() => {
+        const courseInfoObj = getObjFromJSONLocalStorage("courseInfo") as CourseInfo | null;
+        return courseInfoObj?.id || null;
+    });
+    const [currentCourseName, setCurrentCourseName] = useState<string | null>(() => {
+        const courseInfoObj = getObjFromJSONLocalStorage("courseInfo") as CourseInfo | null;
+        return courseInfoObj?.name || null;
+    });
 
     useEffect(() => {
-        setCurrentUserRole(localStorage.getItem("role") as UserRole);
-        setCurrentUserId(localStorage.getItem("currentUserId"))
-
-        const courseId = localStorage.getItem("currentCourseId");
-        if (courseId !== null) {
-            setCurrentCourseId(Number(courseId));
+        const courseInfoObj: CourseInfo = {
+            id: currentCourseId,
+            name: currentCourseName
         }
 
-        const courseName = localStorage.getItem("currentCourseName");
-        if (courseName !== null) {
-            setCurrentCourseName(courseName);
-        }
-    }, [])
-
-    useEffect(() => {
-        if (currentCourseId === null || currentCourseName === null) {
-            return;
-        }
-
-        localStorage.setItem("currentCourseId", currentCourseId.toString());
-        localStorage.setItem("currentCourseName", currentCourseName);
+        localStorage.setItem("courseInfo", JSON.stringify(courseInfoObj))
     }, [currentCourseId, currentCourseName]);
 
     return (

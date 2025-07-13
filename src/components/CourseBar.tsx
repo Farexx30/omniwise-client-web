@@ -60,9 +60,9 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
     const { mutate: removeCourse } = useMutation({
         mutationFn: () => deleteCourse(currentCourseId!),
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ["courses"] });
             setCurrentCourseId(null);
             setCurrentCourseName(null);
+            await queryClient.invalidateQueries({ queryKey: ["courses"] });
             router.navigate({ to: "/home" });
         },
         onError: () => {

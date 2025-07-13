@@ -91,7 +91,7 @@ function Assignment() {
 
   // !!!IMPORTANT!!!
   // Reset the component state when navigating to different lecture, since React preserves the previous state even if
-  // lectureId param from Tanstack Router is different. 
+  // assignmentId param from Tanstack Router is different. 
   // If not it would destroy component's behavior when isEditing would be set to true atleast once in the same course.
   useEffect(() => {
     setIsEditing(false);
