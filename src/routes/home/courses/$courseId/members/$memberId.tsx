@@ -46,9 +46,8 @@ function CourseMember() {
   const { mutate: removeMember } = useMutation({
     mutationFn: ({ courseId, userId }: { courseId: string; userId: string }) =>
       removeCourseMember(courseId, userId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["courseMembers"] })
-      queryClient.invalidateQueries({ queryKey: ["courseMember"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["members", homeContext.currentCourseId] })
 
       navigate({
         to: "/home/courses/$courseId",
@@ -72,24 +71,28 @@ function CourseMember() {
             {courseMember.fullName}
           </h2>
           <span className="ml-4 text-secondary-grey shrink-0">
-            {courseMember.roleName}
+            {courseMember.roleName} 
+            {memberId === homeContext.currentCourseOwnerId && " (Owner)"}
+            {memberId == userContext.userId && " (You)"}
           </span>
         </div>
 
-        {(userContext.role === "Teacher" && memberId !== homeContext.currentCourseOwnerId) && (
-          <div className="ml-4">
-            <TransparentButton
-              text=""
-              iconSrc={UserDelete}
-              onClick={() =>
-                removeMember({
-                  courseId: homeContext!.currentCourseId!.toString(),
-                  userId: courseMember.id,
-                })
-              }
-            />
-          </div>
-        )}
+        {(userContext.role === "Teacher"
+          && (courseMember.roleName !== "Teacher" || userContext.userId === homeContext.currentCourseOwnerId)
+          && memberId !== homeContext.currentCourseOwnerId) && (
+            <div className="ml-4">
+              <TransparentButton
+                text=""
+                iconSrc={UserDelete}
+                onClick={() =>
+                  removeMember({
+                    courseId: homeContext!.currentCourseId!.toString(),
+                    userId: courseMember.id,
+                  })
+                }
+              />
+            </div>
+          )}
       </div>
       <div className='flex flex-row pb-2  border-b-1 mt-2 mb-4'>
         <span><strong>E-mail: </strong>{courseMember.email}</span>
@@ -125,7 +128,6 @@ function CourseMember() {
             (
               <p className="italic text-secondary-grey">No submissions yet.</p>
             )
-
         )
       }
     </div >

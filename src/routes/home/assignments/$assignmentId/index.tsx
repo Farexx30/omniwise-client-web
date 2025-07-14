@@ -54,8 +54,9 @@ function Assignment() {
 
   const { mutate: removeAssignment } = useMutation({
     mutationFn: deleteAssignment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["assignments"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["assignments"] });
+      await queryClient.invalidateQueries({ queryKey: ["members"] })
       navigate({
         to: "/home/courses/$courseId",
         params: {
