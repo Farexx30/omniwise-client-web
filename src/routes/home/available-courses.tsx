@@ -20,7 +20,7 @@ function AvailableCourses() {
 
     const { data: courses, isLoading, isError } = useQuery({
         queryFn: () => getAvailableCourses(searchValue),
-        queryKey: ["courses", { debouncedSearchValue }]
+        queryKey: ["courses", "pending", { debouncedSearchValue }]
     })
 
 

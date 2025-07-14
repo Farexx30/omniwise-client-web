@@ -2,7 +2,7 @@ import type { Assignment, BasicAssignmentInfo } from "../types/assignment";
 import type { Course } from "../types/course";
 import type { NotificationDetails } from "../types/notification";
 import type { BasicLectureInfo, Lecture } from "../types/lecture";
-import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, PendingCourseMember, RegisterResult, RegisterUser, UserRole } from "../types/user";
+import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, PendingCourseMember, RegisterResult, RegisterUser, UserInfoForAdmin, UserRole, UserStatus } from "../types/user";
 import type { AssignmentSubmission } from "../types/assignmentSubmission";
 import type { Auth, UserInfo } from "../types/localStorage";
 import { getObjFromJSONLocalStorage } from "../utils/appHelpers";
@@ -618,13 +618,73 @@ export const deleteAssignmentSubmissionComment = async (id: number): Promise<voi
     }
 }
 
+export const getUsersByStatus = async (status: UserStatus): Promise<UserInfoForAdmin[]> => {
+    const url = `${BASE_API_URL_DEV}/users?status=${encodeURIComponent(status)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
+    const response = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${tokenType} ${accessToken}`
+        }
+    });
 
-export const removeCourseMember = async (courseId: string, userId: string) => {
-    const url = `${BASE_API_URL_DEV}/courses/${courseId}/members/${userId}`;
+    if (!response.ok) {
+        throw new Error(`Error fetching ${status} users: ${response.statusText}`);
+    }
+
+    const json = await response.json();
+    const result: UserInfoForAdmin[] = Array.isArray(json)
+        ? json.map((prop: { id: string; firstName: string, lastName: string; email: string; roleName: string }) => ({
+            id: prop.id,
+            fullName: `${prop.firstName} ${prop.lastName}`,
+            email: prop.email,
+            roleName: prop.roleName
+        }))
+        : [];
+
+    return result;
+}
+
+export const updateUserStatus = async (userId: string, statusIndex: number): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/users/${encodeURIComponent(userId)}/status`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
+    const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `${tokenType} ${accessToken}`
+        },
+        body: JSON.stringify({ status: statusIndex })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error updating assignment user status: ${response.statusText}`);
+    }
+}
+
+export const deleteUser = async (userId: string): Promise<void> => {
+    const url = `${BASE_API_URL_DEV}/users/${encodeURIComponent(userId)}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "DELETE",
         headers: {
-            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Error deleting user: ${response.statusText}`);
+    }
+}
+
+export const removeCourseMember = async (courseId: string, userId: string) => {
+    const url = `${BASE_API_URL_DEV}/courses/${courseId}/members/${userId}`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
+    const response = await fetch(url, {
+        method: "DELETE",
+        headers: {
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -635,11 +695,12 @@ export const removeCourseMember = async (courseId: string, userId: string) => {
 
 export const getPendingMembersByCourseId = async (id: number): Promise<PendingCourseMember[]> => {
     const url = `${BASE_API_URL_DEV}/courses/${encodeURIComponent(id)}/members/pending`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 
@@ -649,7 +710,7 @@ export const getPendingMembersByCourseId = async (id: number): Promise<PendingCo
 
     const json = await response.json();
     const result: PendingCourseMember[] = Array.isArray(json)
-        ? json.map((prop: { userId: string; firstName: string, lastName: string; role: string;}) => ({
+        ? json.map((prop: { userId: string; firstName: string, lastName: string; role: string; }) => ({
             id: prop.userId,
             name: `${prop.firstName} ${prop.lastName}`,
             role: prop.role
@@ -658,14 +719,14 @@ export const getPendingMembersByCourseId = async (id: number): Promise<PendingCo
     return result;
 }
 
-
 export const acceptMemberToCourse = async (courseId: string, userId: string) => {
     const url = `${BASE_API_URL_DEV}/courses/${courseId}/members/${userId}/accept`;
+    const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
     const response = await fetch(url, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `${localStorage.getItem("tokenType")} ${localStorage.getItem("accessToken")}`
+            "Authorization": `${tokenType} ${accessToken}`
         }
     });
 

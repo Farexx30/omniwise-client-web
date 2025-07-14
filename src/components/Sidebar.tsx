@@ -10,7 +10,7 @@ import ShadowLink from "./ShadowLink";
 import { UserContext } from "../routes/home/route";
 
 interface SidebarProps {
-    onCourseClick: (courseId: number, courseName: string) => void;
+    onCourseClick: (courseId: number, courseName: string, courseOwnerId: string) => void;
 }
 
 const Sidebar = ({ onCourseClick }: SidebarProps) => {
@@ -42,7 +42,7 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
                             params={{
                                 courseId: c.id.toString()
                             }}
-                            onClick={() => onCourseClick(c.id, c.name)}
+                            onClick={() => onCourseClick(c.id, c.name, c.ownerId)}
                             text={c.name}
                          />
                     </li>

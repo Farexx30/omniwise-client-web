@@ -65,12 +65,19 @@ function CourseMember() {
   return (
     <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
       <div className='flex flex-row justify-between items-center pb-2 border-b-1'>
-        <div className='flex flex-row items-end'>
-          <h2>{courseMember.fullName}</h2>
-          <span className='ml-4 text-secondary-grey'>{courseMember.roleName}</span>
+        <div className="flex items-center min-w-0">
+          <h2
+            className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis"
+            title={courseMember.fullName}>
+            {courseMember.fullName}
+          </h2>
+          <span className="ml-4 text-secondary-grey shrink-0">
+            {courseMember.roleName}
+          </span>
         </div>
-        {(userContext.userId !== memberId && userContext.role === "Teacher") && (
-          <div>
+
+        {(userContext.role === "Teacher" && memberId !== homeContext.currentCourseOwnerId) && (
+          <div className="ml-4">
             <TransparentButton
               text=""
               iconSrc={UserDelete}

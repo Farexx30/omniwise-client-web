@@ -6,15 +6,16 @@ interface TransparentButtonProps {
     isSubmitType?: boolean;
     disabled?: boolean;
     withEffect?: boolean;
+    isAdminTab?: boolean;
 }
 
-const TransparentButton = ({ iconSrc, text, textSize, onClick, isSubmitType, disabled, withEffect }: TransparentButtonProps) => {
+const TransparentButton = ({ iconSrc, text, textSize, onClick, isSubmitType, disabled, withEffect, isAdminTab }: TransparentButtonProps) => {
 
 
     return (
         <button 
             type={isSubmitType ? "submit" : "button"}
-            className={`flex items-center w-full p-1 cursor-pointer select-none group disabled:cursor-default ${withEffect ? "bg-primary rounded-2xl" : "bg-transparent"}`}
+            className={`flex items-center w-full ${isAdminTab ? "p-3" : "p-1"} cursor-pointer select-none group disabled:cursor-default ${withEffect ? (isAdminTab ? "bg-primary rounded-4xl" : "bg-primary rounded-2xl") : "bg-transparent"}`}
             onClick={onClick}
             disabled={disabled}
             >

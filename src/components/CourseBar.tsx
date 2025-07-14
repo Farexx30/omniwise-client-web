@@ -14,6 +14,8 @@ interface CourseBarProps {
     setCurrentCourseId: (value: number | null) => void;
     currentCourseName: string | null;
     setCurrentCourseName: (value: string | null) => void;
+    currentCourseOwnerId: string | null;
+    setCurrentCourseOwnerId: (value: string | null) => void;
 }
 
 type Tab = "lectures" | "assignments" | "members";
@@ -24,7 +26,7 @@ const mapToAddButton: Record<Tab, string> = {
     "members": "Members"
 }
 
-const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, setCurrentCourseName }: CourseBarProps) => {
+const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, setCurrentCourseName, currentCourseOwnerId, setCurrentCourseOwnerId }: CourseBarProps) => {
     const router = useRouter();
     const queryClient = useQueryClient();
     const userContext = useContext(UserContext)!;
@@ -161,13 +163,15 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                             }}
                         />
                     </div>
-                    <div className="mr-1">
-                        <TransparentButton
-                            text="Delete course"
-                            textSize="text-l"
-                            onClick={removeCourse}
-                        />
-                    </div>
+                    {userContext.userId === currentCourseOwnerId &&
+                        <div className="mr-1">
+                            <TransparentButton
+                                text="Delete course"
+                                textSize="text-l"
+                                onClick={removeCourse}
+                            />
+                        </div>
+                    }
                 </div>
             )}
 
