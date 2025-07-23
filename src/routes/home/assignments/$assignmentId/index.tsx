@@ -145,6 +145,7 @@ function Assignment() {
             type="text"
             placeholder="New assignment..."
             required
+            maxLength={256}
             value={assignmentName}
             onChange={(e) => setAssignmentName(e.target.value)}
             className="focus:outline-none focus:ring-0 text-2xl border-gray-700 text-gray-200 w-full h-full bg-[#1E1E1E] p-2 rounded-4xl placeholder:text-gray-500"
@@ -172,7 +173,6 @@ function Assignment() {
             min={new Date().toISOString().slice(0, 16)}
             value={assignmentDeadline}
             onChange={(e) => setAssignmentDeadline(e.target.value)}
-            className=""
           />
           <span className='ml-8'>
             <span className="mr-1">Maximum grade: </span>
@@ -182,7 +182,12 @@ function Assignment() {
               min="1"
               required
               value={assignmentMaxGrade}
-              onChange={(e) => setAssignmentMaxGrade(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.length < 7) {
+                  setAssignmentMaxGrade(e.target.value)
+                }
+              }}
               className="focus:outline-none focus:ring-0 text-gray-200 bg-[#1E1E1E] p-2 rounded-4xl placeholder:text-gray-500"
             />
           </span>
@@ -204,6 +209,7 @@ function Assignment() {
           <textarea
             placeholder="Content..."
             value={assignmentContent || ""}
+            maxLength={4500}
             onChange={(e) => setAssignmentContent(e.target.value)}
             className=" text-gray-200 w-full h-full bg-[#1E1E1E] p-4 rounded-4xl placeholder:text-gray-500 focus:outline-none focus:ring-0"
           />

@@ -108,6 +108,7 @@ function NewLecture() {
         <textarea
           placeholder="Content..."
           value={lectureContent || ""}
+          maxLength={4500}
           onChange={(e) => setLectureContent(e.target.value)}
           className=" text-gray-200 w-full h-full bg-[#1E1E1E] p-4 rounded-4xl placeholder:text-gray-500 focus:outline-none focus:ring-0"
         />

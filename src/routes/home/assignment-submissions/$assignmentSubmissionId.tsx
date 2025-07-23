@@ -233,7 +233,12 @@ function AssignmentSubmission() {
             min="0"
             max={assignmentSubmission.maxGrade}
             value={grade || ""}
-            onChange={(e) => setGrade(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value.length < 7) {
+                setGrade(e.target.value)
+              }
+            }}
             className="focus:outline-none focus:ring-0 text-gray-200 bg-[#1E1E1E] py-2 w-12 rounded-4xl placeholder:text-gray-500"
           />
           <span className='text-xl mr-4 mt-1'>/{assignmentSubmission.maxGrade}</span>
@@ -295,6 +300,7 @@ function AssignmentSubmission() {
             placeholder="Add a comment..."
             className={`w-full bg-white/10 text-white p-2 rounded-lg resize-none border-none focus:outline-none`}
             required
+            maxLength={2000}
             onKeyDown={async (e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 if (!e.currentTarget.value.trim()) {
