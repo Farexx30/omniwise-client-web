@@ -76,9 +76,9 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
             wrapper={(children) => <form onSubmit={async (e) => handleCommentUpdate(e)}>{children}</form>}
         >
             <div className="flex flex-row justify-between items-start">
-                <p><strong>{authorFullName}</strong></p>
+                <span className="w-3/4 overflow-hidden text-ellipsis whitespace-nowrap" title={authorFullName}><strong>{authorFullName}</strong></span>
                 <div className="flex flex-row items-center gap-4">
-                    <p>{formatDate(sentDate)}</p>
+                    {formatDate(sentDate)}
                     {authorId === userId &&
                         <div className="flex flex-row items-center gap-1">
                             {isEditing ? (

@@ -84,6 +84,8 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
 
     const tabs = ["Lectures", "Assignments", "Members"];
 
+    console.log("id: " + currentCourseId);
+
     return (
         <div className="flex flex-col bg-black/20 rounded-2xl h-full w-72 op-0 bottom-0 left-0 overflow-y-auto">
             <div className="flex flex-col p-5 flex-grow overflow-y-auto">
@@ -156,18 +158,18 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                             text={`Add ${mapToAddButton[currentTab]}`}
                             textSize="text-l"
                             onClick={() => {
-                                let destination;
                                 if (currentTab == "lectures") {
-                                    destination = "/home/lectures/new";
+                                    router.navigate({ to: "/home/lectures/new" });
                                 }
                                 else if (currentTab == "assignments") {
-                                    destination = "/home/assignments/new";
+                                    router.navigate({ to: "/home/assignments/new" });
                                 }
                                 else if (currentTab == "members") {
-                                    destination = "/home/courses/$courseId/members/pending"
+                                    router.navigate({
+                                        to: "/home/courses/$courseId/members/pending",
+                                        params: { courseId: currentCourseId!.toString() }
+                                    });
                                 }
-
-                                router.navigate({ to: destination });
                             }}
                             disabled={isDeletingCourse}
                         />

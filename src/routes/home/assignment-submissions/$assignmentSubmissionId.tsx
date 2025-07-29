@@ -226,9 +226,9 @@ function AssignmentSubmission() {
               </div>}
           </div>
           <div className='flex flex-row pb-2 border-b-1 mt-2 justify-between'>
-            <span><strong>Author: </strong> {assignmentSubmission.authorFullName}</span>
-            <span><strong>Submission date:</strong> {formatDate(assignmentSubmission.latestSubmissionDate)}</span>
-            <span><strong>Deadline:</strong> {formatDate(assignmentSubmission.deadline)}</span>
+            <span className='w-5/12 mr-2 overflow-hidden text-ellipsis whitespace-nowrap' title={assignmentSubmission.authorFullName}><strong>Author: </strong> {assignmentSubmission.authorFullName}</span>
+            <span className='w-7/24 overflow-hidden text-ellipsis whitespace-nowrap'><strong>Submission date:</strong> {formatDate(assignmentSubmission.latestSubmissionDate)}</span>
+            <span className='w-7/24 overflow-hidden text-ellipsis whitespace-nowrap text-right'><strong>Deadline:</strong> {formatDate(assignmentSubmission.deadline)}</span>
           </div>
           <div className="flex flex-row justify-between mt-4">
             <h3>Files</h3>
@@ -342,7 +342,6 @@ function AssignmentSubmission() {
                     e.preventDefault();
                     return;
                   }
-
                   await handleCommentCreation(e)
                 }
               }}
@@ -350,7 +349,7 @@ function AssignmentSubmission() {
             <button
               type="submit"
               disabled={newComment.trim() === "" || isPending || isSubmitting}
-              className="mt-2 ml-4 mr-2 bg-primary hover:bg-primary text-white px-4 py-2 rounded-full disabled:opacity-50 hover:drop-shadow-[0_0_8px_rgba(140,71,246,1)] transition mb-3 disabled:bg-gray-500 disabled:cursor-default disabled:hover:drop-shadow-none"
+              className="mt-2 ml-4 mr-2 bg-primary hover:bg-primary text-white px-4 py-2 rounded-full disabled:opacity-50 hover:drop-shadow-[0_0_8px_rgba(140,71,246,1)] cursor-pointer transition mb-3 disabled:bg-gray-500 disabled:cursor-default disabled:hover:drop-shadow-none"
             >
               Send
             </button>

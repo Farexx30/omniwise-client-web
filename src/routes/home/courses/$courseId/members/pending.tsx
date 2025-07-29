@@ -68,7 +68,7 @@ function RouteComponent() {
                             pendingMembers.map(pm => (
                                 <li key={pm.id}>
                                     <div className="flex flex-row w-full bg-white/10 rounded-lg p-4 shadow-md my-4">
-                                        <span className='w-1/3 overflow-hidden text-ellipsis whitespace-nowrap'><strong>{pm.name}</strong></span>
+                                        <span className='w-1/3 overflow-hidden text-ellipsis whitespace-nowrap' title={pm.name}><strong>{pm.name}</strong></span>
                                         <div className='w-1/3 justify-items-center overflow-hidden text-ellipsis whitespace-nowrap'>
                                             <span className='flex flex-row w-fit'>{pm.role}</span>
                                         </div>
