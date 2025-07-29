@@ -8,9 +8,10 @@ interface CourseCardProps {
     imgUrl?: string;
     onClick?: () => void;
     onEnroll?: (id: number) => void;
+    disableControls?: boolean;
 }
 
-const CourseCard = ({ id, name, imgUrl, onClick, onEnroll }: CourseCardProps) => {
+const CourseCard = ({ id, name, imgUrl, onClick, onEnroll, disableControls }: CourseCardProps) => {
     return (
         <div className="relative course-card hover:drop-shadow-[0_0_8px_rgba(140,71,246,1)] transition">
             {onEnroll ? (
@@ -21,6 +22,7 @@ const CourseCard = ({ id, name, imgUrl, onClick, onEnroll }: CourseCardProps) =>
                             text="Join"
                             onClick={() => onEnroll(id)}
                             iconSrc={enrollIcon}
+                            disabled={disableControls}
                         />
                     </div>
                     <div

@@ -38,6 +38,8 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
         | BasicUserInfo[]
     >([])
 
+    const [isDeletingCourse, setIsDeletingCourse] = useState(false);
+
     const { data: lectures } = useQuery({
         queryKey: ["lectures", currentCourseId],
         queryFn: () => getLecturesByCourseId(currentCourseId!),
@@ -59,15 +61,17 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
         staleTime: 60_000 * 5
     })
 
-    const { mutate: removeCourse } = useMutation({
+    const { mutateAsync: removeCourse } = useMutation({
         mutationFn: () => deleteCourse(currentCourseId!),
         onSuccess: async () => {
             setCurrentCourseId(null);
             setCurrentCourseName(null);
+            setIsDeletingCourse(false);
             await queryClient.invalidateQueries({ queryKey: ["courses"] });
             router.navigate({ to: "/home" });
         },
         onError: () => {
+            setIsDeletingCourse(false);
             alert("An error occured while deleting course.")
         }
     });
@@ -79,6 +83,8 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
     }, [currentTab, lectures, assignments, members])
 
     const tabs = ["Lectures", "Assignments", "Members"];
+
+    console.log("id: " + currentCourseId);
 
     return (
         <div className="flex flex-col bg-black/20 rounded-2xl h-full w-72 op-0 bottom-0 left-0 overflow-y-auto">
@@ -98,6 +104,7 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                                         text={tab}
                                         onClick={() => setCurrentTab(tab.toLowerCase() as Tab)}
                                         withEffect={tab.toLowerCase() === currentTab}
+                                        disabled={isDeletingCourse}
                                     />
                                 </div>
                             ))}
@@ -113,6 +120,7 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                                                     lectureId: d.id
                                                 }}
                                                 text={d.name}
+                                                disabled={isDeletingCourse}
                                             />
                                         ) : currentTab === "assignments" ? (
                                             <TransparentLink
@@ -121,6 +129,7 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                                                     assignmentId: d.id
                                                 }}
                                                 text={d.name}
+                                                disabled={isDeletingCourse}
                                             />
                                         ) : (
                                             <TransparentLink
@@ -130,6 +139,7 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                                                     memberId: d.id
                                                 }}
                                                 text={d.name}
+                                                disabled={isDeletingCourse}
                                             />
                                         )}
                                     </li>
@@ -148,19 +158,20 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                             text={`Add ${mapToAddButton[currentTab]}`}
                             textSize="text-l"
                             onClick={() => {
-                                let destination;
                                 if (currentTab == "lectures") {
-                                    destination = "/home/lectures/new";
+                                    router.navigate({ to: "/home/lectures/new" });
                                 }
                                 else if (currentTab == "assignments") {
-                                    destination = "/home/assignments/new";
+                                    router.navigate({ to: "/home/assignments/new" });
                                 }
                                 else if (currentTab == "members") {
-                                    destination = "/home/courses/$courseId/members/pending"
+                                    router.navigate({
+                                        to: "/home/courses/$courseId/members/pending",
+                                        params: { courseId: currentCourseId!.toString() }
+                                    });
                                 }
-
-                                router.navigate({ to: destination });
                             }}
+                            disabled={isDeletingCourse}
                         />
                     </div>
                     {userContext.userId === currentCourseOwnerId &&
@@ -168,7 +179,11 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                             <TransparentButton
                                 text="Delete course"
                                 textSize="text-l"
-                                onClick={removeCourse}
+                                onClick={async () => {
+                                    setIsDeletingCourse(true);
+                                    await removeCourse()
+                                }}
+                                disabled={isDeletingCourse}
                             />
                         </div>
                     }

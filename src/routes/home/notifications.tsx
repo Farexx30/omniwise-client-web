@@ -2,16 +2,21 @@ import { createFileRoute } from "@tanstack/react-router"
 import TransparentButton from "../../components/TransparentButton";
 import { getNotifications } from "../../services/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { JSX } from "react";
+import { useState, type JSX } from "react";
 import Spinner from "../../components/Spinner";
 import { formatDate } from "../../utils/date";
 import { deleteNotification } from "../../services/api";
+import { useDebounce } from "../../hooks/useDebounce";
+import LoadingView from "../../components/LoadingView";
 
 export const Route = createFileRoute('/home/notifications')({
     component: Notifications,
 })
 
 function Notifications() {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const isSubmittingDebounced = useDebounce(isSubmitting, 2000);
+
     const { data: notifications, isLoading, isError } = useQuery({
         queryFn: getNotifications,
         queryKey: ["notifications"]
@@ -19,11 +24,16 @@ function Notifications() {
 
     const queryClient = useQueryClient();
 
-    const { mutate: removeNotification } = useMutation({
+    const { mutateAsync: removeNotification } = useMutation({
         mutationFn: deleteNotification,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["notifications"] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["notifications"] });
+            setIsSubmitting(false);
         },
+        onError: () => {
+            setIsSubmitting(false);
+            alert("An error occurred while deleting notification.");
+        }
     });
 
     let content: JSX.Element | null = null;
@@ -50,9 +60,11 @@ function Notifications() {
                             <div className="ml-4">
                                 <TransparentButton
                                     text="x"
-                                    onClick={() => {
-                                        removeNotification(n.id);
+                                    onClick={async () => {
+                                        setIsSubmitting(true);
+                                        await removeNotification(n.id);
                                     }}
+                                    disabled={isSubmitting}
                                 />
                             </div>
                         </div>
@@ -65,10 +77,14 @@ function Notifications() {
     }
 
     return (
-        <div className="bg-black/20 h-full w-full p-4 text-white overflow-x-hidden">
-            <h2 className="8 text-xl font-bold mb-4">Notifications</h2>
-            {content}
-        </div>
+        isSubmittingDebounced && isSubmitting ? (
+            <LoadingView />
+        ) : (
+            <div className="bg-black/20 h-full w-full p-4 text-white overflow-x-hidden">
+                <h2 className="8 text-xl font-bold mb-4">Notifications</h2>
+                {content}
+            </div>
+        )
     )
 }
 
