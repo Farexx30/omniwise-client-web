@@ -17,9 +17,11 @@ interface CommentViewProps {
     authorFullName: string;
     sentDate: string;
     content: string;
+    disableControls?: boolean;
+    setIsSubmitting?: (isSubmitting: boolean) => void;
 }
 
-const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sentDate, content }: CommentViewProps) => {
+const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sentDate, content, disableControls, setIsSubmitting }: CommentViewProps) => {
     const queryClient = useQueryClient();
     const [isEditing, setIsEditing] = useState(false);
     const [newContent, setNewContent] = useState(content);
@@ -29,12 +31,14 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
         mutationFn: (content: string) => updateAssignmentSubmissionComment(id, content),
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission", assignmentSubmissionId] });
+            setIsSubmitting?.(false);
             setIsEditing(!isEditing);
             setNewContent(newContent.trim());
         },
         onError: () => {
-            alert("An error occured while updating assignment submission comment.")
+            setIsSubmitting?.(false);
             setIsEditing(!isEditing)
+            alert("An error occured while updating assignment submission comment.")
         },
     });
 
@@ -42,8 +46,10 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
         mutationFn: deleteAssignmentSubmissionComment,
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission", assignmentSubmissionId] });
+            setIsSubmitting?.(false);
         },
         onError: () => {
+            setIsSubmitting?.(false);
             alert("An error occured while deleting assignment submission comment.")
         },
     });
@@ -55,10 +61,12 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
             return;
         }
 
+        setIsSubmitting?.(true);
         await updateComment(newContent)
     }
 
     const handleCommentDelete = async () => {
+        setIsSubmitting?.(true);
         await deleteComment(id);
     }
 
@@ -79,7 +87,7 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
                                         text=""
                                         iconSrc={AcceptIcon}
                                         isSubmitType={true}
-                                        disabled={newContent.trim().length < 1}
+                                        disabled={newContent.trim().length < 1 || disableControls}
                                     />
                                     <TransparentButton
                                         text=""
@@ -88,6 +96,7 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
                                             setIsEditing(!isEditing)
                                             setNewContent(content);
                                         }}
+                                        disabled={disableControls}
                                     />
                                 </>
                             ) : (
@@ -96,11 +105,13 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
                                         text=""
                                         iconSrc={EditIcon}
                                         onClick={() => setIsEditing(!isEditing)}
+                                        disabled={disableControls}
                                     />
                                     <TransparentButton
                                         text=""
                                         iconSrc={TrashIcon}
                                         onClick={async () => handleCommentDelete()}
+                                        disabled={disableControls}
                                     />
                                 </>
                             )}

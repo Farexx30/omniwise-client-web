@@ -38,6 +38,8 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
         | BasicUserInfo[]
     >([])
 
+    const [isDeletingCourse, setIsDeletingCourse] = useState(false);
+
     const { data: lectures } = useQuery({
         queryKey: ["lectures", currentCourseId],
         queryFn: () => getLecturesByCourseId(currentCourseId!),
@@ -59,15 +61,17 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
         staleTime: 60_000 * 5
     })
 
-    const { mutate: removeCourse } = useMutation({
+    const { mutateAsync: removeCourse } = useMutation({
         mutationFn: () => deleteCourse(currentCourseId!),
         onSuccess: async () => {
             setCurrentCourseId(null);
             setCurrentCourseName(null);
+            setIsDeletingCourse(false);
             await queryClient.invalidateQueries({ queryKey: ["courses"] });
             router.navigate({ to: "/home" });
         },
         onError: () => {
+            setIsDeletingCourse(false);
             alert("An error occured while deleting course.")
         }
     });
@@ -98,6 +102,7 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                                         text={tab}
                                         onClick={() => setCurrentTab(tab.toLowerCase() as Tab)}
                                         withEffect={tab.toLowerCase() === currentTab}
+                                        disabled={isDeletingCourse}
                                     />
                                 </div>
                             ))}
@@ -113,6 +118,7 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                                                     lectureId: d.id
                                                 }}
                                                 text={d.name}
+                                                disabled={isDeletingCourse}
                                             />
                                         ) : currentTab === "assignments" ? (
                                             <TransparentLink
@@ -121,6 +127,7 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                                                     assignmentId: d.id
                                                 }}
                                                 text={d.name}
+                                                disabled={isDeletingCourse}
                                             />
                                         ) : (
                                             <TransparentLink
@@ -130,6 +137,7 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                                                     memberId: d.id
                                                 }}
                                                 text={d.name}
+                                                disabled={isDeletingCourse}
                                             />
                                         )}
                                     </li>
@@ -161,6 +169,7 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
 
                                 router.navigate({ to: destination });
                             }}
+                            disabled={isDeletingCourse}
                         />
                     </div>
                     {userContext.userId === currentCourseOwnerId &&
@@ -168,7 +177,11 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
                             <TransparentButton
                                 text="Delete course"
                                 textSize="text-l"
-                                onClick={removeCourse}
+                                onClick={async () => {
+                                    setIsDeletingCourse(true);
+                                    await removeCourse()
+                                }}
+                                disabled={isDeletingCourse}
                             />
                         </div>
                     }

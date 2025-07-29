@@ -6,9 +6,10 @@ interface ReadonlyFileList {
     data: FileInfo[];
     zipNameForDownloadAll: string;
     accept?: string;
+    disabled?: boolean;
 }
 
-const ReadonlyFileList = ({ data: files, zipNameForDownloadAll }: ReadonlyFileList) => {
+const ReadonlyFileList = ({ data: files, zipNameForDownloadAll, disabled }: ReadonlyFileList) => {
     return (
         <div className="w-full max-h-72 overflow-y-auto overflow-x-clip">
             <ul className="grid grid-cols-1 gap-3 gap-x-5 md:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 p-4">
@@ -18,6 +19,7 @@ const ReadonlyFileList = ({ data: files, zipNameForDownloadAll }: ReadonlyFileLi
                             name={f.name}
                             canDownload={true}
                             onClick={() => downloadFile(f.name, f.url)}
+                            disabled={disabled}
                         />
                     </li>
                 ))}
@@ -26,6 +28,7 @@ const ReadonlyFileList = ({ data: files, zipNameForDownloadAll }: ReadonlyFileLi
                 <button
                     type="button"
                     onClick={() => downloadAllFiles(files, zipNameForDownloadAll)}
+                    disabled={disabled}
                     className="bg-[#D9D9D9] cursor-pointer text-black font-medium px-4 py-2 rounded-2xl hover:bg-[#D9D9D9]/90 w-fit"
                 >
                     Download All

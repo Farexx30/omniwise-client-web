@@ -13,6 +13,7 @@ import UserAccept from "/user-accept.svg"
 import UserDelete from "/user-delete.svg"
 import UserArchive from "/archive.svg"
 import UndoArchive from "/undo-archive.svg"
+import LoadingView from '../../components/LoadingView';
 
 export const Route = createFileRoute('/home/')({
     component: HomePage
@@ -29,7 +30,10 @@ function HomePage() {
     const homeContext = useContext(HomeContext);
     const [searchValue, setSearchValue] = useState("");
     const debouncedSearchValue = useDebounce(searchValue.trim(), 500);
+
     const [currentAdminTab, setCurrentAdminTab] = useState<UserStatus>("Pending")
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const isSubmittingDebounced = useDebounce(isSubmitting, 2000);
 
     const adminTabs: UserStatus[] = ["Pending", "Active", "Archived"];
 
@@ -51,8 +55,10 @@ function HomePage() {
         mutationFn: ({ userId, statusIndex }) => updateUserStatus(userId, statusIndex),
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["users"] })
+            setIsSubmitting(false);
         },
         onError: () => {
+            setIsSubmitting(false);
             alert("An error occured while updating a user status.")
         }
     })
@@ -61,8 +67,10 @@ function HomePage() {
         mutationFn: (userId: string) => deleteUser(userId),
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ["users", currentAdminTab] })
+            setIsSubmitting(false);
         },
         onError: () => {
+            setIsSubmitting(false);
             alert("An error occured while updating a user status.")
         }
     })
@@ -97,15 +105,23 @@ function HomePage() {
                                 <div className='flex flex-row'>
                                     <TransparentButton
                                         iconSrc={UserAccept}
-                                        onClick={async () => await modifyUserStatus({
-                                            userId: u.id, 
-                                            statusIndex: 1
-                                        })}
+                                        onClick={async () => {
+                                            setIsSubmitting(true);
+                                            await modifyUserStatus({
+                                                userId: u.id,
+                                                statusIndex: 1
+                                            })
+                                        }}
+                                        disabled={isSubmitting}
                                     />
                                     <div className='ml-4'></div>
                                     <TransparentButton
                                         iconSrc={UserDelete}
-                                        onClick={async () => await removeUser(u.id)}
+                                        onClick={async () => {
+                                            setIsSubmitting(true);
+                                            await removeUser(u.id)
+                                        }}
+                                        disabled={isSubmitting}
                                     />
                                 </div>
                             ) : (currentAdminTab === "Active" ? (
@@ -113,10 +129,14 @@ function HomePage() {
                                     <div className='ml-2'></div>
                                     <TransparentButton
                                         iconSrc={UserArchive}
-                                        onClick={async () => await modifyUserStatus({
-                                            userId: u.id, 
-                                            statusIndex: 2
-                                        })}
+                                        onClick={async () => {
+                                            setIsSubmitting(true);
+                                            await modifyUserStatus({
+                                                userId: u.id,
+                                                statusIndex: 2
+                                            })
+                                        }}
+                                        disabled={isSubmitting}
                                     />
                                 </div>
                             ) : (
@@ -124,10 +144,14 @@ function HomePage() {
                                     <div className='ml-2'></div>
                                     <TransparentButton
                                         iconSrc={UndoArchive}
-                                        onClick={async () => await modifyUserStatus({
-                                            userId: u.id, 
-                                            statusIndex: 1
-                                        })}
+                                        onClick={async () => {
+                                            setIsSubmitting(true);
+                                            await modifyUserStatus({
+                                                userId: u.id,
+                                                statusIndex: 1
+                                            })
+                                        }}
+                                        disabled={isSubmitting}
                                     />
                                 </div>
                             ))
@@ -161,7 +185,9 @@ function HomePage() {
     }
 
     return (
-        currentUserRole === "Admin" ? (
+        isSubmittingDebounced && isSubmitting ? (
+            <LoadingView />
+        ) : currentUserRole === "Admin" ? (
             <>
                 <div className="flex justify-center gap-x-64 my-4">
                     {adminTabs.map((tab, i) => (

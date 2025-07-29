@@ -8,6 +8,7 @@ import Spinner from '../../components/Spinner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { enrollInCourse } from '../../services/api';
 import { useDebounce } from '../../hooks/useDebounce';
+import LoadingView from '../../components/LoadingView';
 
 
 export const Route = createFileRoute('/home/available-courses')({
@@ -18,21 +19,25 @@ function AvailableCourses() {
     const [searchValue, setSearchValue] = useState("");
     const debouncedSearchValue = useDebounce(searchValue.trim(), 500);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const isSubmittingDebounced = useDebounce(isSubmitting, 2000);
+
     const { data: courses, isLoading, isError } = useQuery({
         queryFn: () => getAvailableCourses(searchValue),
         queryKey: ["courses", "pending", { debouncedSearchValue }]
     })
 
-
     const queryClient = useQueryClient();
 
-    const { mutate: enroll } = useMutation({
+    const { mutateAsync: enroll } = useMutation({
         mutationFn: enrollInCourse,
-        onSuccess: () => {
+        onSuccess: async () => {
             alert("Successfully enrolled!");
-            queryClient.invalidateQueries({ queryKey: ["courses"] });
+            await queryClient.invalidateQueries({ queryKey: ["courses"] });
+            setIsSubmitting(false);
         },
         onError: () => {
+            setIsSubmitting(false);
             alert("Failed to enroll in the course.");
         }
     });
@@ -53,23 +58,34 @@ function AvailableCourses() {
             <ul className="grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 p-4">
                 {courses.map(c => (
                     <li key={c.id}>
-                        <CourseCard {...c} onEnroll={enroll} />
+                        <CourseCard
+                            {...c}
+                            disableControls={isSubmitting}
+                            onEnroll={async () => {
+                                setIsSubmitting(true);
+                                await enroll(c.id)
+                            }}
+                        />
                     </li>
                 ))}
             </ul>
         )
     }
     return (
-        <div className="h-full w-full">
-            <SearchBar
-                searchValue={searchValue}
-                onSearch={setSearchValue}
-                placeholder="Search for courses..."
-            />
-            <section className="space-y-9">
-                {content}
-            </section>
-        </div>
+        isSubmittingDebounced && isSubmitting ? (
+            <LoadingView />
+        ) : (
+            <div className="h-full w-full">
+                <SearchBar
+                    searchValue={searchValue}
+                    onSearch={setSearchValue}
+                    placeholder="Search for courses..."
+                />
+                <section className="space-y-9">
+                    {content}
+                </section>
+            </div>
+        )
     )
 }
 

@@ -98,7 +98,7 @@ function CourseMember() {
         <span><strong>E-mail: </strong>{courseMember.email}</span>
         <span className='ml-8'><strong>Enrolled on: </strong>{courseMember.joinDate}</span>
       </div>
-      <h3>Grades</h3>
+      <h3>Submissions</h3>
       {courseMember.assignmentSubmissions
         && courseMember.assignmentSubmissions.length > 0
         && (courseMember.id === userContext.userId || userContext.role === "Teacher")
@@ -123,7 +123,7 @@ function CourseMember() {
         ) : (
           courseMember.id !== userContext.userId && userContext.role === "Student" ?
             (
-              <p className="italic text-secondary-grey">You cannot view other member grades.</p>
+              <p className="italic text-secondary-grey">You cannot view other member submissions.</p>
             ) :
             (
               <p className="italic text-secondary-grey">No submissions yet.</p>

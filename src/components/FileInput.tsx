@@ -8,9 +8,10 @@ interface FileInputProps {
     onClear: () => void;
     multiple?: boolean;
     accept?: string;
+    disabled?: boolean;
 }
 
-function FileInput({ data: files, onChange, onRemove, onClear, multiple, accept }: FileInputProps) {
+function FileInput({ data: files, onChange, onRemove, onClear, multiple, accept, disabled }: FileInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     return (
@@ -19,7 +20,8 @@ function FileInput({ data: files, onChange, onRemove, onClear, multiple, accept 
                 <button
                     type="button"
                     onClick={() => inputRef.current?.click()}
-                    className="flex cursor-pointer justify-between min-w-40 bg-[#D9D9D9] text-white px-5 py-3 rounded-2xl hover:bg-[#D9D9D9]/90 w-fit"
+                    disabled={disabled}
+                    className={`flex cursor-pointer justify-between min-w-40 bg-[#D9D9D9] text-white px-5 py-3 rounded-2xl w-fit disabled:cursor-default ${!disabled && "hover:bg-[#D9D9D9]/90}"}`}
                 >
                     <span className="text-black font-medium">
                         {multiple ? "Add Files" : "Add File"}
@@ -39,6 +41,7 @@ function FileInput({ data: files, onChange, onRemove, onClear, multiple, accept 
                                 name={f.name}
                                 canDownload={false}
                                 onClick={onRemove}
+                                disabled={disabled}
                             />
                         </li>
                     ))}
@@ -50,6 +53,7 @@ function FileInput({ data: files, onChange, onRemove, onClear, multiple, accept 
                         <button
                             type="button"
                             onClick={onClear}
+                            disabled={disabled}
                             className="bg-[#D9D9D9] cursor-pointer text-black font-medium px-4 py-2 rounded-2xl hover:bg-[#D9D9D9]/90 w-fit"
                         >
                             Clear All
