@@ -17,11 +17,12 @@ import { fetchFiles } from '../../../utils/file'
 import { HomeContext, UserContext } from '../route'
 import { useDebounce } from '../../../hooks/useDebounce'
 import LoadingView from '../../../components/LoadingView'
+import ErrorComponentView from '../../../components/ErrorComponentView'
 
 export const Route = createFileRoute('/home/lectures/$lectureId')({
   component: Lecture,
   pendingComponent: () => <Spinner />,
-  errorComponent: () => <p className="text-red-500">Error.</p>,
+  errorComponent: ({ error }) => <ErrorComponentView message={error.message} />,
   loader: async ({ params, context: { queryClient } }) => {
     await queryClient.prefetchQuery({
       queryKey: ["lecture", Number(params.lectureId)],
@@ -61,9 +62,12 @@ function Lecture() {
         }
       });
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
-      alert("An error occured while deleting lecture.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     }
   });
 
@@ -76,10 +80,13 @@ function Lecture() {
       setIsSubmitting(false);
       setIsEditing(!isEditing)
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
       setIsEditing(!isEditing)
-      alert("An error occured while updating lecture.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     },
   });
 

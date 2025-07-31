@@ -39,9 +39,12 @@ function NewLecture() {
         }
       })
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
-      alert("An error occured while creating a lecture.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     }
   })
 

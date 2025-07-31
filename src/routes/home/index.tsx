@@ -37,14 +37,14 @@ function HomePage() {
 
     const adminTabs: UserStatus[] = ["Pending", "Active", "Archived"];
 
-    const { data: courses, isLoading, isError } = useQuery({
+    const { data: courses, isLoading, error: getEnrolledError } = useQuery({
         queryKey: ["courses", "enrolled", { debouncedSearchValue }],
         queryFn: () => getEnrolledCourses(searchValue),
         enabled: currentUserRole !== "Admin",
         staleTime: 60_000 * 5
     })
 
-    const { data: users, isLoading: usersIsLoading, isError: usersIsError } = useQuery({
+    const { data: users, isLoading: usersIsLoading, error: getUsersError } = useQuery({
         queryKey: ["users", currentAdminTab],
         queryFn: () => getUsersByStatus(currentAdminTab),
         enabled: currentUserRole === "Admin",
@@ -57,9 +57,12 @@ function HomePage() {
             await queryClient.invalidateQueries({ queryKey: ["users"] })
             setIsSubmitting(false);
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("An error occured while updating a user status.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     })
 
@@ -69,9 +72,12 @@ function HomePage() {
             await queryClient.invalidateQueries({ queryKey: ["users", currentAdminTab] })
             setIsSubmitting(false);
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("An error occured while updating a user status.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     })
 
@@ -79,8 +85,11 @@ function HomePage() {
     if (isLoading || usersIsLoading) {
         content = <Spinner />;
     }
-    else if (isError || usersIsError) {
-        content = <p className="text-red-500">Error.</p>;
+    else if (getEnrolledError) {
+        content = <p className="text-red-500 font-bold text-center text-xl mt-8">Error - {getEnrolledError.message}</p>;
+    }
+    else if (getUsersError) {
+        content = <p className="text-red-500 font-bold text-center text-xl mt-8">Error - {getUsersError.message}</p>;
     }
     else if (currentUserRole === "Admin") {
         content = (
@@ -175,7 +184,6 @@ function HomePage() {
                             {...c}
                             onClick={() => {
                                 homeContext?.setCurrentCourseId(c.id);
-                                homeContext?.setCurrentCourseName(c.name);
                                 homeContext?.setCurrentCourseOwnerId(c.ownerId);
                             }} />
                     </li>
@@ -214,7 +222,7 @@ function HomePage() {
                 <section className="space-y-9">
                     {content}
                 </section>
-            </div >
+            </div>
         )
     )
 }

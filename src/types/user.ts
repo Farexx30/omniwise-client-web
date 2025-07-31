@@ -33,7 +33,6 @@ export interface CourseMemberWithDetails {
 }
 
 export type RegisterResult = "BadRequest" | "Success";
-
 export type LoginResult = "Unauthorized" | "Forbidden" | "Success";
 
 export interface AuthenticationSuccessResponse {

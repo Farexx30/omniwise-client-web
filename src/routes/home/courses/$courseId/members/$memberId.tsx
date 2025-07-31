@@ -9,13 +9,14 @@ import { HomeContext, UserContext } from '../../../route'
 import { useContext, useState } from 'react'
 import { useDebounce } from '../../../../../hooks/useDebounce'
 import LoadingView from '../../../../../components/LoadingView'
+import ErrorComponentView from '../../../../../components/ErrorComponentView'
 
 export const Route = createFileRoute(
   '/home/courses/$courseId/members/$memberId',
 )({
   component: CourseMember,
   pendingComponent: () => <Spinner />,
-  errorComponent: () => <p className="text-red-500">Error.</p>,
+  errorComponent: ({ error }) => <ErrorComponentView message={error.message} />,
   loader: async ({ params, context: { queryClient } }) => {
     await queryClient.prefetchQuery({
       queryKey: ["courseMember", Number(params.courseId), params.memberId],
@@ -59,9 +60,12 @@ function CourseMember() {
         }
       });
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
-      alert("An error occured while deleting course member.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     }
   });
 

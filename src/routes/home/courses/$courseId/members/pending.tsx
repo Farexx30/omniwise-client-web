@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router'
-import { useContext, useState } from 'react';
+import { useContext, useState, type JSX } from 'react';
 import { acceptMemberToCourse, getPendingMembersByCourseId, removeCourseMember } from '../../../../../services/api';
 import UserDelete from '/user-delete.svg'
 import UserAccept from '/user-accept.svg'
@@ -8,6 +8,7 @@ import { HomeContext } from '../../../route';
 import TransparentButton from '../../../../../components/TransparentButton';
 import LoadingView from '../../../../../components/LoadingView';
 import { useDebounce } from '../../../../../hooks/useDebounce';
+import Spinner from '../../../../../components/Spinner';
 
 export const Route = createFileRoute('/home/courses/$courseId/members/pending')(
     {
@@ -18,7 +19,7 @@ export const Route = createFileRoute('/home/courses/$courseId/members/pending')(
 function RouteComponent() {
     const homeContext = useContext(HomeContext)!;
 
-    const { data: pendingMembers } = useQuery({
+    const { data: pendingMembers, isLoading, error } = useQuery({
         queryKey: ["pendingMembers", homeContext.currentCourseId],
         queryFn: () => getPendingMembersByCourseId(homeContext.currentCourseId!),
         staleTime: 60_000 * 5
@@ -36,9 +37,12 @@ function RouteComponent() {
             await queryClient.invalidateQueries({ queryKey: ["pendingMembers", homeContext.currentCourseId] });
             setIsSubmitting(false);
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("An error occured while deleting course member.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     });
 
@@ -50,17 +54,26 @@ function RouteComponent() {
             await queryClient.invalidateQueries({ queryKey: ["members", homeContext.currentCourseId] });
             setIsSubmitting(false);
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("An error occured while accepting member.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         },
     });
 
-    return (
-        isSubmittingDebounced && isSubmitting ? (
-            <LoadingView />
-        ) : (
-            <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
+    let content: JSX.Element | null = null;
+
+    if (isLoading) {
+        content = <Spinner />;
+    }
+    else if (error) {
+        content = <p className="text-red-500 font-bold text-center text-xl mt-8">Error - {error.message}</p>;
+    }
+    else {
+        content = (
+            <>
                 <h2 className='mb-4'>Applicants</h2>
                 {pendingMembers && pendingMembers.length > 0 ? (
                     <ul>
@@ -89,7 +102,7 @@ function RouteComponent() {
                                                 <TransparentButton
                                                     iconSrc={UserDelete}
                                                     onClick={async () => {
-                                                        setIsSubmitting(true);                                                        
+                                                        setIsSubmitting(true);
                                                         await removeMember({
                                                             courseId: homeContext!.currentCourseId!.toString(),
                                                             userId: pm.id,
@@ -104,8 +117,18 @@ function RouteComponent() {
                             ))
                         }
                     </ul>
-                ) : (<p className="italic text-secondary-grey">There is no pending members.</p>)}
+                ) : (<p className="italic text-secondary-grey">There is no pending members.</p>)
+                }
+            </>
+        )
+    }
 
+    return (
+        isSubmittingDebounced && isSubmitting ? (
+            <LoadingView />
+        ) : (
+            <div className="bg-black/20 h-full w-full p-4 text-white flex flex-col">
+                {content}
             </div>
         )
     )

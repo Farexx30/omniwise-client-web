@@ -55,9 +55,12 @@ function NewAssignmentSubmission() {
                 }
             })
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("An error occured while creating an assignment submission.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     })
 

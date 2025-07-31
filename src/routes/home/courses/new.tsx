@@ -32,7 +32,6 @@ function CreateCourse() {
             queryClient.invalidateQueries({ queryKey: ["courses"] })
 
             homeContext?.setCurrentCourseId(courseId);
-            homeContext?.setCurrentCourseName(courseName);
 
             router.navigate({
                 to: "/home/courses/$courseId",
@@ -41,9 +40,12 @@ function CreateCourse() {
                 }
             })
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("An error occured while creating a course.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     })
 

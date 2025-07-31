@@ -22,7 +22,7 @@ function AvailableCourses() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const isSubmittingDebounced = useDebounce(isSubmitting, 2000);
 
-    const { data: courses, isLoading, isError } = useQuery({
+    const { data: courses, isLoading, error } = useQuery({
         queryFn: () => getAvailableCourses(searchValue),
         queryKey: ["courses", "pending", { debouncedSearchValue }]
     })
@@ -36,9 +36,12 @@ function AvailableCourses() {
             await queryClient.invalidateQueries({ queryKey: ["courses"] });
             setIsSubmitting(false);
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("Failed to enroll in the course.");
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     });
 
@@ -47,8 +50,8 @@ function AvailableCourses() {
     if (isLoading) {
         content = <Spinner />;
     }
-    else if (isError) {
-        content = <p className="text-red-500">Error.</p>;
+    else if (error) {
+        content = <p className="text-red-500 font-bold text-center text-xl mt-8">Error - {error.message}</p>;
     }
     else if (!courses || courses.length === 0) {
         content = <p className="text-white text-center text-xl mt-8 italic">No courses found.</p>;

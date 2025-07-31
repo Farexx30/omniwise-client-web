@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { BasicLectureInfo } from "../types/lecture";
 import TransparentButton from "./TransparentButton"
 import TransparentLink from "./TransparentLink";
-import { deleteCourse, getAssignmentsByCourseId, getLecturesByCourseId, getMembersByCourseId } from "../services/api";
+import { deleteCourse, getAssignmentsByCourseId, getCourseById, getLecturesByCourseId, getMembersByCourseId } from "../services/api";
 import { useContext, useEffect, useState } from "react";
 import type { BasicAssignmentInfo } from "../types/assignment";
 import type { BasicUserInfo } from "../types/user";
@@ -12,8 +12,6 @@ import { UserContext } from "../routes/home/route";
 interface CourseBarProps {
     currentCourseId: number | null;
     setCurrentCourseId: (value: number | null) => void;
-    currentCourseName: string | null;
-    setCurrentCourseName: (value: string | null) => void;
     currentCourseOwnerId: string | null;
     setCurrentCourseOwnerId: (value: string | null) => void;
 }
@@ -26,7 +24,7 @@ const mapToAddButton: Record<Tab, string> = {
     "members": "Members"
 }
 
-const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, setCurrentCourseName, currentCourseOwnerId, setCurrentCourseOwnerId }: CourseBarProps) => {
+const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseOwnerId, setCurrentCourseOwnerId }: CourseBarProps) => {
     const router = useRouter();
     const queryClient = useQueryClient();
     const userContext = useContext(UserContext)!;
@@ -39,6 +37,13 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
     >([])
 
     const [isDeletingCourse, setIsDeletingCourse] = useState(false);
+
+    const { data: currentCourse } = useQuery({
+        queryKey: ["course", currentCourseId],
+        queryFn: () => getCourseById(currentCourseId!),
+        enabled: currentCourseId !== null,
+        staleTime: 60_000 * 5
+    })
 
     const { data: lectures } = useQuery({
         queryKey: ["lectures", currentCourseId],
@@ -65,14 +70,16 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
         mutationFn: () => deleteCourse(currentCourseId!),
         onSuccess: async () => {
             setCurrentCourseId(null);
-            setCurrentCourseName(null);
             setIsDeletingCourse(false);
             await queryClient.invalidateQueries({ queryKey: ["courses"] });
             router.navigate({ to: "/home" });
         },
-        onError: () => {
+        onError: (error) => {
             setIsDeletingCourse(false);
-            alert("An error occured while deleting course.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     });
 
@@ -91,9 +98,9 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseName, set
             <div className="flex flex-col p-5 flex-grow overflow-y-auto">
                 <span
                     className="font-bold text-xl text-secondary-grey select-none overflow-hidden whitespace-nowrap text-ellipsis pb-2 border-b border-secondary-grey border-2/20"
-                    title={currentCourseName || "No course selected"}
+                    title={currentCourseId ? (currentCourse?.name || "Loading...") : "No course selected"}
                 >
-                    {currentCourseName || <span className="italic text-secondary-grey">No course selected</span>}
+                    {currentCourseId ? (currentCourse?.name || <span className="italic text-secondary-grey">Loading...</span>) : <span className="italic text-secondary-grey">No course selected</span>}
                 </span>
                 {currentCourseId && (
                     <>

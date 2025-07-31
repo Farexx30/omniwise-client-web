@@ -10,13 +10,13 @@ import ShadowLink from "./ShadowLink";
 import { UserContext } from "../routes/home/route";
 
 interface SidebarProps {
-    onCourseClick: (courseId: number, courseName: string, courseOwnerId: string) => void;
+    onCourseClick: (courseId: number, courseOwnerId: string) => void;
 }
 
 const Sidebar = ({ onCourseClick }: SidebarProps) => {
     const userContext = useContext(UserContext)!;
 
-    const {data: courses, isLoading, isError } = useQuery({
+    const {data: courses, isLoading, error } = useQuery({
         queryKey: ["courses"],
         queryFn: () => getEnrolledCourses(),
     })
@@ -26,8 +26,8 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
     if (isLoading) {
         content = <Spinner />;
     }
-    else if (isError) {
-        content = <p className="text-red-500">Error.</p>;
+    else if (error) {
+        content = <p className="text-red-500 font-bold text-center mt-8">Error - {error.message}</p>;
     }
     else if (!courses || courses.length === 0) {
         content = <p className="text-white italic">No courses found.</p>;
@@ -42,7 +42,7 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
                             params={{
                                 courseId: c.id.toString()
                             }}
-                            onClick={() => onCourseClick(c.id, c.name, c.ownerId)}
+                            onClick={() => onCourseClick(c.id, c.ownerId)}
                             text={c.name}
                          />
                     </li>

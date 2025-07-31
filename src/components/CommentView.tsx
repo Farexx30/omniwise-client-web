@@ -35,10 +35,13 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
             setIsEditing(!isEditing);
             setNewContent(newContent.trim());
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting?.(false);
             setIsEditing(!isEditing)
-            alert("An error occured while updating assignment submission comment.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         },
     });
 
@@ -48,9 +51,12 @@ const CommentView = ({ id, assignmentSubmissionId, authorId, authorFullName, sen
             await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission", assignmentSubmissionId] });
             setIsSubmitting?.(false);
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting?.(false);
-            alert("An error occured while deleting assignment submission comment.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         },
     });
 

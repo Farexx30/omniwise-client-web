@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { getBasicUserData, login } from "../services/api";
+import { useMutation } from "@tanstack/react-query";
+import { resetCourseInfoFromLocalStorage } from "../utils/appHelpers";
 
 export const Route = createFileRoute('/login')({
     component: LoginForm,
@@ -36,6 +38,7 @@ function LoginForm() {
                 return;
             }
 
+            resetCourseInfoFromLocalStorage();
             router.navigate({ to: '/home' });
         }
         catch (error) {

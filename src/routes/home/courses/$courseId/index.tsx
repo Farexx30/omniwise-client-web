@@ -16,12 +16,13 @@ import type { FileInfo } from '../../../../types/file';
 import FileInput from '../../../../components/FileInput';
 import { useDebounce } from '../../../../hooks/useDebounce';
 import LoadingView from '../../../../components/LoadingView';
+import ErrorComponentView from '../../../../components/ErrorComponentView';
 
 
 export const Route = createFileRoute('/home/courses/$courseId/')({
   component: Course,
   pendingComponent: () => <Spinner />,
-  errorComponent: () => <p className="text-red-500">Error.</p>,
+  errorComponent: ({ error }) => <ErrorComponentView message={error.message} />,
   loader: async ({ params, context: { queryClient } }) => {
     await queryClient.prefetchQuery({
       queryKey: ["course", Number(params.courseId)],
@@ -52,14 +53,16 @@ function Course() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["courses"] })
       await queryClient.invalidateQueries({ queryKey: ["course", courseId] })
-      homeContext.setCurrentCourseName(newCourseName.trim());
       setIsSubmitting(false);
       setIsEditing(!isEditing)
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
       setIsEditing(!isEditing)
-      alert("An error occured while updating a course.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     }
   })
 

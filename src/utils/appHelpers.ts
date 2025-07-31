@@ -4,6 +4,8 @@ export function resetLocalStorage() {
     localStorage.removeItem("courseInfo");
 }
 
+export const resetCourseInfoFromLocalStorage = () => localStorage.removeItem("courseInfo");
+
 export function getObjFromJSONLocalStorage(key: string): any {
     const json = localStorage.getItem(key);
 

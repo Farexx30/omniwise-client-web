@@ -18,12 +18,13 @@ import CommentView from '../../../components/CommentView';
 import { UserContext } from '../route';
 import { useDebounce } from '../../../hooks/useDebounce';
 import LoadingView from '../../../components/LoadingView';
+import ErrorComponentView from '../../../components/ErrorComponentView';
 
 
 export const Route = createFileRoute('/home/assignment-submissions/$assignmentSubmissionId')({
   component: AssignmentSubmission,
   pendingComponent: () => <Spinner />,
-  errorComponent: () => <p className="text-red-500">Error.</p>,
+  errorComponent: ({ error }) => <ErrorComponentView message={error.message} />,
   loader: async ({ params, context: { queryClient } }) => {
     await queryClient.prefetchQuery({
       queryKey: ["assignmentSubmission", Number(params.assignmentSubmissionId)],
@@ -58,9 +59,12 @@ function AssignmentSubmission() {
       setIsSubmitting(false);
       await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission", assignmentSubmissionId] });
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
-      alert("Failed to add comment.");
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     }
   });
 
@@ -76,9 +80,12 @@ function AssignmentSubmission() {
         }
       });
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
-      alert("An error occured while deleting assignment submission.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     },
   });
 
@@ -89,10 +96,13 @@ function AssignmentSubmission() {
       setIsSubmitting(false);
       setIsEditing(!isEditing)
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
       setIsEditing(!isEditing)
-      alert("An error occured while updating assignment submission.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     },
   });
 
@@ -111,11 +121,14 @@ function AssignmentSubmission() {
         : Number(trimmedGrade);
       setGrade(gradeAsNumber?.toString() || null);
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
       setIsGrading(!isGrading);
       setGrade(assignmentSubmission.grade?.toString() || null);
-      alert("An error occured while updating grade.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     },
   });
 
@@ -161,7 +174,7 @@ function AssignmentSubmission() {
     const trimmedGrade = grade?.trim();
     const gradeAsNumber = trimmedGrade === "" || trimmedGrade === null
       ? null
-      : Number(trimmedGrade);    
+      : Number(trimmedGrade);
 
     await updateGrade(gradeAsNumber);
   }
@@ -215,7 +228,7 @@ function AssignmentSubmission() {
                     <div className='w-2'></div>
                     <TransparentButton text=""
                       iconSrc={TrashIcon}
-                      onClick={async() => {
+                      onClick={async () => {
                         setIsSubmitting(true);
                         await removeAssignmentSubmission(assignmentSubmission.id)
                       }}
