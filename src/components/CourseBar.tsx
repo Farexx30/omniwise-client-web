@@ -1,19 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { BasicLectureInfo } from "../types/lecture";
-import TransparentButton from "./TransparentButton"
-import TransparentLink from "./TransparentLink";
-import { deleteCourse, getAssignmentsByCourseId, getCourseById, getLecturesByCourseId, getMembersByCourseId } from "../services/api";
-import { useContext, useEffect, useState } from "react";
-import type { BasicAssignmentInfo } from "../types/assignment";
-import type { BasicUserInfo } from "../types/user";
 import { useRouter } from "@tanstack/react-router";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../routes/home/route";
+import { deleteCourse, getAssignmentsByCourseId, getCourseById, getLecturesByCourseId, getMembersByCourseId } from "../services/api";
+import type { BasicAssignmentInfo } from "../types/assignment";
+import type { BasicLectureInfo } from "../types/lecture";
+import type { BasicUserInfo } from "../types/user";
+import TransparentButton from "./TransparentButton";
+import TransparentLink from "./TransparentLink";
 
 interface CourseBarProps {
     currentCourseId: number | null;
     setCurrentCourseId: (value: number | null) => void;
     currentCourseOwnerId: string | null;
-    setCurrentCourseOwnerId: (value: string | null) => void;
 }
 
 type Tab = "lectures" | "assignments" | "members";
@@ -24,7 +23,7 @@ const mapToAddButton: Record<Tab, string> = {
     "members": "Members"
 }
 
-const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseOwnerId, setCurrentCourseOwnerId }: CourseBarProps) => {
+const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseOwnerId }: CourseBarProps) => {
     const router = useRouter();
     const queryClient = useQueryClient();
     const userContext = useContext(UserContext)!;
@@ -90,8 +89,6 @@ const CourseBar = ({ currentCourseId, setCurrentCourseId, currentCourseOwnerId, 
     }, [currentTab, lectures, assignments, members])
 
     const tabs = ["Lectures", "Assignments", "Members"];
-
-    console.log("id: " + currentCourseId);
 
     return (
         <div className="flex flex-col bg-black/20 rounded-2xl h-full w-72 op-0 bottom-0 left-0 overflow-y-auto">

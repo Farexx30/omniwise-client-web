@@ -1,13 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router"
-import TransparentButton from "../../components/TransparentButton";
-import { getNotifications } from "../../services/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState, type JSX } from "react";
-import Spinner from "../../components/Spinner";
-import { formatDate } from "../../utils/date";
-import { deleteNotification } from "../../services/api";
-import { useDebounce } from "../../hooks/useDebounce";
 import LoadingView from "../../components/LoadingView";
+import Spinner from "../../components/Spinner";
+import TransparentButton from "../../components/TransparentButton";
+import { useDebounce } from "../../hooks/useDebounce";
+import { deleteNotification, getNotifications } from "../../services/api";
+import { formatDate } from "../../utils/date";
 
 export const Route = createFileRoute('/home/notifications')({
     component: Notifications,

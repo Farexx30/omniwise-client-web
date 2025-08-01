@@ -1,11 +1,11 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createContext, useEffect, useState } from 'react'
 import CourseBar from '../../components/CourseBar'
 import Sidebar from '../../components/Sidebar'
 import WebHeader from '../../components/WebHeader'
-import { createContext, useEffect, useMemo, useState } from 'react'
+import type { LocalStorageCourseInfo, UserInfo } from '../../types/localStorage'
 import type { UserRole } from "../../types/user"
 import { getObjFromJSONLocalStorage } from '../../utils/appHelpers'
-import type { LocalStorageCourseInfo, UserInfo } from '../../types/localStorage'
 
 export const Route = createFileRoute('/home')({
     component: HomeLayout,
@@ -30,7 +30,7 @@ function HomeLayout() {
         const courseInfoObj = getObjFromJSONLocalStorage("courseInfo") as LocalStorageCourseInfo | null;
         return courseInfoObj?.id || null;
     });
-    const [currentCourseOwnerId, setCurrentCourseOwnerId] = useState<string | null > (() => {
+    const [currentCourseOwnerId, setCurrentCourseOwnerId] = useState<string | null>(() => {
         const courseInfoObj = getObjFromJSONLocalStorage("courseInfo") as LocalStorageCourseInfo | null;
         return courseInfoObj?.ownerId || null;
     })
@@ -57,35 +57,32 @@ function HomeLayout() {
                 </div>
             </main>
         ) : (
-            <main>
-                <UserContext value={{ role: currentUserRole, userId: currentUserId }}>
-                    <div className="bg-main-page w-screen h-screen bg-center bg-cover fixed inset-0 z-0 overflow-hidden flex flex-col">
-                        <WebHeader />
-                        <div className="flex flex-row h-[calc(100vh-2rem)] w-full">
-                            <div className="mb-4">
-                                <Sidebar onCourseClick={(courseId, courseOwnerId) => {
-                                    setCurrentCourseId(courseId);
-                                    setCurrentCourseOwnerId(courseOwnerId);
-                                }}
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <CourseBar
-                                    currentCourseId={currentCourseId}
-                                    setCurrentCourseId={setCurrentCourseId}
-                                    currentCourseOwnerId={currentCourseOwnerId}
-                                    setCurrentCourseOwnerId={setCurrentCourseOwnerId}
-                                />
-                            </div>
-                            <div className="w-[calc(100vw-29rem)] rounded-2xl mx-2 mb-4 overflow-y-auto">
-                                <HomeContext value={{ currentCourseId, currentCourseOwnerId, setCurrentCourseId, setCurrentCourseOwnerId }}>
-                                    <Outlet />
-                                </HomeContext>
-                            </div>
-                        </div>
+            <UserContext value={{ role: currentUserRole, userId: currentUserId }}>
+                <div className="bg-main-page w-screen h-screen bg-center bg-cover fixed inset-0 z-0 overflow-hidden flex flex-col">
+                    <WebHeader />
+                    <div className="flex flex-row h-[calc(100vh-2rem)] w-full">
+                        <nav className="mb-4">
+                            <Sidebar onCourseClick={(courseId, courseOwnerId) => {
+                                setCurrentCourseId(courseId);
+                                setCurrentCourseOwnerId(courseOwnerId);
+                            }}
+                            />
+                        </nav>
+                        <nav className="mb-4">
+                            <CourseBar
+                                currentCourseId={currentCourseId}
+                                setCurrentCourseId={setCurrentCourseId}
+                                currentCourseOwnerId={currentCourseOwnerId}
+                            />
+                        </nav>
+                        <main className="w-[calc(100vw-29rem)] rounded-2xl mx-2 mb-4 overflow-y-auto">
+                            <HomeContext value={{ currentCourseId, currentCourseOwnerId, setCurrentCourseId, setCurrentCourseOwnerId }}>
+                                <Outlet />
+                            </HomeContext>
+                        </main>
                     </div>
-                </UserContext>
-            </main>
+                </div>
+            </UserContext>
         )
     )
 }

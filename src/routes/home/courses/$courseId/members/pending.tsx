@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 import { useContext, useState, type JSX } from 'react';
-import { acceptMemberToCourse, getPendingMembersByCourseId, removeCourseMember } from '../../../../../services/api';
-import UserDelete from '/user-delete.svg'
-import UserAccept from '/user-accept.svg'
-import { HomeContext } from '../../../route';
-import TransparentButton from '../../../../../components/TransparentButton';
 import LoadingView from '../../../../../components/LoadingView';
-import { useDebounce } from '../../../../../hooks/useDebounce';
 import Spinner from '../../../../../components/Spinner';
+import TransparentButton from '../../../../../components/TransparentButton';
+import { useDebounce } from '../../../../../hooks/useDebounce';
+import { acceptMemberToCourse, getPendingMembersByCourseId, removeCourseMember } from '../../../../../services/api';
+import { HomeContext } from '../../../route';
+import UserAccept from '/user-accept.svg';
+import UserDelete from '/user-delete.svg';
 
 export const Route = createFileRoute('/home/courses/$courseId/members/pending')(
     {

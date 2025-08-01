@@ -1,19 +1,20 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useContext, useEffect, useState, type JSX } from "react";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
+import { useContext, useState, type JSX } from "react";
+import ConditionalWrapper from '../../components/ConditionalWrapper';
 import CourseCard from '../../components/CourseCard';
+import LoadingView from '../../components/LoadingView';
 import SearchBar from '../../components/SearchBar';
 import Spinner from '../../components/Spinner';
-import { deleteUser, getEnrolledCourses, getUsersByStatus, updateUserStatus } from '../../services/api';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useDebounce } from '../../hooks/useDebounce';
-import { HomeContext, UserContext } from './route';
 import TransparentButton from '../../components/TransparentButton';
+import { useDebounce } from '../../hooks/useDebounce';
+import { deleteUser, getEnrolledCourses, getUsersByStatus, updateUserStatus } from '../../services/api';
 import type { UserStatus } from '../../types/user';
-import UserAccept from "/user-accept.svg"
-import UserDelete from "/user-delete.svg"
-import UserArchive from "/archive.svg"
-import UndoArchive from "/undo-archive.svg"
-import LoadingView from '../../components/LoadingView';
+import { HomeContext, UserContext } from './route';
+import UserArchive from "/archive.svg";
+import UndoArchive from "/undo-archive.svg";
+import UserAccept from "/user-accept.svg";
+import UserDelete from "/user-delete.svg";
 
 export const Route = createFileRoute('/home/')({
     component: HomePage
@@ -83,7 +84,11 @@ function HomePage() {
 
     let content: JSX.Element | null = null;
     if (isLoading || usersIsLoading) {
-        content = <Spinner />;
+        content = (
+            <section className="flex h-full items-center justify-center">
+                <Spinner />
+            </section>
+        );
     }
     else if (getEnrolledError) {
         content = <p className="text-red-500 font-bold text-center text-xl mt-8">Error - {getEnrolledError.message}</p>;
@@ -213,15 +218,18 @@ function HomePage() {
                 {content}
             </>
         ) : (
-            <div className="h-full w-full">
+            <div className="h-full w-full flex flex-col">
                 <SearchBar
                     searchValue={searchValue}
                     onSearch={setSearchValue}
                     placeholder="Search for courses..."
                 />
-                <section className="space-y-9">
+                <ConditionalWrapper
+                    condition={!isLoading}
+                    wrapper={(children) => <section className="space-y-9">{children}</section>}
+                >
                     {content}
-                </section>
+                </ConditionalWrapper>
             </div>
         )
     )

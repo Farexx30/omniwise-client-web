@@ -1,16 +1,15 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { createAssignmentSubmission, getAssignmentById } from '../../../../services/api'
-import { useContext, useState, type FormEvent } from 'react'
-import { HomeContext, UserContext } from '../../route'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { useState, type FormEvent } from 'react'
+import FileInput from '../../../../components/FileInput'
+import LoadingView from '../../../../components/LoadingView'
 import TransparentButton from '../../../../components/TransparentButton'
+import { useDebounce } from '../../../../hooks/useDebounce'
+import { useFile } from '../../../../hooks/useFile'
+import { createAssignmentSubmission, getAssignmentById } from '../../../../services/api'
+import { formatDate } from '../../../../utils/date'
 import AcceptIcon from "/accept-icon.svg"
 import DiscardIcon from "/discard-icon.svg"
-import { useFile } from '../../../../hooks/useFile'
-import { formatDate } from '../../../../utils/date'
-import FileInput from '../../../../components/FileInput'
-import { useDebounce } from '../../../../hooks/useDebounce'
-import LoadingView from '../../../../components/LoadingView'
 
 export const Route = createFileRoute('/home/assignments/$assignmentId/new-submission')({
     component: NewAssignmentSubmission,

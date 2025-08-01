@@ -1,6 +1,6 @@
-import TransparentButton from "./TransparentButton";
-import enrollIcon from "/enroll.svg"
 import { Link } from "@tanstack/react-router";
+import TransparentButton from "./TransparentButton";
+import enrollIcon from "/enroll.svg";
 
 interface CourseCardProps {
     id: number;

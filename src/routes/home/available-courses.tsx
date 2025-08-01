@@ -1,14 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { getAvailableCourses } from '../../services/api';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
 import { useState, type JSX } from 'react';
+import ConditionalWrapper from '../../components/ConditionalWrapper';
 import CourseCard from '../../components/CourseCard';
+import LoadingView from '../../components/LoadingView';
 import SearchBar from '../../components/SearchBar';
 import Spinner from '../../components/Spinner';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { enrollInCourse } from '../../services/api';
 import { useDebounce } from '../../hooks/useDebounce';
-import LoadingView from '../../components/LoadingView';
+import { enrollInCourse, getAvailableCourses } from '../../services/api';
 
 
 export const Route = createFileRoute('/home/available-courses')({
@@ -48,7 +47,11 @@ function AvailableCourses() {
     let content: JSX.Element | null = null;
 
     if (isLoading) {
-        content = <Spinner />;
+        content = (
+            <section className="flex h-full items-center justify-center">
+                <Spinner />
+            </section>
+        );
     }
     else if (error) {
         content = <p className="text-red-500 font-bold text-center text-xl mt-8">Error - {error.message}</p>;
@@ -78,15 +81,18 @@ function AvailableCourses() {
         isSubmittingDebounced && isSubmitting ? (
             <LoadingView />
         ) : (
-            <div className="h-full w-full">
+            <div className="h-full w-full flex flex-col">
                 <SearchBar
                     searchValue={searchValue}
                     onSearch={setSearchValue}
                     placeholder="Search for courses..."
                 />
-                <section className="space-y-9">
+                <ConditionalWrapper
+                    condition={!isLoading}
+                    wrapper={(children) => <section className="space-y-9">{children}</section>}
+                >
                     {content}
-                </section>
+                </ConditionalWrapper>
             </div>
         )
     )

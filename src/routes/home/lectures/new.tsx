@@ -1,15 +1,15 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { useFile } from '../../../hooks/useFile';
-import FileInput from '../../../components/FileInput';
-import TransparentButton from '../../../components/TransparentButton';
-import AcceptIcon from "/accept-icon.svg"
-import DiscardIcon from "/discard-icon.svg"
-import { useContext, useState, type FormEvent } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { useContext, useState, type FormEvent } from 'react';
+import FileInput from '../../../components/FileInput';
+import LoadingView from '../../../components/LoadingView';
+import TransparentButton from '../../../components/TransparentButton';
+import { useDebounce } from '../../../hooks/useDebounce';
+import { useFile } from '../../../hooks/useFile';
 import { createLecture } from '../../../services/api';
 import { HomeContext } from '../route';
-import { useDebounce } from '../../../hooks/useDebounce';
-import LoadingView from '../../../components/LoadingView';
+import AcceptIcon from "/accept-icon.svg";
+import DiscardIcon from "/discard-icon.svg";
 
 export const Route = createFileRoute('/home/lectures/new')({
   component: NewLecture,

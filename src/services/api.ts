@@ -1,12 +1,12 @@
 import type { Assignment, BasicAssignmentInfo } from "../types/assignment";
-import type { Course } from "../types/course";
-import type { NotificationDetails } from "../types/notification";
-import type { BasicLectureInfo, Lecture } from "../types/lecture";
-import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, PendingCourseMember, RegisterResult, RegisterUser, UserInfoForAdmin, UserRole, UserStatus } from "../types/user";
 import type { AssignmentSubmission } from "../types/assignmentSubmission";
+import type { Course } from "../types/course";
+import type { BasicLectureInfo, Lecture } from "../types/lecture";
 import type { Auth, UserInfo } from "../types/localStorage";
-import { getObjFromJSONLocalStorage } from "../utils/appHelpers";
+import type { NotificationDetails } from "../types/notification";
+import type { AuthenticationSuccessResponse, BasicUserInfo, CourseMemberWithDetails, LoginResult, PendingCourseMember, RegisterResult, RegisterUser, UserInfoForAdmin, UserStatus } from "../types/user";
 import { getStatusCodeText } from "../utils/apiHelpers";
+import { getObjFromJSONLocalStorage } from "../utils/appHelpers";
 
 // const BASE_API_URL = "https://omniwise-ckhgf2duhhfvgtdp.polandcentral-01.azurewebsites.net/api";
 const BASE_API_URL_DEV = "https://localhost:7155/api"
@@ -92,7 +92,6 @@ export const getEnrolledCourses = async (query?: string): Promise<Course[]> => {
     query = query?.trim() || "";
     const url = `${BASE_API_URL_DEV}/courses/enrolled?searchPhrase=${encodeURIComponent(query)}`;
     const { tokenType, accessToken } = getObjFromJSONLocalStorage("auth") as Auth;
-    console.log(tokenType);
     const response = await fetch(url, {
         method: "GET",
         headers: {

@@ -1,23 +1,21 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { deleteLecture, getLectureById, updateLecture } from '../../../services/api'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
-
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useContext, useEffect, useState, type FormEvent } from 'react'
+import ErrorComponentView from '../../../components/ErrorComponentView'
+import FileInput from '../../../components/FileInput'
+import LoadingView from '../../../components/LoadingView'
+import ReadonlyFileList from '../../../components/ReadonlyFileList'
 import Spinner from '../../../components/Spinner'
 import TransparentButton from '../../../components/TransparentButton'
-import TrashIcon from '/white-trash.svg'
-import EditIcon from '/edit.svg'
-import AcceptIcon from "/accept-icon.svg"
-import DiscardIcon from "/discard-icon.svg"
-import ReadonlyFileList from '../../../components/ReadonlyFileList'
-import { useContext, useEffect, useState, type FormEvent } from 'react'
-import FileInput from '../../../components/FileInput'
+import { useDebounce } from '../../../hooks/useDebounce'
 import { useFile } from '../../../hooks/useFile'
+import { deleteLecture, getLectureById, updateLecture } from '../../../services/api'
 import { fetchFiles } from '../../../utils/file'
 import { HomeContext, UserContext } from '../route'
-import { useDebounce } from '../../../hooks/useDebounce'
-import LoadingView from '../../../components/LoadingView'
-import ErrorComponentView from '../../../components/ErrorComponentView'
+import AcceptIcon from "/accept-icon.svg"
+import DiscardIcon from "/discard-icon.svg"
+import EditIcon from '/edit.svg'
+import TrashIcon from '/white-trash.svg'
 
 export const Route = createFileRoute('/home/lectures/$lectureId')({
   component: Lecture,

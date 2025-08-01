@@ -1,13 +1,13 @@
-import plusIcon from "/plus.svg";
-import signupIcon from "/signup.svg";
-import bell from "/bell.svg";
-import { getEnrolledCourses } from "../services/api";
+import { useQuery } from "@tanstack/react-query";
 import { useContext, type JSX } from "react";
+import { UserContext } from "../routes/home/route";
+import { getEnrolledCourses } from "../services/api";
+import ShadowLink from "./ShadowLink";
 import Spinner from "./Spinner";
 import TransparentLink from "./TransparentLink";
-import { useQuery } from "@tanstack/react-query";
-import ShadowLink from "./ShadowLink";
-import { UserContext } from "../routes/home/route";
+import bell from "/bell.svg";
+import plusIcon from "/plus.svg";
+import signupIcon from "/signup.svg";
 
 interface SidebarProps {
     onCourseClick: (courseId: number, courseOwnerId: string) => void;
@@ -51,7 +51,6 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
         )
     }
 
-    console.log(userContext.role);
     return (
         <div className="flex flex-col bg-transparent h-full w-44 p-3">
             <div className="flex flex-col gap-2 mb-4">  

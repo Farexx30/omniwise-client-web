@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { formatDate } from '../utils/date'
-import TransparentButton from './TransparentButton';
-import TrashIcon from '/white-trash.svg'
-import EditIcon from '/edit.svg'
-import AcceptIcon from "/accept-icon.svg"
-import DiscardIcon from "/discard-icon.svg"
-import ConditionalWrapper from './ConditionalWrapper';
-import { UserContext } from '../routes/home/route';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteAssignmentSubmission, deleteAssignmentSubmissionComment, updateAssignmentSubmission, updateAssignmentSubmissionComment } from '../services/api';
+import React, { useContext, useState } from 'react';
+import { UserContext } from '../routes/home/route';
+import { deleteAssignmentSubmissionComment, updateAssignmentSubmissionComment } from '../services/api';
+import { formatDate } from '../utils/date';
+import ConditionalWrapper from './ConditionalWrapper';
+import TransparentButton from './TransparentButton';
+import AcceptIcon from "/accept-icon.svg";
+import DiscardIcon from "/discard-icon.svg";
+import EditIcon from '/edit.svg';
+import TrashIcon from '/white-trash.svg';
 
 interface CommentViewProps {
     id: number;

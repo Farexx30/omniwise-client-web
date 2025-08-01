@@ -1,22 +1,20 @@
-import { createFileRoute, Outlet, useRouteContext, useRouter } from '@tanstack/react-router'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import Spinner from '../../../../components/Spinner';
-import { getCourseById, updateCourse } from '../../../../services/api';
+import { createFileRoute } from '@tanstack/react-router';
 import { useContext, useEffect, useState, type FormEvent } from 'react';
-import { HomeContext, UserContext } from '../../route';
-import TrashIcon from '/white-trash.svg'
-import EditIcon from '/edit.svg'
-import AcceptIcon from "/accept-icon.svg"
-import DiscardIcon from "/discard-icon.svg"
-import { useFile } from '../../../../hooks/useFile';
-import { fetchFile, fetchFiles } from '../../../../utils/file';
-import TransparentButton from '../../../../components/TransparentButton';
-import ShadowButton from '../../../../components/ShadowButton';
-import type { FileInfo } from '../../../../types/file';
-import FileInput from '../../../../components/FileInput';
-import { useDebounce } from '../../../../hooks/useDebounce';
-import LoadingView from '../../../../components/LoadingView';
 import ErrorComponentView from '../../../../components/ErrorComponentView';
+import FileInput from '../../../../components/FileInput';
+import LoadingView from '../../../../components/LoadingView';
+import ShadowButton from '../../../../components/ShadowButton';
+import Spinner from '../../../../components/Spinner';
+import { useDebounce } from '../../../../hooks/useDebounce';
+import { useFile } from '../../../../hooks/useFile';
+import { getCourseById, updateCourse } from '../../../../services/api';
+import type { FileInfo } from '../../../../types/file';
+import { fetchFile } from '../../../../utils/file';
+import { UserContext } from '../../route';
+import AcceptIcon from "/accept-icon.svg";
+import DiscardIcon from "/discard-icon.svg";
+import EditIcon from '/edit.svg';
 
 
 export const Route = createFileRoute('/home/courses/$courseId/')({
@@ -40,7 +38,6 @@ function Course() {
   const { courseId } = Route.useLoaderData();
   const queryClient = useQueryClient();
   const userContext = useContext(UserContext)!;
-  const homeContext = useContext(HomeContext)!;
 
   const { data: course } = useSuspenseQuery({
     queryKey: ["course", courseId],

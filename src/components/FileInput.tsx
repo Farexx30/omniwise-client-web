@@ -1,4 +1,4 @@
-import React, { useRef, useState, type ChangeEvent } from "react";
+import { useRef, type ChangeEvent } from "react";
 import FileView from "./FileView";
 
 interface FileInputProps {

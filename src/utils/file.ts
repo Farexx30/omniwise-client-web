@@ -1,6 +1,6 @@
+import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import type { FileInfo } from "../types/file";
-import { saveAs } from "file-saver";
 
 export async function fetchFile(file: FileInfo): Promise<File> {
     const response = await fetch(file.url);
