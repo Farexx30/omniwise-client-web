@@ -1,4 +1,3 @@
-
 interface SearchBarProps {
     searchValue?: string;
     onSearch: (query: string) => void;

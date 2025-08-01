@@ -1,21 +1,22 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { getCourseMemberById, removeCourseMember } from '../../../../../services/api'
-import Spinner from '../../../../../components/Spinner'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useContext, useState } from 'react'
+import ErrorComponentView from '../../../../../components/ErrorComponentView'
+import LoadingView from '../../../../../components/LoadingView'
+import Spinner from '../../../../../components/Spinner'
 import TransparentButton from '../../../../../components/TransparentButton'
-import UserDelete from '/user-delete.svg'
+import { useDebounce } from '../../../../../hooks/useDebounce'
+import { getCourseMemberById, removeCourseMember } from '../../../../../services/api'
 import { formatDate } from '../../../../../utils/date'
 import { HomeContext, UserContext } from '../../../route'
-import { useContext, useState } from 'react'
-import { useDebounce } from '../../../../../hooks/useDebounce'
-import LoadingView from '../../../../../components/LoadingView'
+import UserDelete from '/user-delete.svg'
 
 export const Route = createFileRoute(
   '/home/courses/$courseId/members/$memberId',
 )({
   component: CourseMember,
   pendingComponent: () => <Spinner />,
-  errorComponent: () => <p className="text-red-500">Error.</p>,
+  errorComponent: ({ error }) => <ErrorComponentView message={error.message} />,
   loader: async ({ params, context: { queryClient } }) => {
     await queryClient.prefetchQuery({
       queryKey: ["courseMember", Number(params.courseId), params.memberId],
@@ -59,9 +60,12 @@ function CourseMember() {
         }
       });
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
-      alert("An error occured while deleting course member.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     }
   });
 

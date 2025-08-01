@@ -126,7 +126,7 @@
       }
     }
 
-    & label {
+    & label, p {
       @apply mb-1 text-left text-gray-100;
     }
   }

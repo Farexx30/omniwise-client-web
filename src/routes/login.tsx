@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { getBasicUserData, login } from "../services/api";
+import { resetCourseInfoFromLocalStorage } from "../utils/appHelpers";
 
 export const Route = createFileRoute('/login')({
     component: LoginForm,
@@ -29,13 +30,14 @@ function LoginForm() {
                 return;
             }
 
-            const getBasicUserDataResult = await getBasicUserData();        
-            
+            const getBasicUserDataResult = await getBasicUserData();
+
             if (getBasicUserDataResult === "Unauthorized") {
                 alert("Login failed: Couldn't fetch your basic data.");
                 return;
             }
 
+            resetCourseInfoFromLocalStorage();
             router.navigate({ to: '/home' });
         }
         catch (error) {
@@ -47,43 +49,43 @@ function LoginForm() {
     };
 
     return (
-        <main>
-            <div className="login-and-registration-container">
-                <div className="login-and-registration-form">
-                    <form onSubmit={handleSubmit}>
-                        <h1>Sign in</h1>
-                        <div className="input-box">
-                            <label htmlFor="email">Email</label>
-                            <input
-                                id="email"
-                                type="email"
-                                placeholder="Email"
-                                required
-                                value={email}
-                                maxLength={256}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
-                        <div className="input-box">
-                            <label htmlFor="password">Password</label>
-                            <input
-                                id="password"
-                                type="password"
-                                placeholder="Password"
-                                required
-                                value={password}
-                                maxLength={36}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
-                        <button type="submit" disabled={!email || !password || isLoading}>Sign in</button>
-                        <div className="mt-8 flex justify-center">
-                            <Link to="/registration" className="text-gray-400 hover:underline">
-                                Don't have an account? Create one
-                            </Link>
-                        </div>
-                    </form>
-                </div>
+        <main className="login-and-registration-container">
+            <div className="login-and-registration-form">
+                <form onSubmit={handleSubmit}>
+                    <h1>Sign in</h1>
+                    <div className="input-box">
+                        <label htmlFor="email">Email</label>
+                        <input
+                            id="email"
+                            type="email"
+                            placeholder="Email"
+                            required
+                            value={email}
+                            maxLength={256}
+                            autoComplete="email"
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div className="input-box">
+                        <label htmlFor="password">Password</label>
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Password"
+                            required
+                            value={password}
+                            maxLength={36}
+                            autoComplete="current-password"
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <button type="submit" disabled={!email || !password || isLoading}>Sign in</button>
+                    <div className="mt-8 flex justify-center">
+                        <Link to="/registration" className="text-gray-400 hover:underline">
+                            Don't have an account? Create one
+                        </Link>
+                    </div>
+                </form>
             </div>
         </main>
     )

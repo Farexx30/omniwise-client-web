@@ -1,13 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router"
-import TransparentButton from "../../components/TransparentButton";
-import { getNotifications } from "../../services/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState, type JSX } from "react";
-import Spinner from "../../components/Spinner";
-import { formatDate } from "../../utils/date";
-import { deleteNotification } from "../../services/api";
-import { useDebounce } from "../../hooks/useDebounce";
 import LoadingView from "../../components/LoadingView";
+import Spinner from "../../components/Spinner";
+import TransparentButton from "../../components/TransparentButton";
+import { useDebounce } from "../../hooks/useDebounce";
+import { deleteNotification, getNotifications } from "../../services/api";
+import { formatDate } from "../../utils/date";
 
 export const Route = createFileRoute('/home/notifications')({
     component: Notifications,
@@ -17,7 +16,7 @@ function Notifications() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const isSubmittingDebounced = useDebounce(isSubmitting, 2000);
 
-    const { data: notifications, isLoading, isError } = useQuery({
+    const { data: notifications, isLoading, error } = useQuery({
         queryFn: getNotifications,
         queryKey: ["notifications"]
     })
@@ -30,9 +29,12 @@ function Notifications() {
             await queryClient.invalidateQueries({ queryKey: ["notifications"] });
             setIsSubmitting(false);
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("An error occurred while deleting notification.");
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     });
 
@@ -41,8 +43,8 @@ function Notifications() {
     if (isLoading) {
         content = <Spinner />;
     }
-    else if (isError) {
-        content = <p className="text-red-500">Error.</p>;
+    else if (error) {
+        content = <p className="text-red-500 font-bold text-center text-xl mt-8">Error - {error.message}</p>;
     }
     else if (!notifications || notifications.length === 0) {
         content = <p className="text-white italic">No notifications found.</p>;

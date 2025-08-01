@@ -1,29 +1,30 @@
-import { createFileRoute, useLocation, useRouter } from '@tanstack/react-router'
-import TransparentButton from '../../../components/TransparentButton';
-import { formatDate } from '../../../utils/date';
-import { useSuspenseQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import Spinner from '../../../components/Spinner';
-import { createAssignmentSubmissionComment, deleteAssignmentSubmission, getAssignmentSubmissionById, updateAssignmentSubmission, updateAssignmentSubmissionGrade } from '../../../services/api';
-import { Children, useContext, useState, type JSX, type ReactNode } from 'react';
-import ReadonlyFileList from '../../../components/ReadonlyFileList';
-import FileInput from '../../../components/FileInput';
-import { useFile } from '../../../hooks/useFile';
-import TrashIcon from '/white-trash.svg'
-import EditIcon from '/edit.svg'
-import AcceptIcon from "/accept-icon.svg"
-import DiscardIcon from "/discard-icon.svg"
-import { fetchFiles } from '../../../utils/file';
-import ConditionalWrapper from '../../../components/ConditionalWrapper';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { useContext, useState } from 'react';
 import CommentView from '../../../components/CommentView';
-import { UserContext } from '../route';
-import { useDebounce } from '../../../hooks/useDebounce';
+import ConditionalWrapper from '../../../components/ConditionalWrapper';
+import ErrorComponentView from '../../../components/ErrorComponentView';
+import FileInput from '../../../components/FileInput';
 import LoadingView from '../../../components/LoadingView';
+import ReadonlyFileList from '../../../components/ReadonlyFileList';
+import Spinner from '../../../components/Spinner';
+import TransparentButton from '../../../components/TransparentButton';
+import { useDebounce } from '../../../hooks/useDebounce';
+import { useFile } from '../../../hooks/useFile';
+import { createAssignmentSubmissionComment, deleteAssignmentSubmission, getAssignmentSubmissionById, updateAssignmentSubmission, updateAssignmentSubmissionGrade } from '../../../services/api';
+import { formatDate } from '../../../utils/date';
+import { fetchFiles } from '../../../utils/file';
+import { UserContext } from '../route';
+import AcceptIcon from "/accept-icon.svg";
+import DiscardIcon from "/discard-icon.svg";
+import EditIcon from '/edit.svg';
+import TrashIcon from '/white-trash.svg';
 
 
 export const Route = createFileRoute('/home/assignment-submissions/$assignmentSubmissionId')({
   component: AssignmentSubmission,
   pendingComponent: () => <Spinner />,
-  errorComponent: () => <p className="text-red-500">Error.</p>,
+  errorComponent: ({ error }) => <ErrorComponentView message={error.message} />,
   loader: async ({ params, context: { queryClient } }) => {
     await queryClient.prefetchQuery({
       queryKey: ["assignmentSubmission", Number(params.assignmentSubmissionId)],
@@ -58,9 +59,12 @@ function AssignmentSubmission() {
       setIsSubmitting(false);
       await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission", assignmentSubmissionId] });
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
-      alert("Failed to add comment.");
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     }
   });
 
@@ -68,6 +72,7 @@ function AssignmentSubmission() {
     mutationFn: deleteAssignmentSubmission,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["assignment", assignmentSubmission.assignmentId] });
+      await queryClient.invalidateQueries({ queryKey: ["courseMember"] });
 
       router.navigate({
         to: "/home/assignments/$assignmentId",
@@ -76,9 +81,12 @@ function AssignmentSubmission() {
         }
       });
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
-      alert("An error occured while deleting assignment submission.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     },
   });
 
@@ -89,10 +97,13 @@ function AssignmentSubmission() {
       setIsSubmitting(false);
       setIsEditing(!isEditing)
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
       setIsEditing(!isEditing)
-      alert("An error occured while updating assignment submission.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     },
   });
 
@@ -101,6 +112,7 @@ function AssignmentSubmission() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["assignmentSubmission", assignmentSubmissionId] });
       await queryClient.invalidateQueries({ queryKey: ["assignment", assignmentSubmission.assignmentId] });
+      await queryClient.invalidateQueries({ queryKey: ["courseMember"] });
 
       setIsSubmitting(false);
       setIsGrading(!isGrading)
@@ -111,11 +123,14 @@ function AssignmentSubmission() {
         : Number(trimmedGrade);
       setGrade(gradeAsNumber?.toString() || null);
     },
-    onError: () => {
+    onError: (error) => {
       setIsSubmitting(false);
       setIsGrading(!isGrading);
       setGrade(assignmentSubmission.grade?.toString() || null);
-      alert("An error occured while updating grade.")
+      alert(error instanceof Error
+        ? error.message || "Unknown error"
+        : new Error("An unexpected error occurred")
+      );
     },
   });
 
@@ -161,7 +176,7 @@ function AssignmentSubmission() {
     const trimmedGrade = grade?.trim();
     const gradeAsNumber = trimmedGrade === "" || trimmedGrade === null
       ? null
-      : Number(trimmedGrade);    
+      : Number(trimmedGrade);
 
     await updateGrade(gradeAsNumber);
   }
@@ -215,7 +230,7 @@ function AssignmentSubmission() {
                     <div className='w-2'></div>
                     <TransparentButton text=""
                       iconSrc={TrashIcon}
-                      onClick={async() => {
+                      onClick={async () => {
                         setIsSubmitting(true);
                         await removeAssignmentSubmission(assignmentSubmission.id)
                       }}

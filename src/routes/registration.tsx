@@ -1,7 +1,7 @@
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router';
 import { useState } from "react";
-import { type UserRole } from "../types/user";
 import { register } from '../services/api';
+import { type UserRole } from "../types/user";
 
 export const Route = createFileRoute('/registration')({
     component: RegistrationForm,
@@ -64,106 +64,109 @@ function RegistrationForm() {
     }
 
     return (
-        <main>
-            <div className="login-and-registration-container">
-                <div className="login-and-registration-form">
-                    <form onSubmit={handleSubmit}>
-                        <h1>Register</h1>
-                        <div className="input-box">
-                            <label htmlFor="email">Email</label>
+        <main className="login-and-registration-container">
+            <div className="login-and-registration-form">
+                <form onSubmit={handleSubmit}>
+                    <h1>Register</h1>
+                    <div className="input-box">
+                        <label htmlFor="email">Email</label>
+                        <input
+                            id="email"
+                            type="email"
+                            placeholder="Email"
+                            required
+                            value={email}
+                            maxLength={256}
+                            autoComplete="email"
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div className="input-box">
+                        <label htmlFor="first-name">First name</label>
+                        <input
+                            id="first-name"
+                            type="text"
+                            placeholder="First name"
+                            required
+                            value={firstName}
+                            maxLength={256}
+                            autoComplete="given-name"
+                            onChange={(e) => setFirstName(e.target.value)}
+                        />
+                    </div>
+                    <div className="input-box">
+                        <label htmlFor="last-name">Last name</label>
+                        <input
+                            id="last-name"
+                            type="text"
+                            placeholder="Last name"
+                            required
+                            value={lastName}
+                            maxLength={256}
+                            autoComplete="family-name"
+                            onChange={(e) => setLastName(e.target.value)}
+                        />
+                    </div>
+                    <div className="input-box">
+                        <label htmlFor="password">Password</label>
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Password"
+                            required
+                            value={password}
+                            maxLength={36}
+                            autoComplete="new-password"
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <div className="input-box">
+                        <label htmlFor="confirm-password">Confirm password</label>
+                        <input
+                            id="confirm-password"
+                            type="password"
+                            placeholder="Confirm password"
+                            required
+                            value={confirmPassword}
+                            maxLength={36}
+                            autoComplete="new-password"
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                    </div>
+                    <div className="flex flex-col w-full mt-6">
+                        <p>Who are you?</p>
+                        <label>
                             <input
-                                id="email"
-                                type="email"
-                                placeholder="Email"
-                                required
-                                value={email}
-                                maxLength={256}
-                                onChange={(e) => setEmail(e.target.value)}
+                                type="radio"
+                                value="Student"
+                                name="role"
+                                className="accent-[#8C47F6]"
+                                checked={role === "Student"}
+                                onChange={(e) => setRole(e.target.value as UserRole)}
                             />
-                        </div>
-                        <div className="input-box">
-                            <label htmlFor="first-name">First name</label>
+                            <span className="pl-2">Student</span>
+                        </label>
+                        <label>
                             <input
-                                id="first-name"
-                                type="text"
-                                placeholder="First name"
-                                required
-                                value={firstName}
-                                maxLength={256}
-                                onChange={(e) => setFirstName(e.target.value)}
+                                type="radio"
+                                value="Teacher"
+                                name="role"
+                                className="accent-[#8C47F6]"
+                                checked={role === "Teacher"}
+                                onChange={(e) => setRole(e.target.value as UserRole)}
                             />
-                        </div>
-                        <div className="input-box">
-                            <label htmlFor="last-name">Last name</label>
-                            <input
-                                id="last-name"
-                                type="text"
-                                placeholder="Last name"
-                                required
-                                value={lastName}
-                                maxLength={256}
-                                onChange={(e) => setLastName(e.target.value)}
-                            />
-                        </div>
-                        <div className="input-box">
-                            <label htmlFor="password">Password</label>
-                            <input
-                                id="password"
-                                type="password"
-                                placeholder="Password"
-                                required
-                                value={password}
-                                maxLength={36}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
-                        <div className="input-box">
-                            <label htmlFor="confirm-password">Confirm password</label>
-                            <input
-                                id="confirm-password"
-                                type="password"
-                                placeholder="Confirm password"
-                                required
-                                value={confirmPassword}
-                                maxLength={36}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex flex-col w-full mt-6">
-                            <label>Who are you?</label>
-                            <label>
-                                <input
-                                    type="radio"
-                                    value="Student"
-                                    name="role"
-                                    className="accent-[#8C47F6]"
-                                    checked={role === "Student"}
-                                    onChange={(e) => setRole(e.target.value as UserRole)}
-                                />
-                                <span className="pl-2">Student</span>
-                            </label>
-                            <label>
-                                <input
-                                    type="radio"
-                                    value="Teacher"
-                                    name="role"
-                                    className="accent-[#8C47F6]"
-                                    checked={role === "Teacher"}
-                                    onChange={(e) => setRole(e.target.value as UserRole)}
-                                />
-                                <span className="pl-2">Teacher</span>
-                            </label>
-                        </div>
-                        <button type="submit" disabled={!isFormValid() || isLoading}>
-                            Register
-                        </button>
-                        <div className="mt-8 flex justify-center">
-                            <Link to="/login" className="text-gray-400 hover:underline">
-                                Already have an account? Sign in
-                            </Link>
-                        </div>
-                    </form>
-                </div>
+                            <span className="pl-2">Teacher</span>
+                        </label>
+                    </div>
+                    <button type="submit" disabled={!isFormValid() || isLoading}>
+                        Register
+                    </button>
+                    <div className="mt-8 flex justify-center">
+                        <Link to="/login" className="text-gray-400 hover:underline">
+                            Already have an account? Sign in
+                        </Link>
+                    </div>
+                </form>
             </div>
         </main>
     )

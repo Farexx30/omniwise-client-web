@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/pending-approval')({
   component: PendingApprovalPage,
@@ -6,7 +6,7 @@ export const Route = createFileRoute('/pending-approval')({
 
 function PendingApprovalPage() {
   return (
-    <div className="login-and-registration-container">
+    <main className="login-and-registration-container">
       <div className="flex flex-col justify-center px-10 py-8 rounded-2xl shadow-2xl bg-[#222224]/50 w-full max-w-4xl h-full max-h-1/2 ">
         <div className="text-left mt-24">
           <h1 className="text-left">Waiting...</h1>
@@ -20,7 +20,7 @@ function PendingApprovalPage() {
           </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 // In the future, we'll probably implement automatic authentication.
 const isAuthenticated = false;

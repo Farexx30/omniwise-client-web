@@ -1,22 +1,22 @@
-import plusIcon from "/plus.svg";
-import signupIcon from "/signup.svg";
-import bell from "/bell.svg";
-import { getEnrolledCourses } from "../services/api";
+import { useQuery } from "@tanstack/react-query";
 import { useContext, type JSX } from "react";
+import { UserContext } from "../routes/home/route";
+import { getEnrolledCourses } from "../services/api";
+import ShadowLink from "./ShadowLink";
 import Spinner from "./Spinner";
 import TransparentLink from "./TransparentLink";
-import { useQuery } from "@tanstack/react-query";
-import ShadowLink from "./ShadowLink";
-import { UserContext } from "../routes/home/route";
+import bell from "/bell.svg";
+import plusIcon from "/plus.svg";
+import signupIcon from "/signup.svg";
 
 interface SidebarProps {
-    onCourseClick: (courseId: number, courseName: string, courseOwnerId: string) => void;
+    onCourseClick: (courseId: number, courseOwnerId: string) => void;
 }
 
 const Sidebar = ({ onCourseClick }: SidebarProps) => {
     const userContext = useContext(UserContext)!;
 
-    const {data: courses, isLoading, isError } = useQuery({
+    const {data: courses, isLoading, error } = useQuery({
         queryKey: ["courses"],
         queryFn: () => getEnrolledCourses(),
     })
@@ -26,8 +26,8 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
     if (isLoading) {
         content = <Spinner />;
     }
-    else if (isError) {
-        content = <p className="text-red-500">Error.</p>;
+    else if (error) {
+        content = <p className="text-red-500 font-bold text-center mt-8">Error - {error.message}</p>;
     }
     else if (!courses || courses.length === 0) {
         content = <p className="text-white italic">No courses found.</p>;
@@ -42,7 +42,7 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
                             params={{
                                 courseId: c.id.toString()
                             }}
-                            onClick={() => onCourseClick(c.id, c.name, c.ownerId)}
+                            onClick={() => onCourseClick(c.id, c.ownerId)}
                             text={c.name}
                          />
                     </li>
@@ -51,7 +51,6 @@ const Sidebar = ({ onCourseClick }: SidebarProps) => {
         )
     }
 
-    console.log(userContext.role);
     return (
         <div className="flex flex-col bg-transparent h-full w-44 p-3">
             <div className="flex flex-col gap-2 mb-4">  

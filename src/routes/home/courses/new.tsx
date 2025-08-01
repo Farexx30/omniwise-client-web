@@ -1,14 +1,13 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { use, useContext, useEffect, useState, type FormEvent } from 'react';
-import ShadowButton from '../../../components/ShadowButton';
-import { createCourse } from '../../../services/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { HomeContext } from '../route';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { useContext, useState, type FormEvent } from 'react';
 import FileInput from '../../../components/FileInput';
-import { useFile } from '../../../hooks/useFile';
-import Spinner from '../../../components/Spinner';
-import { useDebounce } from '../../../hooks/useDebounce';
 import LoadingView from '../../../components/LoadingView';
+import ShadowButton from '../../../components/ShadowButton';
+import { useDebounce } from '../../../hooks/useDebounce';
+import { useFile } from '../../../hooks/useFile';
+import { createCourse } from '../../../services/api';
+import { HomeContext } from '../route';
 
 export const Route = createFileRoute('/home/courses/new')({
     component: CreateCourse,
@@ -32,7 +31,6 @@ function CreateCourse() {
             queryClient.invalidateQueries({ queryKey: ["courses"] })
 
             homeContext?.setCurrentCourseId(courseId);
-            homeContext?.setCurrentCourseName(courseName);
 
             router.navigate({
                 to: "/home/courses/$courseId",
@@ -41,9 +39,12 @@ function CreateCourse() {
                 }
             })
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("An error occured while creating a course.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     })
 

@@ -1,19 +1,20 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useContext, useEffect, useState, type JSX } from "react";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
+import { useContext, useState, type JSX } from "react";
+import ConditionalWrapper from '../../components/ConditionalWrapper';
 import CourseCard from '../../components/CourseCard';
+import LoadingView from '../../components/LoadingView';
 import SearchBar from '../../components/SearchBar';
 import Spinner from '../../components/Spinner';
-import { deleteUser, getEnrolledCourses, getUsersByStatus, updateUserStatus } from '../../services/api';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useDebounce } from '../../hooks/useDebounce';
-import { HomeContext, UserContext } from './route';
 import TransparentButton from '../../components/TransparentButton';
+import { useDebounce } from '../../hooks/useDebounce';
+import { deleteUser, getEnrolledCourses, getUsersByStatus, updateUserStatus } from '../../services/api';
 import type { UserStatus } from '../../types/user';
-import UserAccept from "/user-accept.svg"
-import UserDelete from "/user-delete.svg"
-import UserArchive from "/archive.svg"
-import UndoArchive from "/undo-archive.svg"
-import LoadingView from '../../components/LoadingView';
+import { HomeContext, UserContext } from './route';
+import UserArchive from "/archive.svg";
+import UndoArchive from "/undo-archive.svg";
+import UserAccept from "/user-accept.svg";
+import UserDelete from "/user-delete.svg";
 
 export const Route = createFileRoute('/home/')({
     component: HomePage
@@ -37,14 +38,14 @@ function HomePage() {
 
     const adminTabs: UserStatus[] = ["Pending", "Active", "Archived"];
 
-    const { data: courses, isLoading, isError } = useQuery({
+    const { data: courses, isLoading, error: getEnrolledError } = useQuery({
         queryKey: ["courses", "enrolled", { debouncedSearchValue }],
         queryFn: () => getEnrolledCourses(searchValue),
         enabled: currentUserRole !== "Admin",
         staleTime: 60_000 * 5
     })
 
-    const { data: users, isLoading: usersIsLoading, isError: usersIsError } = useQuery({
+    const { data: users, isLoading: usersIsLoading, error: getUsersError } = useQuery({
         queryKey: ["users", currentAdminTab],
         queryFn: () => getUsersByStatus(currentAdminTab),
         enabled: currentUserRole === "Admin",
@@ -57,9 +58,12 @@ function HomePage() {
             await queryClient.invalidateQueries({ queryKey: ["users"] })
             setIsSubmitting(false);
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("An error occured while updating a user status.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     })
 
@@ -69,18 +73,28 @@ function HomePage() {
             await queryClient.invalidateQueries({ queryKey: ["users", currentAdminTab] })
             setIsSubmitting(false);
         },
-        onError: () => {
+        onError: (error) => {
             setIsSubmitting(false);
-            alert("An error occured while updating a user status.")
+            alert(error instanceof Error
+                ? error.message || "Unknown error"
+                : new Error("An unexpected error occurred")
+            );
         }
     })
 
     let content: JSX.Element | null = null;
     if (isLoading || usersIsLoading) {
-        content = <Spinner />;
+        content = (
+            <section className="flex h-full items-center justify-center">
+                <Spinner />
+            </section>
+        );
     }
-    else if (isError || usersIsError) {
-        content = <p className="text-red-500">Error.</p>;
+    else if (getEnrolledError) {
+        content = <p className="text-red-500 font-bold text-center text-xl mt-8">Error - {getEnrolledError.message}</p>;
+    }
+    else if (getUsersError) {
+        content = <p className="text-red-500 font-bold text-center text-xl mt-8">Error - {getUsersError.message}</p>;
     }
     else if (currentUserRole === "Admin") {
         content = (
@@ -175,7 +189,6 @@ function HomePage() {
                             {...c}
                             onClick={() => {
                                 homeContext?.setCurrentCourseId(c.id);
-                                homeContext?.setCurrentCourseName(c.name);
                                 homeContext?.setCurrentCourseOwnerId(c.ownerId);
                             }} />
                     </li>
@@ -205,16 +218,19 @@ function HomePage() {
                 {content}
             </>
         ) : (
-            <div className="h-full w-full">
+            <div className="h-full w-full flex flex-col">
                 <SearchBar
                     searchValue={searchValue}
                     onSearch={setSearchValue}
                     placeholder="Search for courses..."
                 />
-                <section className="space-y-9">
+                <ConditionalWrapper
+                    condition={!isLoading}
+                    wrapper={(children) => <section className="space-y-9">{children}</section>}
+                >
                     {content}
-                </section>
-            </div >
+                </ConditionalWrapper>
+            </div>
         )
     )
 }

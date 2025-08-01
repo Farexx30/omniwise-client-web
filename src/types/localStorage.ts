@@ -12,9 +12,8 @@ export interface UserInfo {
     userId: string;
 }
 
-export interface CourseInfo {
+export interface LocalStorageCourseInfo {
     id: number | null;
-    name: string | null;
     ownerId: string | null;
 }
 

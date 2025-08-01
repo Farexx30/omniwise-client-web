@@ -1,8 +1,8 @@
-import React, { type JSX, type ReactNode } from 'react'
+import { type JSX, type ReactNode } from 'react';
 
 interface ConditionalWrapperProps {
     condition: boolean;
-    wrapper: (children: React.ReactNode) => JSX.Element;
+    wrapper: (children: ReactNode) => JSX.Element;
     children: ReactNode
 }
 
